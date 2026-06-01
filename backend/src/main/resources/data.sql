@@ -1,0 +1,87 @@
+-- ==========================================
+-- POPULANDO A TABELA DE BAIRROS (NÓS)
+-- ==========================================
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (1, 'Jardim América', true, 544.46, 337.81);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (2, 'Centro', true, 532.97, 468.69);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (3, 'Setor Leste', false, 793.82, 604.48);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (4, 'Vila Nova', true, 261.86, 632.99);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (5, 'Alto da Serra', false, 161.13, 589.97);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (6, 'Setor Oeste', false, -137.10, 677.87);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (7, 'Distrito Industrial', false, 10.74, 651.75);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (8, 'Residencial Esperança', false, -277.11, 839.92);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (9, 'Recanto Verde', false, 360.41, 1250.30);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (10, 'Ecoparque Sul', false, 341.89, 716.12);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (11, 'Nova Alvorada', false, 560.24, 1016.80);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (12, 'Setor das Palmeiras', false, 220.41, 121.43);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (13, 'Colina Azul', false, 708.24, 521.66);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (14, 'Bela Vista', true, -3.41, 274.19);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (15, 'Morada do Sol', false, 421.82, 206.16);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (16, 'Setor Central II', true, 714.75, 942.03);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (17, 'Lago Azul', false, -55.17, 507.05);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (18, 'Residencial Florença', false, 226.75, 786.14);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (19, 'Setor Industrial Norte', false, 541.74, 747.25);
+INSERT INTO bairros (id_bairro, nome_bairro, tem_base, pos_x, pos_y) VALUES (20, 'Vale do Cerrado', true, 413.31, 981.52);
+
+-- ==========================================
+-- POPULANDO A TABELA DE RUAS (ARESTAS)
+-- ==========================================
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (1, 9, 16, 6.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (2, 15, 19, 8.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (3, 17, 7, 1.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (4, 3, 5, 12.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (5, 12, 4, 14.0);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (6, 13, 7, 9.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (7, 13, 6, 19.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (8, 5, 9, 13.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (9, 16, 3, 3.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (10, 8, 10, 12.8);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (11, 20, 1, 14.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (12, 14, 3, 18.1);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (13, 2, 18, 1.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (14, 6, 11, 15.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (15, 1, 17, 14.5);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (16, 3, 4, 19.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (17, 14, 19, 18.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (18, 15, 18, 18.5);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (19, 20, 2, 14.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (20, 15, 20, 12.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (21, 17, 15, 7.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (22, 4, 12, 6.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (23, 5, 15, 8.6);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (24, 6, 2, 13.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (25, 14, 15, 9.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (26, 9, 3, 18.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (27, 18, 7, 1.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (28, 13, 7, 17.5);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (29, 18, 9, 9.0);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (30, 15, 11, 18.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (31, 3, 4, 3.0);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (32, 7, 2, 13.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (33, 20, 4, 7.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (34, 5, 16, 14.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (35, 13, 4, 12.8);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (36, 1, 16, 13.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (37, 14, 3, 14.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (38, 2, 6, 16.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (39, 11, 8, 16.6);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (40, 11, 10, 4.6);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (41, 4, 1, 7.0);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (42, 11, 7, 14.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (43, 13, 5, 6.2);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (44, 9, 20, 2.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (45, 13, 15, 8.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (46, 17, 13, 16.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (47, 10, 14, 7.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (48, 8, 1, 17.9);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (49, 9, 2, 19.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (50, 16, 17, 18.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (51, 6, 14, 9.0);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (52, 2, 19, 5.1);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (53, 6, 5, 1.3);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (54, 2, 1, 1.4);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (55, 20, 19, 3.7);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (56, 20, 2, 6.5);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (57, 4, 8, 13.1);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (58, 4, 19, 3.8);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (59, 16, 11, 2.8);
+INSERT INTO ruas (id_aresta, id_bairro_origem, id_bairro_destino, distancia_km) VALUES (60, 13, 16, 7.8);

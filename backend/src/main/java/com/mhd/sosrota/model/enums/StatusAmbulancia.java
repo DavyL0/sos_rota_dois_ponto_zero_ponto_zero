@@ -1,0 +1,36 @@
+package com.mhd.sosrota.model.enums;
+
+/**
+ *
+ * @author Murilo Nunes <murilo_no@outlook.com>
+ * @author Hartur Sales <hartursalesxavier@gmail.com>
+ * @date 01/06/2026
+ * @brief Enum StatusAmbulancia
+ */
+
+public enum StatusAmbulancia {
+    DISPONIVEL("Disponível"),
+    EM_ATENDIMENTO("Em Atendimento"),
+    MANUTENCAO("Manutenção"),
+    INATIVA("Inativa"),
+    DESATIVADA("Desativada");
+
+    private final String descricao;
+
+    StatusAmbulancia(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static StatusAmbulancia fromDescricao(String descricao) {
+        for (StatusAmbulancia status : StatusAmbulancia.values()) {
+            if (status.getDescricao().equalsIgnoreCase(descricao)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Descrição inválida: " + descricao);
+    }
+}
