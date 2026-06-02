@@ -15,6 +15,8 @@ import java.util.Optional;
  * @brief Interface AtendimentoRepository
  */
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
+    boolean existsByAmbulanciaId(Long ambulanciaId);
+
     Optional<Atendimento> findByOcorrenciaId(Long ocorrenciaId);
 
     List<Atendimento> findByAmbulanciaId(Long ambulanciaId);
@@ -23,7 +25,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     @Query(value = """
             SELECT AVG(DATEDIFF('SECOND', a.data_hora_despacho, a.data_hora_chegada))
             FROM atendimentos a
-            JOIN ocorrencias o ON o.id = a.ocorrencia_id
+            JOIN ocorrencias o ON o.id_ocorrencia = a.ocorrencia_id
             WHERE o.gravidade = :gravidade
               AND a.data_hora_despacho IS NOT NULL
               AND a.data_hora_chegada IS NOT NULL

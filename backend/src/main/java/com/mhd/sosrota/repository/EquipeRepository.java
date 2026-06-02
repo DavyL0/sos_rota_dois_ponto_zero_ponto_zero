@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -14,7 +13,7 @@ import java.util.Optional;
  * @brief Interface EquipeRepository
  */
 public interface EquipeRepository extends JpaRepository<Equipe, Long> {
-    Optional<Equipe> findByAmbulanciaId(Long ambulanciaId);
+    boolean existsByAmbulanciaId(Long ambulanciaId);
 
     @Query("SELECT DISTINCT e FROM Equipe e JOIN e.profissionais p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
     List<Equipe> findByNomeProfissional(String nome);

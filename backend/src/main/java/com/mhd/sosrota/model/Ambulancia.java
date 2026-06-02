@@ -3,8 +3,7 @@ package com.mhd.sosrota.model;
 import com.mhd.sosrota.model.enums.StatusAmbulancia;
 import com.mhd.sosrota.model.enums.TipoAmbulancia;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
+import jakarta.validation.constraints.Pattern;
 
 /**
  *
@@ -21,6 +20,7 @@ public class Ambulancia {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 7)
+    @Pattern(regexp = "^[A-Z]{3}[0-9][A-Z][0-9]{2}$", message = "A placa deve seguir o formato ABC1D23")
     private String placa;
 
     @Enumerated(EnumType.STRING)
