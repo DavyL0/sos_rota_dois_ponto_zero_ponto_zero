@@ -5,6 +5,7 @@ import com.mhd.sosrota.model.GrafoCidade;
 import com.mhd.sosrota.model.Rua;
 import com.mhd.sosrota.repository.BairroRepository;
 import com.mhd.sosrota.repository.RuaRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,18 +29,17 @@ public class GrafoCidadeService {
         this.ruaRepository = ruaRepository;
     }
 
-    public void carregarGrafoEmMemoria() {
+    @PostConstruct
+    public void carregarGrafo() {
         List<Bairro> bairros = bairroRepository.findAll();
-        // Lembre-se de usar a query com JOIN FETCH no repositório para as Ruas
         List<Rua> ruas = ruaRepository.findAllWithBairros();
 
         this.grafo = new GrafoCidade(bairros, ruas);
-        System.out.println("Grafo carregado em memória com sucesso!");
     }
 
     public GrafoCidade obterGrafo() {
         if (this.grafo == null) {
-            carregarGrafoEmMemoria();
+            carregarGrafo();
         }
         return this.grafo;
     }
