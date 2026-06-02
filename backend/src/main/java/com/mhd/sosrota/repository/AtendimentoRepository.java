@@ -20,8 +20,14 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     List<Atendimento> findByAmbulanciaId(Long ambulanciaId);
 
     // Relatório: Tempo médio por gravidade
-    @Query("SELECT AVG(FUNCTION('EXTRACT', EPOCH FROM (a.dataHoraChegada - a.dataHoraDespacho))) " +
-            "FROM Atendimento a WHERE a.ocorrencia.gravidadeOcorrencia = :gravidade AND a.dataHoraChegada IS NOT NULL")
+    @Query(value = """
+            SELECT AVG(DATEDIFF('SECOND', a.data_hora_despacho, a.data_hora_chegada))
+            FROM atendimentos a
+            JOIN ocorrencias o ON o.id = a.ocorrencia_id
+            WHERE o.gravidade = :gravidade
+              AND a.data_hora_despacho IS NOT NULL
+              AND a.data_hora_chegada IS NOT NULL
+            """, nativeQuery = true)
     Double calculateTempoMedioRespostaByGravidade(GravidadeOcorrencia gravidade);
 
     @Query("SELECT a.ocorrencia.bairro.nome, COUNT(a.id) FROM Atendimento a GROUP BY a.ocorrencia.bairro.nome ORDER BY COUNT(a.id) DESC")

@@ -16,7 +16,6 @@ import java.util.List;
  * @date 01/06/2026
  * @brief Class GrafoCidadeService
  */
-
 @Service
 public class GrafoCidadeService {
     private final BairroRepository bairroRepository;
