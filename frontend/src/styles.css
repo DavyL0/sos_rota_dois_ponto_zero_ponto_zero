@@ -1,2 +1,54 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeicons/primeicons.css";
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap&family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+:root {
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+  --accent-800: #9a3412;
+  --accent-900: #7c2d12;
+}
+
+* {
+  font-family: 'Arimo', sans-serif;
+}
+
+.p-button.p-button-accent {
+  background: var(--accent-500);
+  border-color: var(--accent-500);
+  color: #ffffff;
+}
+
+.p-button.p-button-accent:hover {
+  background: var(--accent-600);
+  border-color: var(--accent-600);
+}
+
+.p-button.p-button-accent:focus {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent-300);
+}
+
+.app-dark .p-button.p-button-accent {
+  background: var(--accent-400);
+  border-color: var(--accent-400);
+  color: var(--p-surface-900);
+}
+
+.app-dark .p-button.p-button-accent:hover {
+  background: var(--accent-300);
+  border-color: var(--accent-300);
+}
