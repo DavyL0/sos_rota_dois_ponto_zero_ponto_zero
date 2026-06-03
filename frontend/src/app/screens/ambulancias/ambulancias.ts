@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AmbulanciasService } from '../../services/ambulancias-service/ambulancias-service';
 import {
+  AmbulanciaCadastroModel,
   AmbulanciaExibicaoModel,
   StatusAmbulancia,
   StatusAmbulanciaLabel,
@@ -15,8 +16,14 @@ import { Skeleton } from 'primeng/skeleton';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { debounceTime, Subject, Subscription } from 'rxjs';
+import { Toast } from 'primeng/toast';
+import { Dialog } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
+import { NgClass } from '@angular/common';
+import { Select } from 'primeng/select';
+import { Bairro } from '../../model/bairro.model';
 
 @Component({
   selector: 'app-ambulancias',
@@ -30,16 +37,41 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
     InputIcon,
     InputText,
     FormsModule,
+    Toast,
+    Dialog,
+    NgClass,
+    Select,
   ],
+  providers: [MessageService],
   templateUrl: './ambulancias.html',
   styleUrl: './ambulancias.css',
 })
 export class Ambulancias implements OnInit, OnDestroy {
   private service = inject(AmbulanciasService);
   private cd = inject(ChangeDetectorRef);
+  private messageService = inject(MessageService);
+
+  @ViewChild('cadastroForm') cadastroForm!: NgForm;
+  @ViewChild('tabelaAmbulancias') tabela!: Table;
 
   ambulancias: AmbulanciaExibicaoModel[] = [];
   carregando: boolean = true;
+
+  cadastroVisivel = false;
+  ambulanciaCadastrada: AmbulanciaCadastroModel = {
+    placa: '',
+    status: StatusAmbulancia.INATIVA,
+    tipo: null,
+    bairroId: null,
+  };
+  tiposAmbulancia = [
+    { label: 'Básica', value: TipoAmbulancia.BASICA },
+    { label: 'UTI', value: TipoAmbulancia.UTI },
+  ];
+  bairros: Bairro[] = [
+    //todo receber os bairros do backend
+    { id: 1, nome: 'Centro' },
+  ];
 
   paginaAtual = 0;
   tamanhoPagina = 10;
@@ -103,6 +135,27 @@ export class Ambulancias implements OnInit, OnDestroy {
       });
   }
 
+  protected salvarAmbulancia() {
+    if (this.cadastroForm?.invalid) return;
+
+    if (!this.ambulanciaCadastrada.placa.match('^[A-Z]{3}[0-9][A-Z][0-9]{2}$')) {
+      this.cadastroForm.controls['placa'].setErrors({ pattern: true });
+      return;
+    }
+
+    // this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
+    //   next: () => {
+    //     this.limparBusca();
+    //     this.limparOrdenacao();
+    //     this.carregarAmbulancias();
+    //     this.fecharCadastro();
+    //   },
+    //   error: (err: HttpErrorResponse) => {
+    //     //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
+    //   },
+    // });
+  }
+
   getSeverityStatus(
     status: StatusAmbulancia,
   ): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined | null {
@@ -134,14 +187,27 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.buscaSubject.next();
   }
 
-  protected limparOrdenacao(tabela: Table) {
-    tabela.sortField = null;
-    tabela.sortOrder = 1;
-    tabela.reset();
+  protected limparOrdenacao() {
+    this.tabela.sortField = null;
+    this.tabela.sortOrder = 1;
+    this.tabela.reset();
   }
 
   protected limparBusca() {
     this.termoBusca = '';
     this.filtrarTabela();
+  }
+
+  protected fecharCadastro() {
+    this.cadastroVisivel = false;
+    this.ambulanciaCadastrada = {
+      placa: '',
+      status: StatusAmbulancia.INATIVA,
+      tipo: null,
+      bairroId: null,
+    };
+    setTimeout(() => {
+      this.cadastroForm?.resetForm();
+    }, 0);
   }
 }
