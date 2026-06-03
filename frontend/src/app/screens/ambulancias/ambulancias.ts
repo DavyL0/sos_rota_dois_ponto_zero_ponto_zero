@@ -5,7 +5,7 @@ import {
   StatusAmbulancia,
   StatusAmbulanciaLabel,
   TipoAmbulancia,
-  TipoAmbulanciaLabel,
+  TipoAmbulanciaLabel
 } from '../../model/ambulancia.model';
 import { Button } from 'primeng/button';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -17,7 +17,6 @@ import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, Subscription } from 'rxjs';
-import { InputGroup } from 'primeng/inputgroup';
 
 @Component({
   selector: 'app-ambulancias',
@@ -31,7 +30,6 @@ import { InputGroup } from 'primeng/inputgroup';
     InputIcon,
     InputText,
     FormsModule,
-    InputGroup,
   ],
   templateUrl: './ambulancias.html',
   styleUrl: './ambulancias.css',

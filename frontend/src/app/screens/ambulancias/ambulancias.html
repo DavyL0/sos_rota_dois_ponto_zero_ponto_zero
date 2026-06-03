@@ -16,28 +16,29 @@
              stripedRows>
       <ng-template #caption>
         <div class="table-header">
-          <p-input-group style="flex: 1;">
-            <p-iconfield iconPosition="left" style="flex: 1;">
-              <p-inputicon class="pi pi-search"/>
-              <input
-                pInputText
-                type="text"
-                placeholder="Buscar por placa ou base"
-                [(ngModel)]="termoBusca"
-                (input)="filtrarTabela()"
-                style="width: 100%;"
-              />
-            </p-iconfield>
+          <p-iconfield iconPosition="left" style="flex: 1; position: relative">
+            <p-inputicon class="pi pi-search"/>
+            <input
+              pInputText
+              type="text"
+              placeholder="Buscar por placa ou base"
+              [(ngModel)]="termoBusca"
+              (input)="filtrarTabela()"
+              style="width: 100%; padding-right: 3rem;"
+            />
+              <p-button
+                icon="pi pi-times"
+                severity="danger"
+                [text]="true"
+                [outlined]="true"
+                class="limpar-btn"
+                [class.aparecer]="termoBusca"
+                (onClick)="limparBusca()"
+                pTooltip="Limpar busca"
+              >
+              </p-button>
+          </p-iconfield>
 
-            <p-button
-              icon="pi pi-times"
-              severity="danger"
-              [outlined]="true"
-              class="limpar-btn"
-              (onClick)="limparBusca()"
-            >
-            </p-button>
-          </p-input-group>
 
           <p-button
             label="Limpar Ordenação"
@@ -48,7 +49,6 @@
             disabled="{{dt.sortField == null}}"
           >
           </p-button>
-
         </div>
       </ng-template>
       <ng-template #header>
