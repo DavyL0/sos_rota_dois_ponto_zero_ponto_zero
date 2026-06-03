@@ -1,15 +1,26 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './screens/dashboard/dashboard';
-import { Ocorrencias } from './screens/ocorrencias/ocorrencias';
-import { Ambulancias } from './screens/ambulancias/ambulancias';
-import { Equipes } from './screens/equipes/equipes';
-import { Relatorios } from './screens/relatorios/relatorios';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: Dashboard },
-  { path: 'ocorrencias', component: Ocorrencias },
-  { path: 'ambulancias', component: Ambulancias },
-  { path: 'equipes', component: Equipes },
-  { path: 'relatorios', component: Relatorios },
+
+  {
+    path: 'home',
+    loadComponent: () => import('./screens/dashboard/dashboard').then((m) => m.Dashboard),
+  },
+  {
+    path: 'ocorrencias',
+    loadComponent: () => import('./screens/ocorrencias/ocorrencias').then((m) => m.Ocorrencias),
+  },
+  {
+    path: 'ambulancias',
+    loadComponent: () => import('./screens/ambulancias/ambulancias').then((m) => m.Ambulancias),
+  },
+  {
+    path: 'equipes',
+    loadComponent: () => import('./screens/equipes/equipes').then((m) => m.Equipes),
+  },
+  {
+    path: 'relatorios',
+    loadComponent: () => import('./screens/relatorios/relatorios').then((m) => m.Relatorios),
+  },
 ];
