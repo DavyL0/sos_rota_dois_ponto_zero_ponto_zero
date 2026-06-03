@@ -1,1 +1,99 @@
-<p>ambulancias works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Ambulâncias</h1>
+    </div>
+    <div class="header-actions">
+      <p-button label="Nova Ambulância" icon="pi pi-plus">
+      </p-button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p-table #dt [value]="ambulancias" [paginator]="true" [rows]="10" [loading]="carregando"
+             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [rowHover]="true"
+             stripedRows>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="placa">Placa
+            <p-sortIcon field="placa"></p-sortIcon>
+          </th>
+          <th pSortableColumn="tipo">Tipo
+            <p-sortIcon field="tipo"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">Status
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th pSortableColumn="bairro.nome">Base Vinculada
+            <p-sortIcon field="bairro.nome"></p-sortIcon>
+          </th>
+          <th class="acoes">Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-ambulancia>
+        @if (carregando) {
+          <tr>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+          </tr>
+        } @else {
+          <tr>
+            <td>{{ ambulancia.placa }}</td>
+            <td>{{ getTipoLabel(ambulancia.tipo) }}</td>
+            <td>
+              <p-tag [value]="getStatusLabel(ambulancia.status)"
+                     [severity]="getSeverityStatus(ambulancia.status)"></p-tag>
+            </td>
+            <td>
+              <div class="bairro-cell">
+                <i class="pi pi-map-marker icon-muted"></i>
+                <span>{{ ambulancia.bairro?.nome }}</span>
+              </div>
+            </td>
+            <td class="actions-column">
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                severity="info"
+                pTooltip="Editar"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                severity="danger"
+                pTooltip="Excluir">
+              </p-button>
+            </td>
+          </tr>
+        }
+      </ng-template>
+      <ng-template #emptymessage>
+        @if (!carregando) {
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <i class="pi pi-car empty-icon"></i>
+                <p class="empty-text">Nenhuma ambulância cadastrada</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+
+  </div>
+</div>
