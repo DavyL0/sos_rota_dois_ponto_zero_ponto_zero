@@ -29,7 +29,7 @@
   margin: 0.5rem 0 0 0;
 }
 
-.card {
+.table-wrapper {
   background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
   border-radius: 12px;
@@ -37,18 +37,12 @@
   overflow: hidden;
 }
 
-.page-header {
+.table-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.table-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--p-text-color);
+  width: 100%
 }
 
 .actions-column {

@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,9 +29,10 @@ public class AmbulanciaController {
 
     @GetMapping
     public ResponseEntity<Page<AmbulanciaExibicaoDTO>> listarAmbulancias(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao,
+            @RequestParam(required = false) String filtro
     ) {
-        Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao).map(AmbulanciaExibicaoDTO::new);
+        Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao, filtro).map(AmbulanciaExibicaoDTO::new);
         return ResponseEntity.ok(ambulancias);
     }
 }

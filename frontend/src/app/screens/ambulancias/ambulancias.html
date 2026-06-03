@@ -9,10 +9,48 @@
     </div>
   </div>
 
-  <div class="card">
-    <p-table #dt [value]="ambulancias" [paginator]="true" [rows]="10" [loading]="carregando"
-             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [rowHover]="true"
+  <div class="table-wrapper">
+    <p-table #dt [value]="ambulancias" [paginator]="true" [rows]="10"
+             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos"
+             [rowHover]="ambulancias.length > 0"
              stripedRows>
+      <ng-template #caption>
+        <div class="table-header">
+          <p-input-group style="flex: 1;">
+            <p-iconfield iconPosition="left" style="flex: 1;">
+              <p-inputicon class="pi pi-search"/>
+              <input
+                pInputText
+                type="text"
+                placeholder="Buscar por placa ou base"
+                [(ngModel)]="termoBusca"
+                (input)="filtrarTabela()"
+                style="width: 100%;"
+              />
+            </p-iconfield>
+
+            <p-button
+              icon="pi pi-times"
+              severity="danger"
+              [outlined]="true"
+              class="limpar-btn"
+              (onClick)="limparBusca()"
+            >
+            </p-button>
+          </p-input-group>
+
+          <p-button
+            label="Limpar Ordenação"
+            icon="pi pi-sort-alt-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparOrdenacao(dt)"
+            disabled="{{dt.sortField == null}}"
+          >
+          </p-button>
+
+        </div>
+      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="placa">Placa

@@ -1,25 +1,42 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AmbulanciasService } from '../../services/ambulancias-service/ambulancias-service';
 import {
   AmbulanciaExibicaoModel,
   StatusAmbulancia,
   StatusAmbulanciaLabel,
   TipoAmbulancia,
-  TipoAmbulanciaLabel
+  TipoAmbulanciaLabel,
 } from '../../model/ambulancia.model';
 import { Button } from 'primeng/button';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { Tooltip } from 'primeng/tooltip';
 import { Skeleton } from 'primeng/skeleton';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { InputText } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { debounceTime, Subject, Subscription } from 'rxjs';
+import { InputGroup } from 'primeng/inputgroup';
 
 @Component({
   selector: 'app-ambulancias',
-  imports: [Button, TableModule, Tag, Tooltip, Skeleton],
+  imports: [
+    Button,
+    TableModule,
+    Tag,
+    Tooltip,
+    Skeleton,
+    IconField,
+    InputIcon,
+    InputText,
+    FormsModule,
+    InputGroup,
+  ],
   templateUrl: './ambulancias.html',
   styleUrl: './ambulancias.css',
 })
-export class Ambulancias {
+export class Ambulancias implements OnInit, OnDestroy {
   private service = inject(AmbulanciasService);
   private cd = inject(ChangeDetectorRef);
 
@@ -31,8 +48,23 @@ export class Ambulancias {
   totalElementos = 0;
   campoOrdenacao?: string;
   ordemOrdenacao: number | undefined | null = -1;
+  termoBusca: string = '';
   statusLabel = StatusAmbulanciaLabel;
   tipoLabel = TipoAmbulanciaLabel;
+
+  private buscaSubject = new Subject<void>();
+  private buscaSubscription!: Subscription;
+
+  ngOnInit(): void {
+    this.buscaSubscription = this.buscaSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.paginaAtual = 0;
+      this.carregarAmbulancias();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.buscaSubscription.unsubscribe();
+  }
 
   carregarTabela(event: TableLazyLoadEvent) {
     this.carregando = true;
@@ -56,6 +88,7 @@ export class Ambulancias {
         this.tamanhoPagina,
         this.campoOrdenacao,
         this.ordemOrdenacao ?? -1,
+        this.termoBusca,
       )
       .subscribe({
         next: (dados) => {
@@ -91,15 +124,26 @@ export class Ambulancias {
     }
   }
 
-  getSeverityTipo(tipo: TipoAmbulancia): 'danger' | 'info' {
-    return tipo === TipoAmbulancia.UTI ? 'danger' : 'info';
-  }
-
   getTipoLabel(tipo: any): string {
     return this.tipoLabel[tipo as TipoAmbulancia] || tipo;
   }
 
   getStatusLabel(status: any): string {
     return this.statusLabel[status as StatusAmbulancia] || status;
+  }
+
+  protected filtrarTabela() {
+    this.buscaSubject.next();
+  }
+
+  protected limparOrdenacao(tabela: Table) {
+    tabela.sortField = null;
+    tabela.sortOrder = 1;
+    tabela.reset();
+  }
+
+  protected limparBusca() {
+    this.termoBusca = '';
+    this.filtrarTabela();
   }
 }

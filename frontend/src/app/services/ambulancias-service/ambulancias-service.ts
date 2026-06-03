@@ -16,8 +16,10 @@ export class AmbulanciasService {
     size: number,
     sortField?: string,
     sortOrder?: number,
+    filtro?: string,
   ): Observable<Page<AmbulanciaExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);
+
     if (sortField) {
       if (sortField === 'bairro.nome') {
         sortField = 'bairroBase';
@@ -27,6 +29,10 @@ export class AmbulanciasService {
       }
       const direction = sortOrder === 1 ? 'asc' : 'desc';
       params = params.set('sort', `${sortField},${direction}`);
+    }
+
+    if (filtro) {
+      params = params.set('filtro', filtro);
     }
 
     return this.http.get<Page<AmbulanciaExibicaoModel>>(`${this.apiUrl}`, { params });

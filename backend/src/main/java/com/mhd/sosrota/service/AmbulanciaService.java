@@ -57,8 +57,8 @@ public class AmbulanciaService {
         );
     }
 
-    public Page<Ambulancia> findAll(Pageable pageable) {
-        return ambulanciaRepository.findAll(pageable);
+    public Page<Ambulancia> findAll(Pageable pageable, String filtro) {
+        return ambulanciaRepository.obterComFiltro(pageable, filtro);
     }
 
     public Ambulancia atualizar(Long id, AmbulanciaCadastroDTO ambulanciaDTO) {
