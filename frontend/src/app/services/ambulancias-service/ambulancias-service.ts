@@ -42,6 +42,10 @@ export class AmbulanciasService {
     return this.http.post<AmbulanciaExibicaoModel>(`${this.apiUrl}`, ambulancia);
   }
 
+  atualizarAmbulancia(id: number, ambulancia: AmbulanciaCadastroModel): Observable<AmbulanciaExibicaoModel> {
+    return this.http.put<AmbulanciaExibicaoModel>(`${this.apiUrl}/${id}`, ambulancia);
+  }
+
   apagarAmbulancia(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

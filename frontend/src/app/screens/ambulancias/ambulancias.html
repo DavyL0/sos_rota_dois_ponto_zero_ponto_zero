@@ -4,7 +4,7 @@
       <h1 class="page-title">Ambulâncias</h1>
     </div>
     <div class="header-actions">
-      <p-button label="Nova Ambulância" icon="pi pi-plus" (onClick)="cadastroVisivel = true">
+      <p-button label="Nova Ambulância" icon="pi pi-plus" (onClick)="abrirCadastro()">
       </p-button>
     </div>
   </div>
@@ -110,6 +110,7 @@
                 [text]="true"
                 severity="info"
                 pTooltip="Editar"
+                (onClick)="abrirEdicao(ambulancia)"
               >
               </p-button>
               <p-button
@@ -139,7 +140,8 @@
   </div>
 </div>
 
-<p-dialog header="Cadastrar Ambulância" [modal]="true" [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"
+<p-dialog [header]="idEditando ? 'Editar Ambulância' : 'Cadastrar Ambulância'" [modal]="true"
+          [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"
           [draggable]="false" [style]="{ width: '50vw' }">
   <form #cadastroForm="ngForm" (ngSubmit)="salvarAmbulancia()" class="form-container">
     <div class="form-item">
@@ -155,6 +157,9 @@
         }
         @if (placaVar.errors?.['pattern']) {
           <small class="error-message">A placa deve seguir o formato ABC1D23.</small>
+        }
+        @if (placaVar.errors?.['unique']) {
+          <small class="error-message">Já existe uma ambulância cadastrada com essa placa</small>
         }
       }
     </div>
@@ -182,6 +187,10 @@
         <small class="error-message">A base vinculada é obrigatória.</small>
       }
     </div>
+
+    @if (erroBackend) {
+      <small class="error-message server-error">{{ erroBackend }}</small>
+    }
 
     <div class="form-actions">
       <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>

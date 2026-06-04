@@ -101,3 +101,8 @@ html, body {
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
+
+.server-error {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}

@@ -76,6 +76,8 @@ export class Ambulancias implements OnInit, OnDestroy {
     //todo receber os bairros do backend
     { id: 1, nome: 'Centro' },
   ];
+  erroBackend: string | null = null;
+  idEditando: number | null = null;
 
   paginaAtual = 0;
   tamanhoPagina = 10;
@@ -100,7 +102,7 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.buscaSubscription.unsubscribe();
   }
 
-  carregarTabela(event: TableLazyLoadEvent) {
+  protected carregarTabela(event: TableLazyLoadEvent) {
     this.carregando = true;
 
     const first = event.first ?? 0;
@@ -114,7 +116,7 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.carregarAmbulancias();
   }
 
-  carregarAmbulancias() {
+  protected carregarAmbulancias() {
     this.carregando = true;
     this.service
       .obterAmbulancias(
@@ -147,20 +149,54 @@ export class Ambulancias implements OnInit, OnDestroy {
       return;
     }
 
-    // this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
-    //   next: () => {
-    //     this.limparBusca();
-    //     this.limparOrdenacao();
-    //     this.carregarAmbulancias();
-    //     this.fecharCadastro();
-    //   },
-    //   error: (err: HttpErrorResponse) => {
-    //     //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
-    //   },
-    // });
+    this.erroBackend = null;
+
+    if (this.idEditando) {
+/*      this.service.atualizarAmbulancia(this.idEditando, this.ambulanciaCadastrada).subscribe({
+        next: () => {
+          this.limparBusca();
+          this.limparOrdenacao();
+          this.carregarAmbulancias();
+          this.fecharCadastro();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Ambulância atualizada com sucesso',
+          });
+        },
+        error: (err: HttpErrorResponse) => {
+          if (err.status === 400) {
+            if (err.error?.message === 'Já existe uma ambulância cadastrada com essa placa') {
+              this.cadastroForm.controls['placa'].setErrors({ unique: true });
+            } else {
+              this.erroBackend = err.error.message;
+            }
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Houve um erro',
+            });
+            console.log('Erro ao editar ', err);
+          }
+        },
+      });*/
+    } else {
+/*      this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
+        next: () => {
+          this.limparBusca();
+          this.limparOrdenacao();
+          this.carregarAmbulancias();
+          this.fecharCadastro();
+        },
+        error: (err: HttpErrorResponse) => {
+          //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
+        },
+      });*/
+    }
   }
 
-  confirmarExclusao(ambulancia: AmbulanciaExibicaoModel) {
+  protected confirmarExclusao(ambulancia: AmbulanciaExibicaoModel) {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir a ambulância placa ${ambulancia.placa}?`,
       header: 'Confirmar Exclusão',
@@ -210,15 +246,14 @@ export class Ambulancias implements OnInit, OnDestroy {
             severity: 'error',
             summary: 'Erro',
             detail: 'Houve um erro',
-            life: 5000,
           });
-          console.log('Erro ao excluir ', err)
+          console.log('Erro ao excluir ', err);
         }
       },
     });
   }
 
-  getSeverityStatus(
+  protected getSeverityStatus(
     status: StatusAmbulancia,
   ): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined | null {
     switch (status) {
@@ -237,11 +272,11 @@ export class Ambulancias implements OnInit, OnDestroy {
     }
   }
 
-  getTipoLabel(tipo: any): string {
+  protected getTipoLabel(tipo: any): string {
     return this.tipoLabel[tipo as TipoAmbulancia] || tipo;
   }
 
-  getStatusLabel(status: any): string {
+  protected getStatusLabel(status: any): string {
     return this.statusLabel[status as StatusAmbulancia] || status;
   }
 
@@ -260,6 +295,17 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.filtrarTabela();
   }
 
+  protected abrirCadastro() {
+    this.idEditando = null;
+    this.ambulanciaCadastrada = {
+      placa: '',
+      status: StatusAmbulancia.INATIVA,
+      tipo: null,
+      bairroId: null,
+    };
+    this.cadastroVisivel = true;
+  }
+
   protected fecharCadastro() {
     this.cadastroVisivel = false;
     this.ambulanciaCadastrada = {
@@ -268,8 +314,21 @@ export class Ambulancias implements OnInit, OnDestroy {
       tipo: null,
       bairroId: null,
     };
+    this.idEditando = null;
+    this.erroBackend = null;
     setTimeout(() => {
       this.cadastroForm?.resetForm();
     }, 0);
+  }
+
+  protected abrirEdicao(ambulancia: AmbulanciaExibicaoModel) {
+    this.idEditando = ambulancia.id;
+    this.ambulanciaCadastrada = {
+      placa: ambulancia.placa,
+      status: ambulancia.status,
+      tipo: ambulancia.tipo,
+      bairroId: ambulancia.bairro.id,
+    };
+    this.cadastroVisivel = true;
   }
 }
