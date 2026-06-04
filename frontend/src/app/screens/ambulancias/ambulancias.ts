@@ -6,7 +6,7 @@ import {
   StatusAmbulancia,
   StatusAmbulanciaLabel,
   TipoAmbulancia,
-  TipoAmbulanciaLabel
+  TipoAmbulanciaLabel,
 } from '../../model/ambulancia.model';
 import { Button } from 'primeng/button';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -20,10 +20,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { Toast } from 'primeng/toast';
 import { Dialog } from 'primeng/dialog';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { Select } from 'primeng/select';
 import { Bairro } from '../../model/bairro.model';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-ambulancias',
@@ -41,8 +43,9 @@ import { Bairro } from '../../model/bairro.model';
     Dialog,
     NgClass,
     Select,
+    ConfirmDialog,
   ],
-  providers: [MessageService],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './ambulancias.html',
   styleUrl: './ambulancias.css',
 })
@@ -50,6 +53,7 @@ export class Ambulancias implements OnInit, OnDestroy {
   private service = inject(AmbulanciasService);
   private cd = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
 
   @ViewChild('cadastroForm') cadastroForm!: NgForm;
   @ViewChild('tabelaAmbulancias') tabela!: Table;
@@ -154,6 +158,64 @@ export class Ambulancias implements OnInit, OnDestroy {
     //     //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
     //   },
     // });
+  }
+
+  confirmarExclusao(ambulancia: AmbulanciaExibicaoModel) {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja excluir a ambulância placa ${ambulancia.placa}?`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Excluir',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        severity: 'danger',
+      },
+      accept: () => {
+        this.excluirAmbulancia(ambulancia.id);
+      },
+    });
+  }
+
+  private excluirAmbulancia(ambulanciaId: number) {
+    this.service.apagarAmbulancia(ambulanciaId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ambulância excluída com sucesso',
+        });
+        this.limparBusca();
+        this.limparOrdenacao();
+        this.carregarAmbulancias();
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 400) {
+          const mensagemErro = err.error?.message || 'Não foi possível excluir a ambulância';
+          this.confirmationService.confirm({
+            header: 'Ação Bloqueada',
+            message: mensagemErro,
+            icon: 'pi pi-exclamation-circle',
+            acceptLabel: 'Ok',
+            rejectVisible: false,
+            acceptButtonProps: {
+              severity: 'primary',
+            },
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Houve um erro',
+            life: 5000,
+          });
+          console.log('Erro ao excluir ', err)
+        }
+      },
+    });
   }
 
   getSeverityStatus(

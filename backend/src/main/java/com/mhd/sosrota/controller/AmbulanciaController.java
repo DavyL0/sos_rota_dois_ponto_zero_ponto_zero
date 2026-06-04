@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @brief Class AmbulanciaController
  */
 @RestController
-@RequestMapping("api/ambulancias")
+@RequestMapping("/api/ambulancias")
 public class AmbulanciaController {
     private final AmbulanciaService ambulanciaService;
 
@@ -40,5 +40,11 @@ public class AmbulanciaController {
     ) {
         Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao, filtro).map(AmbulanciaExibicaoDTO::new);
         return ResponseEntity.ok(ambulancias);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        ambulanciaService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

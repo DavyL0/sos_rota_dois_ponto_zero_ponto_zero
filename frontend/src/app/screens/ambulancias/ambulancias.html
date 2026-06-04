@@ -10,6 +10,7 @@
   </div>
 
   <p-toast position="top-center"></p-toast>
+  <p-confirm-dialog></p-confirm-dialog>
 
   <div class="table-wrapper">
     <p-table #tabelaAmbulancias [value]="ambulancias" [paginator]="true" [rows]="10"
@@ -115,7 +116,8 @@
                 icon="pi pi-trash"
                 [text]="true"
                 severity="danger"
-                pTooltip="Excluir">
+                pTooltip="Excluir"
+                (onClick)="confirmarExclusao(ambulancia)">
               </p-button>
             </td>
           </tr>
