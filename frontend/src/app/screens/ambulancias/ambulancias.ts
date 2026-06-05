@@ -26,6 +26,7 @@ import { Select } from 'primeng/select';
 import { Bairro } from '../../model/bairro.model';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
 
 @Component({
   selector: 'app-ambulancias',
@@ -49,7 +50,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './ambulancias.html',
   styleUrl: './ambulancias.css',
 })
-export class Ambulancias implements OnInit, OnDestroy {
+export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   private service = inject(AmbulanciasService);
   private cd = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
@@ -59,7 +60,6 @@ export class Ambulancias implements OnInit, OnDestroy {
   @ViewChild('tabelaAmbulancias') tabela!: Table;
 
   ambulancias: AmbulanciaExibicaoModel[] = [];
-  carregando: boolean = true;
 
   cadastroVisivel = false;
   ambulanciaCadastrada: AmbulanciaCadastroModel = {
@@ -78,12 +78,7 @@ export class Ambulancias implements OnInit, OnDestroy {
   ];
   erroBackend: string | null = null;
   idEditando: number | null = null;
-
-  paginaAtual = 0;
-  tamanhoPagina = 10;
   totalElementos = 0;
-  campoOrdenacao?: string;
-  ordemOrdenacao: number | undefined | null = -1;
   termoBusca: string = '';
   statusLabel = StatusAmbulanciaLabel;
   tipoLabel = TipoAmbulanciaLabel;
@@ -94,7 +89,7 @@ export class Ambulancias implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buscaSubscription = this.buscaSubject.pipe(debounceTime(300)).subscribe(() => {
       this.paginaAtual = 0;
-      this.carregarAmbulancias();
+      this.carregarDados();
     });
   }
 
@@ -102,21 +97,7 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.buscaSubscription.unsubscribe();
   }
 
-  protected carregarTabela(event: TableLazyLoadEvent) {
-    this.carregando = true;
-
-    const first = event.first ?? 0;
-    const rows = event.rows ?? this.tamanhoPagina;
-    this.paginaAtual = Math.floor(first / rows);
-    this.tamanhoPagina = rows;
-
-    this.campoOrdenacao = event.sortField as string;
-    this.ordemOrdenacao = event.sortOrder;
-
-    this.carregarAmbulancias();
-  }
-
-  protected carregarAmbulancias() {
+  protected override carregarDados() {
     this.carregando = true;
     this.service
       .obterAmbulancias(
@@ -152,7 +133,7 @@ export class Ambulancias implements OnInit, OnDestroy {
     this.erroBackend = null;
 
     if (this.idEditando) {
-/*      this.service.atualizarAmbulancia(this.idEditando, this.ambulanciaCadastrada).subscribe({
+      /*      this.service.atualizarAmbulancia(this.idEditando, this.ambulanciaCadastrada).subscribe({
         next: () => {
           this.limparBusca();
           this.limparOrdenacao();
@@ -182,7 +163,7 @@ export class Ambulancias implements OnInit, OnDestroy {
         },
       });*/
     } else {
-/*      this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
+      /*      this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
         next: () => {
           this.limparBusca();
           this.limparOrdenacao();
@@ -226,7 +207,7 @@ export class Ambulancias implements OnInit, OnDestroy {
         });
         this.limparBusca();
         this.limparOrdenacao();
-        this.carregarAmbulancias();
+        this.carregarDados();
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 400) {
