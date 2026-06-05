@@ -152,7 +152,7 @@
     </div>
     <div class="form-actions">
       <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
-      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid"></p-button>
+      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid || semAlteracoes"></p-button>
     </div>
   </form>
 </p-dialog>

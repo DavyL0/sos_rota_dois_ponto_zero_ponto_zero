@@ -72,6 +72,7 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
     { label: 'Condutor', value: FuncaoProfissional.CONDUTOR },
   ];
   idEditando: number | null = null;
+  profissionalOriginal: ProfissionalCadastroModel | null = null;
   erroBackend: string | null = null;
 
   private buscaSubject = new Subject<void>();
@@ -363,9 +364,7 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
     });
   }
 
-  private excluirProfissional(id: number) {
-
-  }
+  private excluirProfissional(id: number) {}
 
   protected getFuncaoLabel(funcao: any): string {
     return this.funcaoLabel[funcao as FuncaoProfissional] || funcao;
@@ -404,6 +403,7 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
       contato: '',
     };
     this.idEditando = null;
+    this.profissionalOriginal = null;
     setTimeout(() => {
       this.cadastroForm.resetForm();
     }, 0);
@@ -416,6 +416,16 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
       funcao: profissional.funcao,
       contato: profissional.contato,
     };
+    this.profissionalOriginal = { ...this.profissionalCadastrado };
     this.cadastroVisivel = true;
+  }
+
+  get semAlteracoes(): boolean {
+    if (!this.idEditando || !this.profissionalOriginal) return false;
+    return (
+      this.profissionalCadastrado.nome === this.profissionalOriginal.nome &&
+      this.profissionalCadastrado.funcao === this.profissionalOriginal.funcao &&
+      this.profissionalCadastrado.contato === this.profissionalOriginal.contato
+    );
   }
 }
