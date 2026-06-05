@@ -1,0 +1,179 @@
+<p>equipes-component works!</p>
+<p-toast position="top-center"></p-toast>
+<p-confirm-dialog></p-confirm-dialog>
+
+<div class="table-wrapper">
+  <p-table #tabelaEquipes [value]="equipes" [paginator]="true" [rows]="10" [totalRecords]="totalElementos"
+           [lazy]="true" [loading]="carregando" (onLazyLoad)="carregarTabela($event)"
+           [rowHover]="equipes.length > 0" stripedRows>
+    <ng-template #caption>
+      <div class="table-header">
+        <p-iconfield iconPosition="left" style="flex: 1; position: relative">
+          <p-inputicon class="pi pi-search"/>
+          <input
+            pInputText
+            type="text"
+            placeholder="Busca por nome ou contato"
+            [(ngModel)]="termoBusca"
+            (input)="filtrarTabela()"
+            style="width: 100%; padding-right: 3rem;"
+          />
+          <p-button
+            icon="pi pi-times"
+            severity="danger"
+            [text]="true"
+            [outlined]="true"
+            class="limpar-btn"
+            [class.aparecer]="termoBusca"
+            (onClick)="limparBusca()"
+            pTooltip="Limpar busca"
+          />
+        </p-iconfield>
+        <p-button
+          label="Limpar Ordenação"
+          icon="pi pi-sort-alt-slash"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="limparOrdenacao()"
+          [disabled]="tabelaEquipes.sortField == null">
+        </p-button>
+        <p-button label="Novo Profissional" icon="pi pi-plus" (onClick)="abrirCadastro()"></p-button>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="ambulancia">Ambulância
+          <p-sortIcon field="ambulancia"></p-sortIcon>
+        </th>
+        <th pSortableColumn="base">Base
+          <p-sortIcon field="base"></p-sortIcon>
+        </th>
+        <th pSortableColumn="medico">Médico
+          <p-sortIcon field="medico"></p-sortIcon>
+        </th>
+        <th pSortableColumn="enfermeiro">Enfermeiro
+          <p-sortIcon field="enfermeiro"></p-sortIcon>
+        </th>
+        <th pSortableColumn="condutor">Condutor
+          <p-sortIcon field="condutor"></p-sortIcon>
+        </th>
+        <th>Ativo</th>
+        <th class="acoes">Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-equipe>
+      @if (carregando) {
+        <tr>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+        </tr>
+      } @else {
+        <tr>
+          <td>{{ getAmbulanciaLabel(equipe.ambulancia) }}</td>
+          <td>{{ getAmbulanciaBase(equipe.ambulancia) }}</td>
+          <td>{{ getMedico(equipe) }}</td>
+          <td>{{ getEnfermeiro(equipe) }}</td>
+          <td>{{ getCondutor(equipe) }}</td>
+          <td>
+            <p-checkbox [(ngModel)]="equipe.ativo" [binary]="true"></p-checkbox>
+          </td>
+          <td class="actions-column">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              severity="info"
+              pTooltip="Editar"
+              (onClick)="abrirEdicao(equipe)">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              severity="danger"
+              pTooltip="Excluir"
+              (onClick)="confirmarExclusao(equipe)"
+            >
+            </p-button>
+          </td>
+        </tr>
+      }
+    </ng-template>
+    <ng-template #emptymessage>
+      @if (!carregando) {
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <i class="pi pi-user empty-icon"></i>
+              <p class="empty-text">Nenhum profissional cadastrado</p>
+            </div>
+          </td>
+        </tr>
+      }
+    </ng-template>
+  </p-table>
+</div>
+
+<!--<p-dialog [header]="idEditando ? 'Editar Equipe' : 'Criar Equipe'" [modal]="true"-->
+<!--          [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"-->
+<!--          [draggable]="false" [style]="{ width: '50vw' }">-->
+<!--  <form #cadastroForm="ngForm" (ngSubmit)="salvarEquipe()" class="form-container">-->
+<!--    <div class="form-item">-->
+<!--      <label for="nome">Nome*</label>-->
+<!--      <input pInputText id="nome" name="nome" type="text" [(ngModel)]="profissionalCadastrado.nome"-->
+<!--             placeholder="Xin Jin Ping" required #nomeVar="ngModel"-->
+<!--             [ngClass]="{'ng-invalid ng-dirty': nomeVar.invalid && nomeVar.touched}">-->
+<!--      @if (nomeVar.invalid && nomeVar.touched) {-->
+<!--        <small class="error-message">O nome é obrigatório.</small>-->
+<!--      }-->
+<!--    </div>-->
+
+<!--    <div class="form-item">-->
+<!--      <label for="funcao">Função</label>-->
+<!--      <p-select id="funcao" name="funcao" [options]="funcoes" [(ngModel)]="profissionalCadastrado.funcao"-->
+<!--                placeholder="Selecione" optionLabel="label" optionValue="value" appendTo="body"-->
+<!--                required #funcaoVar="ngModel"-->
+<!--                [ngClass]="{'ng-invalid ng-dirty': funcaoVar.invalid && (funcaoVar.touched || funcaoVar.dirty)}">-->
+<!--      </p-select>-->
+<!--      @if (funcaoVar.invalid && (funcaoVar.dirty || funcaoVar.touched)) {-->
+<!--        <small class="error-message">A função é obrigatória.</small>-->
+<!--      }-->
+<!--    </div>-->
+
+<!--    <div class="form-item">-->
+<!--      <label for="email">Email</label>-->
+<!--      <input pInputText id="email" name="email" type="email" email="true" [(ngModel)]="profissionalCadastrado.contato"-->
+<!--             placeholder="xinjinping@gmail.com" required #emailVar="ngModel"-->
+<!--             [ngClass]="{'ng-invalid ng-dirty': emailVar.invalid && (emailVar.touched || emailVar.dirty)}">-->
+<!--      @if (emailVar.invalid && emailVar.touched) {-->
+<!--        @if (emailVar.errors?.['required']) {-->
+<!--          <small class="error-message">O email é obrigatório.</small>-->
+<!--        }-->
+<!--        @if (emailVar.errors?.['email']) {-->
+<!--          <small class="error-message">Digite um endereço de email válido.</small>-->
+<!--        }-->
+<!--      }-->
+<!--    </div>-->
+<!--    <div class="form-actions">-->
+<!--      <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>-->
+<!--      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid || semAlteracoes"></p-button>-->
+<!--    </div>-->
+<!--  </form>-->
+<!--</p-dialog>-->
