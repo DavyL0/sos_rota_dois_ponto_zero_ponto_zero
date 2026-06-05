@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { ProfissionaisComponent } from '../profissionais-component/profissionais-component';
+import { ProfissionaisComponent } from '../../component/profissionais-component/profissionais-component';
 
 @Component({
   selector: 'app-equipes',

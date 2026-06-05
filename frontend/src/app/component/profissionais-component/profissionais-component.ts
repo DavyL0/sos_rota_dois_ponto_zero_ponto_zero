@@ -8,7 +8,7 @@ import {
 } from '../../model/profissional.model';
 import { Table, TableModule } from 'primeng/table';
 import { debounceTime, Subject, Subscription } from 'rxjs';
-import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
+import { TabelaOrdenacao } from '../tabela-ordenacao';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tooltip } from 'primeng/tooltip';
