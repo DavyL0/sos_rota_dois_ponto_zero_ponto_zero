@@ -42,7 +42,7 @@ public class AmbulanciaController {
         return ResponseEntity.ok(ambulancias);
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<AmbulanciaExibicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AmbulanciaCadastroDTO ambulanciaDTO) {
         var ambulancia = ambulanciaService.atualizar(id, ambulanciaDTO);
         return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulancia));
