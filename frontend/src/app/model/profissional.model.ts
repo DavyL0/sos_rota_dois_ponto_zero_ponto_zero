@@ -12,8 +12,8 @@ export const FuncaoProfissionalLabel: Record<FuncaoProfissional, string> = {
 
 export interface ProfissionalCadastroModel {
   nome: string;
-  funcao: FuncaoProfissional;
-  email: string;
+  funcao: FuncaoProfissional | null;
+  contato: string;
 }
 
 export interface ProfissionalExibicaoModel extends ProfissionalCadastroModel {
