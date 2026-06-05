@@ -48,7 +48,7 @@ public class AmbulanciaController {
         return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulancia));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{/id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         ambulanciaService.deletar(id);
         return ResponseEntity.noContent().build();
