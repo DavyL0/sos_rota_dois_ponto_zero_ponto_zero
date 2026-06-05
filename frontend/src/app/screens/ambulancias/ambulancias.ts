@@ -9,7 +9,7 @@ import {
   TipoAmbulanciaLabel,
 } from '../../model/ambulancia.model';
 import { Button } from 'primeng/button';
-import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { Tooltip } from 'primeng/tooltip';
 import { Skeleton } from 'primeng/skeleton';
@@ -78,6 +78,7 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   ];
   erroBackend: string | null = null;
   idEditando: number | null = null;
+  ambulanciaOriginal: AmbulanciaCadastroModel | null = null;
   totalElementos = 0;
   termoBusca: string = '';
   statusLabel = StatusAmbulanciaLabel;
@@ -296,6 +297,7 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
       bairroId: null,
     };
     this.idEditando = null;
+    this.ambulanciaOriginal = null;
     this.erroBackend = null;
     setTimeout(() => {
       this.cadastroForm?.resetForm();
@@ -310,6 +312,17 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
       tipo: ambulancia.tipo,
       bairroId: ambulancia.bairro.id,
     };
+    this.ambulanciaOriginal = { ...this.ambulanciaCadastrada };
     this.cadastroVisivel = true;
+  }
+
+  get semAlteracoes(): boolean {
+    if (!this.idEditando || !this.ambulanciaOriginal) return false;
+    return (
+      this.ambulanciaOriginal.placa === this.ambulanciaCadastrada.placa &&
+      this.ambulanciaOriginal.status === this.ambulanciaCadastrada.status &&
+      this.ambulanciaOriginal.tipo === this.ambulanciaCadastrada.tipo &&
+      this.ambulanciaOriginal.bairroId === this.ambulanciaCadastrada.bairroId
+    );
   }
 }
