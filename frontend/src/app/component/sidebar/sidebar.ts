@@ -14,7 +14,7 @@ export class Sidebar implements OnInit {
     { label: 'Dashboard', icon: 'pi pi-th-large', rota: '/home' },
     { label: 'Ocorrências', icon: 'pi pi-exclamation-triangle', rota: '/ocorrencias' },
     { label: 'Ambulâncias', icon: 'pi pi-car', rota: '/ambulancias' },
-    { label: 'Equipes', icon: 'pi pi-users', rota: '/equipes' },
+    { label: 'EquipesProfissionais', icon: 'pi pi-users', rota: '/equipes' },
     { label: 'Relatórios', icon: 'pi pi-chart-line', rota: '/relatorios' },
   ];
   colapsada: boolean = false;

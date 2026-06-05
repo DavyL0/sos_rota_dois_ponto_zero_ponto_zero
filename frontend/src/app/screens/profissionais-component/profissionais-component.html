@@ -1,0 +1,6 @@
+<div class="table-wrapper">
+  <p-table [value]="profissionais" [paginator]="true" [rows]="10" [totalRecords]="totalElementos"
+           [lazy]="true" [loading]="carregando" (onLazyLoad)="carregarTabela($event)">
+
+  </p-table>
+</div>

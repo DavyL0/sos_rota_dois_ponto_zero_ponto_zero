@@ -1,0 +1,14 @@
+.tabs-container {
+  margin-bottom: 1.5rem;
+}
+
+.tab-list {
+  background-color: transparent;
+}
+
+.tab-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
