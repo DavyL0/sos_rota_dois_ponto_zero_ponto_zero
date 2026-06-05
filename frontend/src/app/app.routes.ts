@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'equipes',
-    loadComponent: () => import('./screens/equipes/equipes').then((m) => m.Equipes),
+    loadComponent: () => import('./screens/equipes-profissionais/equipes-profissionais').then((m) => m.EquipesProfissionais),
   },
   {
     path: 'relatorios',
