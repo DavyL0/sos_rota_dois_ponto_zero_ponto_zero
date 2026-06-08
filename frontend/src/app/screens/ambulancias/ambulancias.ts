@@ -27,6 +27,7 @@ import { Bairro } from '../../model/bairro.model';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
+import { BairroService } from '../../services/bairro-service/bairro-service';
 
 @Component({
   selector: 'app-ambulancias',
@@ -51,7 +52,8 @@ import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
   styleUrl: './ambulancias.css',
 })
 export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
-  private service = inject(AmbulanciasService);
+  private ambulanciasService = inject(AmbulanciasService);
+  private bairrosService = inject(BairroService);
   private cd = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
@@ -72,10 +74,7 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
     { label: 'Básica', value: TipoAmbulancia.BASICA },
     { label: 'UTI', value: TipoAmbulancia.UTI },
   ];
-  bairros: Bairro[] = [
-    //todo receber os bairros do backend
-    { id: 1, nome: 'Centro' },
-  ];
+  bairros: Bairro[] = [];
   erroBackend: string | null = null;
   idEditando: number | null = null;
   ambulanciaOriginal: AmbulanciaCadastroModel | null = null;
@@ -100,7 +99,12 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
   protected override carregarDados() {
     this.carregando = true;
-    this.service
+    this.bairrosService.obterBairros().subscribe({
+      next: (bairros) => {
+        this.bairros = bairros;
+      },
+    });
+    this.ambulanciasService
       .obterAmbulancias(
         this.paginaAtual,
         this.tamanhoPagina,
@@ -199,7 +203,7 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   }
 
   private excluirAmbulancia(ambulanciaId: number) {
-    this.service.apagarAmbulancia(ambulanciaId).subscribe({
+    this.ambulanciasService.apagarAmbulancia(ambulanciaId).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
