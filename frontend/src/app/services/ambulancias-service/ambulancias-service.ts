@@ -16,6 +16,8 @@ export class AmbulanciasService {
     size: number,
     sortField?: string,
     sortOrder?: number,
+  ): Observable<Page<AmbulanciaExibicaoModel>> {
+    let params = new HttpParams().set('page', page).set('size', size);
     filtro?: string,
   ): Observable<Page<AmbulanciaExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);

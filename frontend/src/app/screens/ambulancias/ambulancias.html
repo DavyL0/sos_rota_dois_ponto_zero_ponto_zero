@@ -4,11 +4,16 @@
       <h1 class="page-title">Ambulâncias</h1>
     </div>
     <div class="header-actions">
+      <p-button label="Nova Ambulância" icon="pi pi-plus">
       <p-button label="Nova Ambulância" icon="pi pi-plus" (onClick)="abrirCadastro()">
       </p-button>
     </div>
   </div>
 
+  <div class="card">
+    <p-table #dt [value]="ambulancias" [paginator]="true" [rows]="10" [loading]="carregando"
+             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [rowHover]="true"
+             stripedRows>
   <p-toast position="top-center"></p-toast>
   <p-confirm-dialog></p-confirm-dialog>
 
@@ -117,6 +122,7 @@
                 icon="pi pi-trash"
                 [text]="true"
                 severity="danger"
+                pTooltip="Excluir">
                 pTooltip="Excluir"
                 (onClick)="confirmarExclusao(ambulancia)">
               </p-button>
@@ -137,6 +143,9 @@
         }
       </ng-template>
     </p-table>
+
+  </div>
+</div>
   </div>
 </div>
 
