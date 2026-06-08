@@ -54,6 +54,8 @@
 .actions-column {
   text-align: center;
   white-space: nowrap;
+}
+
 .limpar-btn {
   position: absolute;
   right: 4px;
