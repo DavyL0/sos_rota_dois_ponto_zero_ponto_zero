@@ -18,6 +18,10 @@ export class AmbulanciasService {
     sortOrder?: number,
   ): Observable<Page<AmbulanciaExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);
+    filtro?: string,
+  ): Observable<Page<AmbulanciaExibicaoModel>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+
     if (sortField) {
       if (sortField === 'bairro.nome') {
         sortField = 'bairroBase';
@@ -29,11 +33,19 @@ export class AmbulanciasService {
       params = params.set('sort', `${sortField},${direction}`);
     }
 
+    if (filtro) {
+      params = params.set('filtro', filtro);
+    }
+
     return this.http.get<Page<AmbulanciaExibicaoModel>>(`${this.apiUrl}`, { params });
   }
 
   criarAmbulancia(ambulancia: AmbulanciaCadastroModel): Observable<AmbulanciaExibicaoModel> {
     return this.http.post<AmbulanciaExibicaoModel>(`${this.apiUrl}`, ambulancia);
+  }
+
+  atualizarAmbulancia(id: number, ambulancia: AmbulanciaCadastroModel): Observable<AmbulanciaExibicaoModel> {
+    return this.http.put<AmbulanciaExibicaoModel>(`${this.apiUrl}/${id}`, ambulancia);
   }
 
   apagarAmbulancia(id: number): Observable<void> {

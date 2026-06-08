@@ -58,8 +58,8 @@ public class AmbulanciaService {
                         "Ambulância não encontrada"));
     }
 
-    public Page<Ambulancia> findAll(Pageable pageable) {
-        return ambulanciaRepository.findAll(pageable);
+    public Page<Ambulancia> findAll(Pageable pageable, String filtro) {
+        return ambulanciaRepository.obterComFiltro(pageable, filtro);
     }
 
     public List<Ambulancia> findByStatus(StatusAmbulancia status) {
