@@ -5,11 +5,11 @@ export enum GravidadeOcorrencia {
 }
 
 export enum StatusOcorrencia {
-  ABERTA = 'Aberta',
-  DESPACHADA = 'Despachada',
-  EM_ATENDIMENTO = 'Em Atendimento',
-  CONCLUIDA = 'Concluída',
-  CANCELADA = 'Cancelada',
+  ABERTA = 'ABERTA',
+  DESPACHADA = 'DESPACHADA',
+  EM_ATENDIMENTO = 'EM_ATENDIMENTO',
+  CONCLUIDA = 'CONCLUIDA',
+  CANCELADA = 'CANCELADA',
 }
 
 export const GravidadeOcorrenciaLabel: Record<GravidadeOcorrencia, string> = {

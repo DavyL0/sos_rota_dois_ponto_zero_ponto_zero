@@ -53,6 +53,67 @@ html, body {
   border-color: var(--accent-300);
 }
 
+/*Titulo das paginas*/
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--p-text-color);
+  line-height: 1;
+}
+
+.page-subtitle {
+  color: var(--p-text-muted-color);
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+/*Tabelas*/
+.table-wrapper {
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  width: 100%
+}
+
+.actions-column {
+  text-align: center;
+  white-space: nowrap;
+}
+
+th.acoes,
+td.actions-column {
+  width: 120px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /*Estado vazio*/
 .empty-state {
   display: flex;
@@ -74,4 +135,35 @@ html, body {
   color: var(--p-text-muted-color);
   margin: 0 0 1.5rem 0;
   font-size: 1.3rem;
+}
+
+/*Form de cadastro/edicao*/
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.error-message {
+  color: var(--p-red-500);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.server-error {
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
