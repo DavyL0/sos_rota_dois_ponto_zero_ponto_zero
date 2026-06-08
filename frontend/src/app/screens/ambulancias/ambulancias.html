@@ -5,6 +5,7 @@
     </div>
     <div class="header-actions">
       <p-button label="Nova Ambulância" icon="pi pi-plus">
+      <p-button label="Nova Ambulância" icon="pi pi-plus" (onClick)="abrirCadastro()">
       </p-button>
     </div>
   </div>
@@ -13,6 +14,51 @@
     <p-table #dt [value]="ambulancias" [paginator]="true" [rows]="10" [loading]="carregando"
              [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [rowHover]="true"
              stripedRows>
+  <p-toast position="top-center"></p-toast>
+  <p-confirm-dialog></p-confirm-dialog>
+
+  <div class="table-wrapper">
+    <p-table #tabelaAmbulancias [value]="ambulancias" [paginator]="true" [rows]="10"
+             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos"
+             [rowHover]="ambulancias.length > 0"
+             stripedRows>
+      <ng-template #caption>
+        <div class="table-header">
+          <p-iconfield iconPosition="left" style="flex: 1; position: relative">
+            <p-inputicon class="pi pi-search"/>
+            <input
+              pInputText
+              type="text"
+              placeholder="Buscar por placa ou base"
+              [(ngModel)]="termoBusca"
+              (input)="filtrarTabela()"
+              style="width: 100%; padding-right: 3rem;"
+            />
+            <p-button
+              icon="pi pi-times"
+              severity="danger"
+              [text]="true"
+              [outlined]="true"
+              class="limpar-btn"
+              [class.aparecer]="termoBusca"
+              (onClick)="limparBusca()"
+              pTooltip="Limpar busca"
+            >
+            </p-button>
+          </p-iconfield>
+
+
+          <p-button
+            label="Limpar Ordenação"
+            icon="pi pi-sort-alt-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparOrdenacao()"
+            disabled="{{tabelaAmbulancias.sortField == null}}"
+          >
+          </p-button>
+        </div>
+      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="placa">Placa
@@ -69,6 +115,7 @@
                 [text]="true"
                 severity="info"
                 pTooltip="Editar"
+                (onClick)="abrirEdicao(ambulancia)"
               >
               </p-button>
               <p-button
@@ -76,6 +123,8 @@
                 [text]="true"
                 severity="danger"
                 pTooltip="Excluir">
+                pTooltip="Excluir"
+                (onClick)="confirmarExclusao(ambulancia)">
               </p-button>
             </td>
           </tr>
@@ -97,3 +146,64 @@
 
   </div>
 </div>
+  </div>
+</div>
+
+<p-dialog [header]="idEditando ? 'Editar Ambulância' : 'Cadastrar Ambulância'" [modal]="true"
+          [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"
+          [draggable]="false" [style]="{ width: '50vw' }">
+  <form #cadastroForm="ngForm" (ngSubmit)="salvarAmbulancia()" class="form-container">
+    <div class="form-item">
+      <label for="placa">Placa*</label>
+      <input pInputText id="placa" name="placa" type="text" [(ngModel)]="ambulanciaCadastrada.placa"
+             placeholder="ABC1D23" (input)="ambulanciaCadastrada.placa = ambulanciaCadastrada.placa.toUpperCase()"
+             maxlength="7" style="text-transform: uppercase" pattern="^[A-Z]{3}[0-9][A-Z][0-9]{2}$"
+             [required]="true" #placaVar="ngModel"
+             [ngClass]="{'ng-invalid ng-dirty': placaVar.invalid && placaVar.touched}">
+      @if (placaVar.invalid && placaVar.touched) {
+        @if (placaVar.errors?.['required']) {
+          <small class="error-message">A placa é obrigatória.</small>
+        }
+        @if (placaVar.errors?.['pattern']) {
+          <small class="error-message">A placa deve seguir o formato ABC1D23.</small>
+        }
+        @if (placaVar.errors?.['unique']) {
+          <small class="error-message">Já existe uma ambulância cadastrada com essa placa</small>
+        }
+      }
+    </div>
+
+    <div class="form-item">
+      <label for="tipo">Tipo*</label>
+      <p-select id="tipo" name="tipo" [options]="tiposAmbulancia" [(ngModel)]="ambulanciaCadastrada.tipo"
+                placeholder="Selecione" optionLabel="label" optionValue="value" appendTo="body"
+                [required]="true" #tipoVar="ngModel"
+                [ngClass]="{'ng-invalid ng-dirty': (tipoVar.invalid && (tipoVar.dirty || tipoVar.touched))}">
+      </p-select>
+      @if (tipoVar.invalid && (tipoVar.dirty || tipoVar.touched)) {
+        <small class="error-message">O tipo é obrigatório.</small>
+      }
+    </div>
+
+    <div class="form-item">
+      <label for="bairro">Base Vinculada*</label>
+      <p-select id="bairro" name="bairro" [options]="bairros" [(ngModel)]="ambulanciaCadastrada.bairroId"
+                optionLabel="nome" optionValue="id" appendTo="body" [filter]="true" filterBy="nome"
+                [required]="true" #bairroVar="ngModel"
+                [ngClass]="{'ng-invalid ng-dirty': bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)}">
+      </p-select>
+      @if (bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)) {
+        <small class="error-message">A base vinculada é obrigatória.</small>
+      }
+    </div>
+
+    @if (erroBackend) {
+      <small class="error-message server-error">{{ erroBackend }}</small>
+    }
+
+    <div class="form-actions">
+      <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
+      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid"></p-button>
+    </div>
+  </form>
+</p-dialog>
