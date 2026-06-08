@@ -1,1 +1,122 @@
-<p>ocorrencias works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Ocorrências</h1>
+    </div>
+    <div class="header-actions">
+      <p-button label="Nova Ocorrência" icon="pi pi-plus">
+      </p-button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <p-table #tabelaOcorrencias [value]="ocorrencias" [paginator]="true" [rows]="10"
+             [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [loading]="carregando"
+             [rowHover]="ocorrencias.length > 0" stripedRows>
+      <ng-template #caption>
+        <!--        todo: implementar filtro-->
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th>Bairro</th>
+          <th>Gravidade</th>
+          <th>Status</th>
+          <th>Tipo</th>
+          <th>Data de abertura</th>
+          <th>SLA</th>
+          <th class="acoes">Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-ocorrencia>
+        @if (carregando) {
+          <tr>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+          </tr>
+        } @else {
+          <tr>
+            <td>{{ ocorrencia.bairro?.nome }}</td>
+            <td>{{ getGravidadeLabel(ocorrencia.gravidadeOcorrencia) }}</td>
+            <td>{{ getStatusLabel(ocorrencia.statusOcorrencia) }}</td>
+            <td>{{ ocorrencia.tipoOcorrencia }}</td>
+            <td>{{ getDataOcorrencia(ocorrencia.dataHoraAbertura) }}</td>
+            <td [ngClass]="ocorrencia._slaFormatado?.classe">
+              {{ ocorrencia._slaFormatado?.texto }}
+            </td>
+            <td class="actions-column">
+              @if (ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA) {
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Detalhes"
+                />
+              } @else {
+                <p-button
+                  icon="pi pi-map"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Despachar ambulância"
+                  [disabled]="ocorrencia.statusOcorrencia !== StatusOcorrencia.ABERTA"
+                />
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Editar ocorrência"
+                  [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+                  || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                />
+                <p-button
+                  icon="pi pi-times-circle"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Cancelar ocorrência"
+                  [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+                  || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Excluir"
+                />
+              }
+            </td>
+          </tr>
+        }
+      </ng-template>
+      <ng-template #emptymessage>
+        @if (!carregando) {
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <i class="pi pi-face-smile empty-icon"></i>
+                <p class="empty-text">Nenhuma ocorrência</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+</div>
