@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page } from '../../model/page.model';
-import { OcorrenciaExibicaoModel } from '../../model/ocorrencias.model';
+import { OcorrenciaCadastroModel, OcorrenciaExibicaoModel } from '../../model/ocorrencias.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,5 +25,9 @@ export class OcorrenciasService {
     }
 
     return this.http.get<Page<OcorrenciaExibicaoModel>>(`${this.apiUrl}`, { params });
+  }
+
+  criarOcorrencia(ocorrencia: OcorrenciaCadastroModel): Observable<OcorrenciaExibicaoModel> {
+    return this.http.post<OcorrenciaExibicaoModel>(`${this.apiUrl}`, ocorrencia);
   }
 }

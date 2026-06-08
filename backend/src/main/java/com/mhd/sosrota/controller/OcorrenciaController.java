@@ -29,18 +29,16 @@ public class OcorrenciaController {
     }
 
     @PostMapping
-    public ResponseEntity<OcorrenciaExibicaoDTO> criar(
-            @RequestBody @Valid OcorrenciaCadastroDTO dto) {
+    public ResponseEntity<OcorrenciaExibicaoDTO> criar(@RequestBody @Valid OcorrenciaCadastroDTO dto) {
         var ocorrencia = ocorrenciaService.salvar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new OcorrenciaExibicaoDTO(ocorrencia));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new OcorrenciaExibicaoDTO(ocorrencia));
     }
 
     @GetMapping
     public ResponseEntity<Page<OcorrenciaExibicaoDTO>> listar(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(
-                ocorrenciaService.findAll(pageable).map(OcorrenciaExibicaoDTO::new));
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(ocorrenciaService.findAll(pageable).map(OcorrenciaExibicaoDTO::new));
     }
 
     @GetMapping("/{id}")
@@ -51,15 +49,16 @@ public class OcorrenciaController {
     @PutMapping("/{id}")
     public ResponseEntity<OcorrenciaExibicaoDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody @Valid OcorrenciaCadastroDTO dto) {
-        return ResponseEntity.ok(
-                new OcorrenciaExibicaoDTO(ocorrenciaService.atualizar(id, dto)));
+            @RequestBody @Valid OcorrenciaCadastroDTO dto
+    ) {
+        return ResponseEntity.ok(new OcorrenciaExibicaoDTO(ocorrenciaService.atualizar(id, dto)));
     }
 
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<OcorrenciaExibicaoDTO> cancelar(
             @PathVariable Long id,
-            @RequestBody @Valid OcorrenciaCancelamentoDTO dto) {
+            @RequestBody @Valid OcorrenciaCancelamentoDTO dto
+    ) {
         return ResponseEntity.ok(
                 new OcorrenciaExibicaoDTO(ocorrenciaService.cancelar(id, dto.justificativa())));
     }

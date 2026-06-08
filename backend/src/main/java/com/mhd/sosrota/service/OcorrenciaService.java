@@ -44,6 +44,7 @@ public class OcorrenciaService {
         ocorrencia.setBairro(bairro);
         ocorrencia.setObservacao(dto.observacao());
         ocorrencia.setStatusOcorrencia(StatusOcorrencia.ABERTA);
+        ocorrencia.setDataHoraAbertura(OffsetDateTime.now(ZoneId.of("America/Sao_Paulo")));
 
         return ocorrenciaRepository.save(ocorrencia);
     }

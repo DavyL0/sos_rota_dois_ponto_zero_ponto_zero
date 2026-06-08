@@ -4,8 +4,6 @@ import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.util.DurationToSecondsConverter;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -36,7 +34,7 @@ public class Ocorrencia {
     @JoinColumn(name = "local_bairro_id", nullable = false)
     private Bairro bairro;
 
-    @Column(name = "data_hora_abertura", nullable = false, insertable = false, updatable = false)
+    @Column(name = "data_hora_abertura", nullable = false, updatable = false)
     private OffsetDateTime dataHoraAbertura;
 
     @Enumerated(EnumType.STRING)

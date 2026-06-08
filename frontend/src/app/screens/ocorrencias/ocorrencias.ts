@@ -90,6 +90,12 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       modal: true,
       closable: true,
     })
+
+    this.ref?.onClose.subscribe((result) => {
+      if (result) {
+        this.carregarDados();
+      }
+    })
   }
 
   abrirDetalhes(ocorrencia: OcorrenciaExibicaoModel) {

@@ -1,1 +1,63 @@
-<p>ocorrencia-cadastrar-component works!</p>
+<form #cadastroForm="ngForm" (ngSubmit)="salvarOcorrencia()" class="form-container">
+
+  <div class="form-item">
+    <label for="tipoOcorrencia">Tipo da Ocorrência*</label>
+    <input pInputText id="tipoOcorrencia" name="tipoOcorrencia" type="text"
+             [(ngModel)]="ocorrenciaCadastrada.tipoOcorrencia" maxlength="50"
+           placeholder="Ex: Mal súbito, Acidente de trânsito..."
+           [required]="true" #tipoVar="ngModel"
+           [ngClass]="{'ng-invalid ng-dirty': tipoVar.invalid && (tipoVar.dirty || tipoVar.touched)}">
+    @if (tipoVar.invalid && (tipoVar.dirty || tipoVar.touched)) {
+      @if (tipoVar.errors?.['required']) {
+        <small class="error-message">O tipo da ocorrência é obrigatório.</small>
+      }
+      @if (tipoVar.errors?.['maxlength']) {
+        <small class="error-message">O tipo da ocorrência deve ter no máximo 50 caracteres</small>
+      }
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="gravidade">Gravidade*</label>
+    <p-select id="gravidade" name="gravidade" [options]="gravidades"
+              [(ngModel)]="ocorrenciaCadastrada.gravidadeOcorrencia"
+              placeholder="Selecione a gravidade" optionLabel="label" optionValue="value" appendTo="body"
+              [required]="true" #gravidadeVar="ngModel"
+              [ngClass]="{'ng-invalid ng-dirty': gravidadeVar.invalid && (gravidadeVar.dirty || gravidadeVar.touched)}">
+    </p-select>
+    @if (gravidadeVar.invalid && (gravidadeVar.dirty || gravidadeVar.touched)) {
+      <small class="error-message">A gravidade é obrigatória.</small>
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="bairro">Bairro da Ocorrência*</label>
+    <p-select id="bairro" name="bairro" [options]="bairros" [(ngModel)]="ocorrenciaCadastrada.bairroId"
+              placeholder="Selecione o bairro" optionLabel="nome" optionValue="id" appendTo="body"
+              [filter]="true" filterBy="nome"
+              [required]="true" #bairroVar="ngModel"
+              [ngClass]="{'ng-invalid ng-dirty': bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)}">
+    </p-select>
+    @if (bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)) {
+      <small class="error-message">O bairro é obrigatório.</small>
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="observacao">Observações</label>
+    <textarea pInputTextarea id="observacao" name="observacao"
+              [(ngModel)]="ocorrenciaCadastrada.observacao"
+              rows="4" placeholder="Detalhes adicionais relevantes..."
+              style="resize: vertical; min-height: 80px;">
+    </textarea>
+  </div>
+
+  @if (erroBackend) {
+    <small class="error-message server-error">{{ erroBackend }}</small>
+  }
+
+  <div class="form-actions">
+    <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
+    <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid" (onClick)="salvarOcorrencia()"></p-button>
+  </div>
+</form>
