@@ -1,0 +1,239 @@
+.detalhes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.detalhes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.detalhe-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detalhe-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--p-text-muted-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detalhe-label i {
+  font-size: 0.9rem;
+}
+
+.detalhe-valor {
+  font-size: 1.1rem;
+  color: var(--p-text-color);
+  font-weight: 500;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+/* Área de Observações */
+.observacoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.observacao-box {
+  background-color: var(--p-content-hover-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.observacao-texto {
+  margin: 0;
+  color: var(--p-text-color);
+  line-height: 1.5;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.observacao-vazia {
+  margin: 0;
+  color: var(--p-text-muted-color);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--p-content-border-color);
+}
+
+/* =========================================
+   LAYOUT UNIFICADO DE ATENDIMENTO
+========================================= */
+
+.atendimento-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+/* Card Único que engloba tudo */
+.atendimento-card-unificado {
+  background-color: var(--p-content-hover-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Linha Superior: Veículo */
+.veiculo-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.veiculo-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--p-surface-0);
+  border: 1px solid var(--p-content-border-color);
+  color: var(--p-text-color);
+  font-size: 1.2rem;
+}
+
+.icon-circle.sec {
+  background-color: var(--p-content-hover-background);
+  color: var(--p-text-color);
+  border: 1px solid var(--p-content-border-color);
+}
+
+.app-dark .icon-circle {
+  background-color: var(--p-surface-900);
+}
+
+.veiculo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.veiculo-label {
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.veiculo-valor {
+  font-size: 1.15rem;
+  color: var(--p-text-color);
+  font-weight: 600;
+}
+
+/* Divisor tracejado separando as informações */
+.atendimento-divider {
+  border: 0;
+  border-top: 1px dashed var(--p-content-border-color);
+  margin: 0;
+  width: 100%;
+}
+
+/* Linha Inferior: Timeline Horizontal */
+.timeline-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow-x: auto;
+  padding-top: 0.5rem;
+}
+
+.time-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.step-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--p-surface-0);
+  border: 2px solid var(--p-text-muted-color);
+  color: var(--p-text-muted-color);
+  font-size: 1rem;
+}
+
+.app-dark .step-marker {
+  background-color: var(--p-surface-900);
+}
+
+.step-marker.final {
+  border-color: var(--p-green-500);
+  color: var(--p-green-500);
+}
+
+.step-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.1rem;
+}
+
+.step-time {
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+}
+
+.step-line {
+  flex-grow: 1;
+  height: 2px;
+  background-color: var(--p-content-border-color);
+  margin: 0 1rem;
+  position: relative;
+  top: -15px; /* Alinha o risco centralizado com as bolinhas */
+  min-width: 30px;
+}
