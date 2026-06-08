@@ -13,14 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
  * @author Murilo Nunes <murilo_no@outlook.com>
- * @date 02/06/2026
- * @brief Class AmbulanciaController
+ * @author Hartur Sales Xavier <hartursalesxavier@gmail.com>
+ * @date 04/06/2026
+ * @brief Controller de ambulâncias
  */
 @RestController
-@RequestMapping("/api/ambulancias")
+@RequestMapping("api/ambulancias")
 public class AmbulanciaController {
+
     private final AmbulanciaService ambulanciaService;
 
     public AmbulanciaController(AmbulanciaService ambulanciaService) {
@@ -28,24 +29,30 @@ public class AmbulanciaController {
     }
 
     @PostMapping
-    public ResponseEntity<AmbulanciaExibicaoDTO> salvar(@Valid @RequestBody AmbulanciaCadastroDTO ambulanciaDTO) {
-        var novaAmbulancia = ambulanciaService.salvar(ambulanciaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new AmbulanciaExibicaoDTO(novaAmbulancia));
+    public ResponseEntity<AmbulanciaExibicaoDTO> criar(
+            @RequestBody @Valid AmbulanciaCadastroDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new AmbulanciaExibicaoDTO(ambulanciaService.salvar(dto)));
     }
 
     @GetMapping
-    public ResponseEntity<Page<AmbulanciaExibicaoDTO>> listarAmbulancias(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao,
-            @RequestParam(required = false) String filtro
-    ) {
-        Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao, filtro).map(AmbulanciaExibicaoDTO::new);
-        return ResponseEntity.ok(ambulancias);
+    public ResponseEntity<Page<AmbulanciaExibicaoDTO>> listar(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(
+                ambulanciaService.findAll(pageable).map(AmbulanciaExibicaoDTO::new));
     }
 
-    @PutMapping("{/id}")
-    public ResponseEntity<AmbulanciaExibicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AmbulanciaCadastroDTO ambulanciaDTO) {
-        var ambulancia = ambulanciaService.atualizar(id, ambulanciaDTO);
-        return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulancia));
+    @GetMapping("/{id}")
+    public ResponseEntity<AmbulanciaExibicaoDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulanciaService.findById(id)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AmbulanciaExibicaoDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid AmbulanciaCadastroDTO dto) {
+        return ResponseEntity.ok(
+                new AmbulanciaExibicaoDTO(ambulanciaService.atualizar(id, dto)));
     }
 
     @DeleteMapping("/{id}")
