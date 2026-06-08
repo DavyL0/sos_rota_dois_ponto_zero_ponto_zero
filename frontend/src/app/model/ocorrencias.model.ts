@@ -1,3 +1,5 @@
+import { Bairro } from './bairro.model';
+
 export enum GravidadeOcorrencia {
   ALTA = 'ALTA',
   MEDIA = 'MEDIA',
@@ -38,9 +40,11 @@ export interface OcorrenciaExibicaoModel {
   tipoOcorrencia: string;
   gravidadeOcorrencia: GravidadeOcorrencia;
   statusOcorrencia: StatusOcorrencia;
-  //todo adicionar bairro
+  bairro: Bairro;
   dataOcorrencia: string;
   dataHoraAbertura: string;
   limiteSla: string;
+  slaFinal: number;
   observacao: string;
+  _slaFormatado?: { texto: string; classe: string };
 }

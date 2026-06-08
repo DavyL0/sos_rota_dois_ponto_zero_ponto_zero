@@ -18,21 +18,11 @@
       </ng-template>
       <ng-template #header>
         <tr>
-          <th pSortableColumn="bairro">Bairro
-            <p-sortIcon field="bairro"></p-sortIcon>
-          </th>
-          <th pSortableColumn="gravidade">Gravidade
-            <p-sortIcon field="gravidade"></p-sortIcon>
-          </th>
-          <th pSortableColumn="status">Status
-            <p-sortIcon field="status"></p-sortIcon>
-          </th>
-          <th pSortableColumn="tipo">Tipo
-            <p-sortIcon field="tipo"></p-sortIcon>
-          </th>
-          <th pSortableColumn="dataHoraAbertura">Data de abertura
-            <p-sortIcon field="dataHoraAbertura"></p-sortIcon>
-          </th>
+          <th>Bairro</th>
+          <th>Gravidade</th>
+          <th>Status</th>
+          <th>Tipo</th>
+          <th>Data de abertura</th>
           <th>SLA</th>
           <th class="acoes">Ações</th>
         </tr>
@@ -69,7 +59,9 @@
             <td>{{ getStatusLabel(ocorrencia.statusOcorrencia) }}</td>
             <td>{{ ocorrencia.tipoOcorrencia }}</td>
             <td>{{ getDataOcorrencia(ocorrencia.dataHoraAbertura) }}</td>
-            <td>SLA</td> <!-- todo: implementar SLA -->
+            <td [ngClass]="ocorrencia._slaFormatado?.classe">
+              {{ ocorrencia._slaFormatado?.texto }}
+            </td>
             <td class="actions-column">
               @if (ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA) {
                 <p-button
