@@ -16,8 +16,6 @@ export class AmbulanciasService {
     size: number,
     sortField?: string,
     sortOrder?: number,
-  ): Observable<Page<AmbulanciaExibicaoModel>> {
-    let params = new HttpParams().set('page', page).set('size', size);
     filtro?: string,
   ): Observable<Page<AmbulanciaExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);
@@ -44,7 +42,10 @@ export class AmbulanciasService {
     return this.http.post<AmbulanciaExibicaoModel>(`${this.apiUrl}`, ambulancia);
   }
 
-  atualizarAmbulancia(id: number, ambulancia: AmbulanciaCadastroModel): Observable<AmbulanciaExibicaoModel> {
+  atualizarAmbulancia(
+    id: number,
+    ambulancia: AmbulanciaCadastroModel,
+  ): Observable<AmbulanciaExibicaoModel> {
     return this.http.put<AmbulanciaExibicaoModel>(`${this.apiUrl}/${id}`, ambulancia);
   }
 
