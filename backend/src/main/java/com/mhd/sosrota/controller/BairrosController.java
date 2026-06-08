@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bairros")
+@RequestMapping("api/bairros")
 public class BairrosController {
 
     BairrosService bairrosService;
