@@ -14,16 +14,24 @@ import { Skeleton } from 'primeng/skeleton';
 import { Tooltip } from 'primeng/tooltip';
 import { NgClass } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { OcorrenciaDetalhesComponent } from '../../component/ocorrencia-detalhes-component/ocorrencia-detalhes-component';
 
 @Component({
   selector: 'app-ocorrencias',
   imports: [Button, TableModule, Skeleton, Tooltip, NgClass],
+  providers: [DialogService],
   templateUrl: './ocorrencias.html',
   styleUrl: './ocorrencias.css',
 })
 export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   private ocorrenciasService = inject(OcorrenciasService);
   private cd = inject(ChangeDetectorRef);
+  ref: DynamicDialogRef | undefined | null;
+
+  constructor(public dialogService: DialogService) {
+    super();
+  }
 
   ocorrencias: OcorrenciaExibicaoModel[] = [];
 
@@ -72,12 +80,21 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       });
   }
 
+  abrirDetalhes(ocorrencia: OcorrenciaExibicaoModel) {
+    this.ref = this.dialogService.open(OcorrenciaDetalhesComponent, {
+      header: `Histórico da ocorrência #${ocorrencia.id}`,
+      width: '60vw',
+      modal: true,
+      closable: true,
+      data: { ocorrencia },
+    });
+  }
+
   getGravidadeLabel(gravidade: GravidadeOcorrencia): string {
     return this.gravidadeLabel[gravidade] || gravidade;
   }
 
   getStatusLabel(status: StatusOcorrencia): string {
-    console.log(status);
     return this.statusLabel[status] || status;
   }
 
@@ -90,15 +107,10 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   atualizarSla() {
     if (!this.ocorrencias || this.ocorrencias.length === 0) return;
 
-    let houveMudanca = false;
-
     this.ocorrencias.forEach((ocorrencia) => {
       if (ocorrencia.statusOcorrencia === this.StatusOcorrencia.ABERTA) {
         ocorrencia._slaFormatado = this.calcularSla(ocorrencia);
-        houveMudanca = true;
-      }
-      // Se está concluída/cancelada, calculamos apenas uma vez e deixamos congelado
-      else if (!ocorrencia._slaFormatado) {
+      } else if (!ocorrencia._slaFormatado) {
         ocorrencia._slaFormatado = this.calcularSla(ocorrencia);
       }
     });
