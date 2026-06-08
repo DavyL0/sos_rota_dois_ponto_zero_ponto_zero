@@ -16,6 +16,9 @@ import { NgClass } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OcorrenciaDetalhesComponent } from '../../component/ocorrencia-detalhes-component/ocorrencia-detalhes-component';
+import {
+  OcorrenciaCadastrarComponent
+} from '../../component/ocorrencia-cadastrar-component/ocorrencia-cadastrar-component';
 
 @Component({
   selector: 'app-ocorrencias',
@@ -78,6 +81,15 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
           this.cd.markForCheck();
         },
       });
+  }
+
+  abrirCadastrar() {
+    this.ref = this.dialogService.open(OcorrenciaCadastrarComponent, {
+      header: 'Adicionar nova ocorrência',
+      width: '60vw',
+      modal: true,
+      closable: true,
+    })
   }
 
   abrirDetalhes(ocorrencia: OcorrenciaExibicaoModel) {
