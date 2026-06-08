@@ -37,6 +37,6 @@ export interface AmbulanciaExibicaoModel {
 export interface AmbulanciaCadastroModel {
   placa: string,
   status: StatusAmbulancia,
-  tipo: TipoAmbulancia | null,
-  bairroId: number | null
+  tipo: TipoAmbulancia,
+  bairroId: number
 }
