@@ -20,6 +20,7 @@ public record OcorrenciaExibicaoDTO(
         BairroDTO bairro,
         OffsetDateTime dataHoraAbertura,
         OffsetDateTime limiteSLA,
+        Long slaFinal,
         String observacao
 ) {
     public OcorrenciaExibicaoDTO(Ocorrencia o) {
@@ -31,6 +32,7 @@ public record OcorrenciaExibicaoDTO(
                 new BairroDTO(o.getBairro().getId(), o.getBairro().getNome()),
                 o.getDataHoraAbertura(),
                 o.getLimiteSLA(),
+                o.getSlaFinal().getSeconds(),
                 o.getObservacao()
         );
     }
