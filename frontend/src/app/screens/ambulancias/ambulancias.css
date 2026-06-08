@@ -1,0 +1,92 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--p-text-color);
+  line-height: 1;
+}
+
+.page-subtitle {
+  color: var(--p-text-muted-color);
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.card {
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+.actions-column {
+  text-align: center;
+  white-space: nowrap;
+.limpar-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: all 0.1s linear;
+  pointer-events: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.limpar-btn.aparecer {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.bairro-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-muted {
+  color: var(--p-text-muted-color);
+  font-size: 1.1rem;
+}
+
+/* Garante que o cabeçalho e o corpo das ações tenham o mesmo comportamento */
+th.acoes,
+td.actions-column {
+  width: 120px;
+  text-align: center;
+  white-space: nowrap;
+}
