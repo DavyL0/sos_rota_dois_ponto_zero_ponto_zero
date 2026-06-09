@@ -12,7 +12,6 @@ import { TabelaOrdenacao } from '../tabela-ordenacao';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tooltip } from 'primeng/tooltip';
-import { Page } from '../../model/page.model';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
@@ -23,6 +22,7 @@ import { Select } from 'primeng/select';
 import { Toast } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-profissionais-component',
@@ -109,205 +109,6 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
         },
         error: (err) => {
           console.log('Erro ao obter profissionais: ', err);
-
-          //todo: apagar as linhas abaixo quando o backend estiver funcionando
-          const mockCompleto: ProfissionalExibicaoModel[] = [
-            {
-              id: 17,
-              nome: 'Bianca Biquestre',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'bibiquestre@yahoo.com.br',
-            },
-            {
-              id: 26,
-              nome: 'Davi Augusto',
-              funcao: 'MEDICO' as any,
-              contato: 'daviaug23@gmail.com',
-            },
-            {
-              id: 4,
-              nome: 'Paula Teixeira',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'paulinhadopagode@gmail.com',
-            },
-            {
-              id: 3,
-              nome: 'Dominic Toretto',
-              funcao: 'CONDUTOR' as any,
-              contato: 'toretto@toretto.com',
-            },
-            {
-              id: 27,
-              nome: 'Marcelo Ferreira',
-              funcao: 'CONDUTOR' as any,
-              contato: 'celoferreira@yahoo.com',
-            },
-            {
-              id: 28,
-              nome: 'Larissa Santana',
-              funcao: 'MEDICO' as any,
-              contato: 'larisantana@gmail.com',
-            },
-            {
-              id: 29,
-              nome: 'Leila Araujo',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'araujoleila@gmail.com',
-            },
-            {
-              id: 30,
-              nome: 'Amanda Sousa',
-              funcao: 'CONDUTOR' as any,
-              contato: 'mandexsousa@hotmail.com',
-            },
-            {
-              id: 8,
-              nome: 'Ronaldo Filho',
-              funcao: 'MEDICO' as any,
-              contato: 'rorofilho@outlook.com',
-            },
-            {
-              id: 14,
-              nome: 'Luiz Felipe',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'felipito@outlook.com',
-            },
-            {
-              id: 1,
-              nome: 'Drauzio Varella',
-              funcao: 'MEDICO' as any,
-              contato: 'drauziovarella@gmail.com',
-            },
-            {
-              id: 15,
-              nome: 'Jessica Ferreira',
-              funcao: 'CONDUTOR' as any,
-              contato: 'jaacaboujessica@gmail.com',
-            },
-            {
-              id: 6,
-              nome: 'Maria José',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'maryjoseph@outlook.com',
-            },
-            {
-              id: 11,
-              nome: 'Rolando Barros',
-              funcao: 'CONDUTOR' as any,
-              contato: 'fuirolando@yahoo.com.br',
-            },
-            {
-              id: 9,
-              nome: 'Gabriela Lisboa',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'gabrielisboa@gmail.com',
-            },
-            {
-              id: 10,
-              nome: 'Juremaldo Sales',
-              funcao: 'CONDUTOR' as any,
-              contato: 'juremildo@outlook.com',
-            },
-            {
-              id: 2,
-              nome: 'Meredith Grey',
-              funcao: 'MEDICO' as any,
-              contato: 'meredithzinha@yahoo.com',
-            },
-            {
-              id: 12,
-              nome: 'Um Dois Tres de Oliveira',
-              funcao: 'CONDUTOR' as any,
-              contato: 'umdoistres@gmail.com',
-            },
-            {
-              id: 13,
-              nome: 'Joana Darc',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'joanadarc@joana.com',
-            },
-            {
-              id: 22,
-              nome: 'Pedro Lucas',
-              funcao: 'MEDICO' as any,
-              contato: 'pedrolucas@outlook.com',
-            },
-            {
-              id: 24,
-              nome: 'Pericles',
-              funcao: 'CONDUTOR' as any,
-              contato: 'periclys@outlook.com',
-            },
-            {
-              id: 25,
-              nome: 'Neuma Moura',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'neuminha@yahoo.com.br',
-            },
-            {
-              id: 21,
-              nome: 'Ameinda Silva',
-              funcao: 'ENFERMEIRO' as any,
-              contato: 'ameinda@gmail.com',
-            },
-            {
-              id: 18,
-              nome: 'Julia Souza',
-              funcao: 'CONDUTOR' as any,
-              contato: 'jusouza@gmail.com',
-            },
-            { id: 16, nome: 'Camila Cabo', funcao: 'MEDICO' as any, contato: 'milacabo@gmail.com' },
-          ];
-
-          // 2. Simular o Filtro por Texto (termoBusca)
-          let dadosFiltrados = mockCompleto;
-          if (this.termoBusca) {
-            const termo = this.termoBusca.toLowerCase();
-            dadosFiltrados = mockCompleto.filter(
-              (p) =>
-                p.nome.toLowerCase().includes(termo) ||
-                p.contato.toLowerCase().includes(termo) ||
-                p.funcao?.toLowerCase().includes(termo),
-            );
-          }
-
-          // 3. Simular a Ordenação (opcional, para a tabela funcionar redondinha)
-          if (this.campoOrdenacao) {
-            const campo = this.campoOrdenacao as string;
-            const direcao = this.ordemOrdenacao === 1 ? 1 : -1;
-
-            dadosFiltrados.sort((a: any, b: any) => {
-              if (a[campo] < b[campo]) return -1 * direcao;
-              if (a[campo] > b[campo]) return 1 * direcao;
-              return 0;
-            });
-          }
-
-          // 4. Simular a Paginação (ex: 10 itens por página)
-          const tamanho = this.tamanhoPagina || 10;
-          const indiceInicio = Math.max(0, this.paginaAtual * tamanho);
-          const indiceFim = indiceInicio + tamanho;
-          const itensDaPagina = dadosFiltrados.slice(indiceInicio, indiceFim);
-
-          // 5. Construir a estrutura de resposta similar à interface Page<T> do backend
-          const dadosMockPage: Page<ProfissionalExibicaoModel> = {
-            content: itensDaPagina,
-            page: {
-              size: tamanho,
-              number: this.paginaAtual,
-              totalElements: dadosFiltrados.length,
-              totalPages: Math.ceil(dadosFiltrados.length / tamanho),
-            },
-          };
-
-          // 6. Atualizar as variáveis da tela como se fosse sucesso
-          setTimeout(() => {
-            // Timeout leve apenas para simular o delay de rede
-            this.profissionais = dadosMockPage.content;
-            this.totalElementos = dadosMockPage.page.totalElements;
-            this.carregando = false;
-            this.cd.markForCheck();
-          }, 300);
         },
       });
   }
@@ -320,28 +121,34 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
       return;
     }
 
+    if (this.profissionalCadastrado.contato.length > 50) {
+      this.cadastroForm.controls['email'].setErrors({ maxlength: true });
+      return;
+    }
+
     this.erroBackend = null;
 
-    if (this.idEditando) {
-    } else {
-      this.profissionaisService.criarProfissional(this.profissionalCadastrado).subscribe({
-        next: () => {
-          this.limparBusca();
-          this.limparOrdenacao();
-          this.carregarDados();
-          this.fecharCadastro();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Profissional cadastrado com sucesso!',
-          });
-        },
-        error: (err) => {
-          console.log('Erro ao criar profissional: ', err);
-          //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
-        },
-      });
-    }
+    const request = this.idEditando
+      ? this.profissionaisService.atualizarProfissional(
+          this.idEditando,
+          this.profissionalCadastrado,
+        )
+      : this.profissionaisService.criarProfissional(this.profissionalCadastrado);
+
+    const mensagemSucesso = this.idEditando
+      ? 'Profissional atualizado com sucesso'
+      : 'Profissional cadastrado com sucesso';
+
+
+    request.subscribe({
+      next: () => {
+        this.exibirToast('success', 'Sucesso', mensagemSucesso);
+        this.atualizarLista(true);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.tratarErroSalvar(err);
+      },
+    });
   }
 
   protected confirmarExclusao(profissional: ProfissionalExibicaoModel) {
@@ -364,7 +171,76 @@ export class ProfissionaisComponent extends TabelaOrdenacao implements OnInit, O
     });
   }
 
-  private excluirProfissional(id: number) {}
+  private excluirProfissional(id: number) {
+    this.profissionaisService.excluirProfissional(id).subscribe({
+      next: () => {
+        this.exibirToast('success', 'Sucesso', 'Profissional excluído com sucesso');
+        this.atualizarLista(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.tratarErroExcluir(err);
+      },
+    });
+  }
+
+  private tratarErroSalvar(err: HttpErrorResponse) {
+    if (err.status !== 400) {
+      this.exibirToast('error', 'Erro', 'Houve um erro');
+      console.error('Erro na requisição: ', err);
+      return;
+    }
+
+    const msg = err.error?.message;
+
+    switch (msg) {
+      case 'Já existe um profissional cadastrado com esse nome':
+        this.cadastroForm.controls['nome'].setErrors({ duplicate: true });
+        break;
+      case 'O nome não pode ter mais de 100 caracteres':
+        this.cadastroForm.controls['nome'].setErrors({ maxlength: true });
+        break;
+      case 'O e-mail não pode ter mais de 50 caracteres':
+        this.cadastroForm.controls['email'].setErrors({ maxlength: true });
+        break;
+      case 'O e-mail informado não é válido':
+        this.cadastroForm.controls['email'].setErrors({ email: true });
+        break;
+      case 'Não é possível alterar a função de um profissional alocado em equipe ativa':
+        this.exibirToast('error', 'Erro', msg);
+        this.atualizarLista(true);
+        break;
+      default:
+        this.erroBackend = msg;
+        break;
+    }
+  }
+
+  private tratarErroExcluir(err: HttpErrorResponse) {
+    if (err.status === 400) {
+      this.confirmationService.confirm({
+        header: 'Ação Bloqueada',
+        message: err.error?.message || 'Não foi possível excluir o profissional',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
+        acceptButtonProps: { severity: 'primary' },
+      });
+    } else {
+      this.exibirToast('error', 'Erro', 'Houve um erro ao excluir');
+      console.error('Erro ao excluir: ', err);
+    }
+  }
+
+  private exibirToast(severity: 'success' | 'error', summary: string, detail: string) {
+    this.messageService.add({ severity, summary, detail });
+  }
+
+  private atualizarLista(fecharModal = false) {
+    this.limparBusca();
+    this.limparOrdenacao();
+    this.carregarDados();
+    if (fecharModal) this.fecharCadastro();
+  }
 
   protected getFuncaoLabel(funcao: any): string {
     return this.funcaoLabel[funcao as FuncaoProfissional] || funcao;

@@ -31,7 +31,6 @@ public class ProfissionalController {
 
     @PostMapping
     public ResponseEntity<ProfissionalExibicaoDTO> criar(@RequestBody @Valid ProfissionalCadastroDTO dto) {
-        System.out.println("DTO PROFISSIONAL: " + dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ProfissionalExibicaoDTO(profissionalService.salvar(dto)));
     }
 

@@ -38,6 +38,17 @@ export class ProfissionaisService {
   criarProfissional(
     profissional: ProfissionalCadastroModel,
   ): Observable<ProfissionalExibicaoModel> {
-    return this.http.post<ProfissionalExibicaoModel>(`${this.apiUrl}`, { profissional });
+    return this.http.post<ProfissionalExibicaoModel>(`${this.apiUrl}`, profissional);
+  }
+
+  atualizarProfissional(
+    id: number,
+    profissional: ProfissionalCadastroModel,
+  ): Observable<ProfissionalExibicaoModel> {
+    return this.http.put<ProfissionalExibicaoModel>(`${this.apiUrl}/${id}`, profissional);
+  }
+
+  excluirProfissional(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
