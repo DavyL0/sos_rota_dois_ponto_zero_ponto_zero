@@ -19,17 +19,18 @@ import java.util.List;
 public interface EquipeRepository extends JpaRepository<Equipe, Long> {
     @Query("""
             SELECT DISTINCT e FROM Equipe e
+            LEFT JOIN e.profissionais p
             WHERE (:ativo IS NULL OR e.ativo = :ativo)
             AND (:tipo IS NULL OR e.ambulancia.tipoAmbulancia = :tipo)
             AND (:filtro IS NULL
-                OR LOWER(e.ambulancia.placa) LIKE LOWER(CONCAT('%', :filtro, '%')))
+                OR LOWER(e.ambulancia.placa) LIKE LOWER(CONCAT('%', :filtro, '%'))
+                OR LOWER(p.nome) LIKE LOWER(CONCAT('%', :filtro, '%')))
             """)
     Page<Equipe> obterComFiltro(Pageable pageable,
                                 @Param("filtro") String filtro,
                                 @Param("ativo") Boolean ativo,
                                 @Param("tipo") TipoAmbulancia tipo
     );
-
     boolean existsByAmbulanciaId(Long ambulanciaId);
 
     @Query("SELECT DISTINCT e FROM Equipe e JOIN e.profissionais p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
