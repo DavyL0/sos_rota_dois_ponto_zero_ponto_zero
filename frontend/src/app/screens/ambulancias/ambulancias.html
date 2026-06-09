@@ -179,7 +179,7 @@
       <label for="bairro">Base Vinculada*</label>
       <p-select id="bairro" name="bairro" [options]="bairros" [(ngModel)]="ambulanciaCadastrada.bairroId"
                 optionLabel="nome" optionValue="id" appendTo="body" [filter]="true" filterBy="nome"
-                [required]="true" #bairroVar="ngModel"
+                [required]="true" #bairroVar="ngModel" scrollHeight="140px"
                 [ngClass]="{'ng-invalid ng-dirty': bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)}">
       </p-select>
       @if (bairroVar.invalid && (bairroVar.dirty || bairroVar.touched)) {
