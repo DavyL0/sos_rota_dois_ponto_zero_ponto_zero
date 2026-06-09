@@ -53,20 +53,17 @@ public class ProfissionalService {
                         "Profissional não encontrado"));
     }
 
+    public List<Profissional> findDisponiveis(Long equipeId, FuncaoProfissional funcao) {
+        List<Profissional> candidatos = profissionalRepository.findDisponiveisPorEquipe(equipeId);
 
-    public List<Profissional> findByFuncao(FuncaoProfissional funcao) {
-        List<Profissional> todos = profissionalRepository.findAll();
         List<Profissional> resultado = new ArrayList<>();
+        ProfissionalIterator iterator = new ProfissionalIterator(candidatos, funcao);
 
-        ProfissionalIterator iterator = new ProfissionalIterator(todos, funcao);
         while (iterator.hasNext()) {
             resultado.add(iterator.next());
         }
-        return resultado;
-    }
 
-    public List<Profissional> findDisponiveis() {
-        return profissionalRepository.findByAtivoTrueAndEquipeIsNull();
+        return resultado;
     }
 
     public Profissional atualizar(Long id, ProfissionalCadastroDTO dto) {

@@ -28,5 +28,11 @@ public interface ProfissionalRepository extends JpaRepository<Profissional, Long
 
     List<Profissional> findByFuncaoProfissionalOrderByNomeAsc(FuncaoProfissional funcao);
 
-    List<Profissional> findByAtivoTrueAndEquipeIsNull();
+    @Query("""
+    SELECT p FROM Profissional p
+    WHERE p.ativo = true
+    AND (p.equipe.id IS NULL OR p.equipe.id = :equipeId)
+    ORDER BY p.nome ASC
+""")
+    List<Profissional> findDisponiveisPorEquipe(@Param("equipeId") Long equipeId);
 }

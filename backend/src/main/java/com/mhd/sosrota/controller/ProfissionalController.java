@@ -1,7 +1,9 @@
 package com.mhd.sosrota.controller;
 
+import com.mhd.sosrota.model.Profissional;
 import com.mhd.sosrota.model.dto.profissional.ProfissionalCadastroDTO;
 import com.mhd.sosrota.model.dto.profissional.ProfissionalExibicaoDTO;
+import com.mhd.sosrota.model.enums.FuncaoProfissional;
 import com.mhd.sosrota.service.ProfissionalService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -45,10 +47,17 @@ public class ProfissionalController {
     }
 
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<ProfissionalExibicaoDTO>> listarDisponiveis() {
-        return ResponseEntity.ok(
-                profissionalService.findDisponiveis()
-                        .stream().map(ProfissionalExibicaoDTO::new).toList());
+    public ResponseEntity<List<ProfissionalExibicaoDTO>> listarDisponiveis(
+            @RequestParam(required = false) Long equipeId,
+            @RequestParam(required = false) FuncaoProfissional funcao
+    ) {
+        List<Profissional> disponiveis = profissionalService.findDisponiveis(equipeId, funcao);
+
+        List<ProfissionalExibicaoDTO> dtos = disponiveis.stream()
+                .map(ProfissionalExibicaoDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
