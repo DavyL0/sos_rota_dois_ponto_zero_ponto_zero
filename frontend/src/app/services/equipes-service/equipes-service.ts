@@ -15,8 +15,8 @@ export class EquipesService {
     page: number,
     size: number,
     filtro?: string,
-    ativo?: boolean,
-    tipo?: string,
+    ativo?: null | boolean,
+    tipo?: null | string,
   ): Observable<Page<EquipeExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);
 

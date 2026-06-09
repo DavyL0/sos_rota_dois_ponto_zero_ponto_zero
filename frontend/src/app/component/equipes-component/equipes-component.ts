@@ -113,7 +113,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
   protected carregarDados() {
     this.carregando = true;
 
-    let ativoParam: boolean | undefined = undefined;
+    let ativoParam: boolean | null = null;
     if (this.ativasSelecao === 'Ativas') {
       ativoParam = true;
     }
@@ -121,7 +121,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
       ativoParam = false;
     }
 
-    let tipoParam: string | undefined = undefined;
+    let tipoParam: string | null = null;
     if (this.tipoSelecao === 'UTI') {
       tipoParam = TipoAmbulancia.UTI;
     }
