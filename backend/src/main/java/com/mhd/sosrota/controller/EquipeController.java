@@ -2,13 +2,16 @@ package com.mhd.sosrota.controller;
 
 import com.mhd.sosrota.model.dto.equipe.EquipeCadastroDTO;
 import com.mhd.sosrota.model.dto.equipe.EquipeExibicaoDTO;
+import com.mhd.sosrota.model.enums.TipoAmbulancia;
 import com.mhd.sosrota.service.EquipeService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author Hartur Sales Xavier <hartursalesxavier@gmail.com>
@@ -32,9 +35,13 @@ public class EquipeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EquipeExibicaoDTO>> listar() {
-        return ResponseEntity.ok(
-                equipeService.findAll().stream().map(EquipeExibicaoDTO::new).toList());
+    public ResponseEntity<Page<EquipeExibicaoDTO>> listar(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao,
+            @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) Boolean ativo,
+            @RequestParam(required = false) TipoAmbulancia tipo
+    ) {
+        return ResponseEntity.ok(equipeService.findAll(paginacao, filtro, ativo, tipo).map(EquipeExibicaoDTO::new));
     }
 
     @GetMapping("/{id}")

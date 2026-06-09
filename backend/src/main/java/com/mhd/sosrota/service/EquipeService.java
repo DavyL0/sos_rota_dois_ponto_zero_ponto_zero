@@ -9,6 +9,8 @@ import com.mhd.sosrota.model.enums.TipoAmbulancia;
 import com.mhd.sosrota.repository.AmbulanciaRepository;
 import com.mhd.sosrota.repository.EquipeRepository;
 import com.mhd.sosrota.repository.ProfissionalRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,8 +30,8 @@ public class EquipeService {
     private final ProfissionalRepository profissionalRepository;
 
     public EquipeService(EquipeRepository equipeRepository,
-                          AmbulanciaRepository ambulanciaRepository,
-                          ProfissionalRepository profissionalRepository) {
+                         AmbulanciaRepository ambulanciaRepository,
+                         ProfissionalRepository profissionalRepository) {
         this.equipeRepository = equipeRepository;
         this.ambulanciaRepository = ambulanciaRepository;
         this.profissionalRepository = profissionalRepository;
@@ -65,8 +67,8 @@ public class EquipeService {
         return equipeRepository.save(equipe);
     }
 
-    public List<Equipe> findAll() {
-        return equipeRepository.findAll();
+    public Page<Equipe> findAll(Pageable pageable, String filtro, Boolean ativo, TipoAmbulancia tipo) {
+        return equipeRepository.obterComFiltro(pageable, filtro, ativo, tipo);
     }
 
     public Equipe findById(Long id) {
