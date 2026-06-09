@@ -17,7 +17,7 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { FormsModule, NgForm } from '@angular/forms';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, finalize, forkJoin, Subject, Subscription } from 'rxjs';
 import { Toast } from 'primeng/toast';
 import { Dialog } from 'primeng/dialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -27,6 +27,7 @@ import { Bairro } from '../../model/bairro.model';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
+import { BairroService } from '../../services/bairro-service/bairro-service';
 
 @Component({
   selector: 'app-ambulancias',
@@ -51,7 +52,8 @@ import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
   styleUrl: './ambulancias.css',
 })
 export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
-  private service = inject(AmbulanciasService);
+  private ambulanciasService = inject(AmbulanciasService);
+  private bairrosService = inject(BairroService);
   private cd = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
@@ -60,6 +62,7 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   @ViewChild('tabelaAmbulancias') tabela!: Table;
 
   ambulancias: AmbulanciaExibicaoModel[] = [];
+  bairros: Bairro[] = [];
 
   cadastroVisivel = false;
   ambulanciaCadastrada: AmbulanciaCadastroModel = {
@@ -71,10 +74,6 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   tiposAmbulancia = [
     { label: 'Básica', value: TipoAmbulancia.BASICA },
     { label: 'UTI', value: TipoAmbulancia.UTI },
-  ];
-  bairros: Bairro[] = [
-    //todo receber os bairros do backend
-    { id: 1, nome: 'Centro' },
   ];
   erroBackend: string | null = null;
   idEditando: number | null = null;
@@ -100,25 +99,30 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
   protected override carregarDados() {
     this.carregando = true;
-    this.service
-      .obterAmbulancias(
+    forkJoin({
+      bairros: this.bairrosService.obterBairros(),
+      ambulancias: this.ambulanciasService.obterAmbulancias(
         this.paginaAtual,
         this.tamanhoPagina,
         this.campoOrdenacao,
         this.ordemOrdenacao ?? -1,
         this.termoBusca,
+      ),
+    })
+      .pipe(
+        finalize(() => {
+          this.carregando = false;
+          this.cd.markForCheck();
+        }),
       )
       .subscribe({
-        next: (dados) => {
-          this.ambulancias = dados.content;
-          this.totalElementos = dados.page.totalElements;
-          this.carregando = false;
-          this.cd.markForCheck();
+        next: ({ bairros, ambulancias }) => {
+          this.bairros = bairros;
+          this.ambulancias = ambulancias.content;
+          this.totalElementos = ambulancias.page.totalElements;
         },
         error: (err) => {
-          console.log('Erro ao obter ambulancias: ', err);
-          this.carregando = false;
-          this.cd.markForCheck();
+          console.error('Erro ao carregar os dados: ', err);
         },
       });
   }
@@ -133,49 +137,23 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
     this.erroBackend = null;
 
-    if (this.idEditando) {
-      /*      this.service.atualizarAmbulancia(this.idEditando, this.ambulanciaCadastrada).subscribe({
-        next: () => {
-          this.limparBusca();
-          this.limparOrdenacao();
-          this.carregarAmbulancias();
-          this.fecharCadastro();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Ambulância atualizada com sucesso',
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          if (err.status === 400) {
-            if (err.error?.message === 'Já existe uma ambulância cadastrada com essa placa') {
-              this.cadastroForm.controls['placa'].setErrors({ unique: true });
-            } else {
-              this.erroBackend = err.error.message;
-            }
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Houve um erro',
-            });
-            console.log('Erro ao editar ', err);
-          }
-        },
-      });*/
-    } else {
-      /*      this.service.criarAmbulancia(this.ambulanciaCadastrada).subscribe({
-        next: () => {
-          this.limparBusca();
-          this.limparOrdenacao();
-          this.carregarAmbulancias();
-          this.fecharCadastro();
-        },
-        error: (err: HttpErrorResponse) => {
-          //todo gerenciar os tipos de erros pra jogar no formulario OU no toast
-        },
-      });*/
-    }
+    const request = this.idEditando
+      ? this.ambulanciasService.atualizarAmbulancia(this.idEditando, this.ambulanciaCadastrada)
+      : this.ambulanciasService.criarAmbulancia(this.ambulanciaCadastrada);
+
+    const mensagemSucesso = this.idEditando
+      ? 'Ambulância atualizada com sucesso'
+      : 'Ambulância cadastrada com sucesso';
+
+    request.subscribe({
+      next: () => {
+        this.exibirToast('success', 'Sucesso', mensagemSucesso);
+        this.atualizarLista(true);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.tratarErroSalvar(err);
+      },
+    });
   }
 
   protected confirmarExclusao(ambulancia: AmbulanciaExibicaoModel) {
@@ -199,40 +177,69 @@ export class Ambulancias extends TabelaOrdenacao implements OnInit, OnDestroy {
   }
 
   private excluirAmbulancia(ambulanciaId: number) {
-    this.service.apagarAmbulancia(ambulanciaId).subscribe({
+    this.ambulanciasService.apagarAmbulancia(ambulanciaId).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Ambulância excluída com sucesso',
-        });
-        this.limparBusca();
-        this.limparOrdenacao();
-        this.carregarDados();
+        this.exibirToast('success', 'Sucesso', 'Ambulância excluída com sucesso');
+        this.atualizarLista(false);
       },
       error: (err: HttpErrorResponse) => {
-        if (err.status === 400) {
-          const mensagemErro = err.error?.message || 'Não foi possível excluir a ambulância';
-          this.confirmationService.confirm({
-            header: 'Ação Bloqueada',
-            message: mensagemErro,
-            icon: 'pi pi-exclamation-circle',
-            acceptLabel: 'Ok',
-            rejectVisible: false,
-            acceptButtonProps: {
-              severity: 'primary',
-            },
-          });
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Houve um erro',
-          });
-          console.log('Erro ao excluir ', err);
-        }
+        this.tratarErroExcluir(err);
       },
     });
+  }
+
+  private exibirToast(severity: 'success' | 'error', summary: string, detail: string) {
+    this.messageService.add({ severity, summary, detail });
+  }
+
+  private atualizarLista(fecharModal = false) {
+    this.limparBusca();
+    this.limparOrdenacao();
+    this.carregarDados();
+    if (fecharModal) this.fecharCadastro();
+  }
+
+  private tratarErroSalvar(err: HttpErrorResponse) {
+    if (err.status !== 400) {
+      this.exibirToast('error', 'Erro', 'Houve um erro');
+      console.error('Erro na requisição: ', err);
+      return;
+    }
+
+    const msg = err.error?.message;
+
+    switch (msg) {
+      case 'Já existe uma ambulância cadastrada com essa placa':
+        this.cadastroForm.controls['placa'].setErrors({ unique: true });
+        break;
+      case 'A placa deve seguir o formato ABC1D23':
+        this.cadastroForm.controls['placa'].setErrors({ pattern: true });
+        break;
+      case 'Não é possível atualizar uma ambulância em atendimento':
+      case 'Não é possível atualizar uma ambulância vinculada a uma equipe':
+        this.exibirToast('error', 'Erro', msg);
+        this.atualizarLista(true);
+        break;
+      default:
+        this.erroBackend = msg;
+        break;
+    }
+  }
+
+  private tratarErroExcluir(err: HttpErrorResponse) {
+    if (err.status === 400) {
+      this.confirmationService.confirm({
+        header: 'Ação Bloqueada',
+        message: err.error?.message || 'Não foi possível excluir a ambulância',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
+        acceptButtonProps: { severity: 'primary' },
+      });
+    } else {
+      this.exibirToast('error', 'Erro', 'Houve um erro ao excluir');
+      console.error('Erro ao excluir: ', err);
+    }
   }
 
   protected getSeverityStatus(
