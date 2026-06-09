@@ -43,8 +43,8 @@ public class ProfissionalService {
         return profissionalRepository.save(profissional);
     }
 
-    public Page<Profissional> findAll(Pageable pageable) {
-        return profissionalRepository.findAll(pageable);
+    public Page<Profissional> findAll(Pageable pageable, String filtro) {
+        return profissionalRepository.obterComFiltro(pageable, filtro);
     }
 
     public Profissional findById(Long id) {

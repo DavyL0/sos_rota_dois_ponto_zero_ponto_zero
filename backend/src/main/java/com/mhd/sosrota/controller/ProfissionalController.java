@@ -2,7 +2,6 @@ package com.mhd.sosrota.controller;
 
 import com.mhd.sosrota.model.dto.profissional.ProfissionalCadastroDTO;
 import com.mhd.sosrota.model.dto.profissional.ProfissionalExibicaoDTO;
-import com.mhd.sosrota.model.enums.FuncaoProfissional;
 import com.mhd.sosrota.service.ProfissionalService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,17 +31,18 @@ public class ProfissionalController {
 
     @PostMapping
     public ResponseEntity<ProfissionalExibicaoDTO> criar(@RequestBody @Valid ProfissionalCadastroDTO dto) {
+        System.out.println("DTO PROFISSIONAL: " + dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ProfissionalExibicaoDTO(profissionalService.salvar(dto)));
     }
 
     @GetMapping
     public ResponseEntity<Page<ProfissionalExibicaoDTO>> listar(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao,
-            @RequestParam(required = false) FuncaoProfissional funcao) {
+            @RequestParam(required = false) String filtro) {
 //        var lista = funcao != null
 //                ? profissionalService.findByFuncao(funcao)
 //                : profissionalService.findAll(paginacao);
-        return ResponseEntity.ok(profissionalService.findAll(paginacao).map(ProfissionalExibicaoDTO::new));
+        return ResponseEntity.ok(profissionalService.findAll(paginacao, filtro).map(ProfissionalExibicaoDTO::new));
     }
 
     @GetMapping("/disponiveis")
