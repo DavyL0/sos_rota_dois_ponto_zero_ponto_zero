@@ -65,7 +65,8 @@
             label="Editar"
             icon="pi pi-pencil"
             outlined="true"
-            severity="info">
+            severity="info"
+            (onClick)="abrirEdicao(equipe)">
           </p-button>
 
         </div>
@@ -84,51 +85,3 @@
     </p-paginator>
   </div>
 }
-
-<!--<p-dialog [header]=" idEditando ?
-    'Editar Equipe' : 'Criar Equipe'" [modal]="true"-->
-<!--          [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"-->
-<!--          [draggable]="false" [style]="{ width: '50vw' }">-->
-<!--  <form #cadastroForm="ngForm" (ngSubmit)="salvarEquipe()" class="form-container">-->
-<!--    <div class="form-item">-->
-<!--      <label for="nome">Nome*</label>-->
-<!--      <input pInputText id="nome" name="nome" type="text" [(ngModel)]="profissionalCadastrado.nome"-->
-<!--             placeholder="Xin Jin Ping" required #nomeVar="ngModel"-->
-<!--             [ngClass]="{'ng-invalid ng-dirty': nomeVar.invalid && nomeVar.touched}">-->
-<!--      @if (nomeVar.invalid && nomeVar.touched) {-->
-<!--        <small class="error-message">O nome é obrigatório.</small>-->
-<!--      }-->
-<!--    </div>-->
-
-<!--    <div class="form-item">-->
-<!--      <label for="funcao">Função</label>-->
-<!--      <p-select id="funcao" name="funcao" [options]="funcoes" [(ngModel)]="profissionalCadastrado.funcao"-->
-<!--                placeholder="Selecione" optionLabel="label" optionValue="value" appendTo="body"-->
-<!--                required #funcaoVar="ngModel"-->
-<!--                [ngClass]="{'ng-invalid ng-dirty': funcaoVar.invalid && (funcaoVar.touched || funcaoVar.dirty)}">-->
-<!--      </p-select>-->
-<!--      @if (funcaoVar.invalid && (funcaoVar.dirty || funcaoVar.touched)) {-->
-<!--        <small class="error-message">A função é obrigatória.</small>-->
-<!--      }-->
-<!--    </div>-->
-
-<!--    <div class="form-item">-->
-<!--      <label for="email">Email</label>-->
-<!--      <input pInputText id="email" name="email" type="email" email="true" [(ngModel)]="profissionalCadastrado.contato"-->
-<!--             placeholder="xinjinping@gmail.com" required #emailVar="ngModel"-->
-<!--             [ngClass]="{'ng-invalid ng-dirty': emailVar.invalid && (emailVar.touched || emailVar.dirty)}">-->
-<!--      @if (emailVar.invalid && emailVar.touched) {-->
-<!--        @if (emailVar.errors?.['required']) {-->
-<!--          <small class="error-message">O email é obrigatório.</small>-->
-<!--        }-->
-<!--        @if (emailVar.errors?.['email']) {-->
-<!--          <small class="error-message">Digite um endereço de email válido.</small>-->
-<!--        }-->
-<!--      }-->
-<!--    </div>-->
-<!--    <div class="form-actions">-->
-<!--      <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>-->
-<!--      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid || semAlteracoes"></p-button>-->
-<!--    </div>-->
-<!--  </form>-->
-<!--</p-dialog>-->

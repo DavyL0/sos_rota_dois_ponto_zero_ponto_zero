@@ -4,9 +4,9 @@ import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { Toast } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { debounceTime, finalize, forkJoin, Subject, Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 import { EquipesService } from '../../services/equipes-service/equipes-service';
-import { EquipeCadastroModel, EquipeExibicaoModel } from '../../model/equipes.model';
+import { EquipeExibicaoModel } from '../../model/equipes.model';
 import {
   FuncaoProfissional,
   FuncaoProfissionalLabel,
@@ -22,8 +22,8 @@ import { Tag } from 'primeng/tag';
 import { NgClass } from '@angular/common';
 import { SelectButton } from 'primeng/selectbutton';
 import { Paginator, PaginatorState } from 'primeng/paginator';
-import { AmbulanciasService } from '../../services/ambulancias-service/ambulancias-service';
-import { ProfissionaisService } from '../../services/profissionais-service/profissionais-service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CriarEquipeComponent } from '../criar-equipe-component/criar-equipe-component';
 
 @Component({
   selector: 'app-equipes-component',
@@ -43,17 +43,17 @@ import { ProfissionaisService } from '../../services/profissionais-service/profi
     SelectButton,
     Paginator,
   ],
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, DialogService, DynamicDialogRef],
   templateUrl: './equipes-component.html',
   styleUrl: './equipes-component.css',
 })
 export class EquipesComponent implements OnInit, OnDestroy {
   private equipesService = inject(EquipesService);
-  private ambulanciasService = inject(AmbulanciasService);
-  private profissionaisService = inject(ProfissionaisService);
   private cd = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private ref: DynamicDialogRef | null = inject(DynamicDialogRef);
 
   @ViewChild('cadastroForm') cadastroForm!: NgForm;
 
@@ -73,26 +73,6 @@ export class EquipesComponent implements OnInit, OnDestroy {
   tipoFiltro: string[] = ['Todas', 'UTI', 'Básica'];
   tipoSelecao: string = 'Todas';
 
-  cadastroVisivel = false;
-  carregandoCadastro = false;
-  equipeCadastrada: EquipeCadastroModel = {
-    ambulanciaId: null,
-    ativo: true,
-    profissionaisIds: [],
-  };
-  ambulanciaSelecionada: any = null;
-  condutorSelecionadoId: number | null = null;
-  enfermeiroSelecionadoId: number | null = null;
-  medicoSelecionadoId: number | null = null;
-
-  ambulanciasDisponiveis: any[] = [];
-  condutoresDisponiveis: any[] = [];
-  enfermeirosDisponiveis: any[] = [];
-  medicosDisponiveis: any[] = [];
-
-  idEditando: number | null = null;
-  equipeOriginal: EquipeCadastroModel | null = null;
-  erroBackend: string | null = null;
   tipoUTI = TipoAmbulancia.UTI;
 
   private buscaSubject = new Subject<void>();
@@ -148,43 +128,6 @@ export class EquipesComponent implements OnInit, OnDestroy {
       });
   }
 
-  protected carregarDadosFormulario(equipeId?: number) {
-    this.carregandoCadastro = true;
-    forkJoin({
-      ambulancias: this.ambulanciasService.obterAmbulanciasDisponiveis(equipeId),
-      profissionais: this.profissionaisService.obterProfissionaisDisponiveis(equipeId),
-    })
-      .pipe(
-        finalize(() => {
-          this.carregandoCadastro = false;
-          this.cd.markForCheck();
-        }),
-      )
-      .subscribe({
-        next: ({ ambulancias, profissionais }) => {
-          this.ambulanciasDisponiveis = ambulancias;
-
-          this.medicosDisponiveis = profissionais.filter(
-            (p) => p.funcao === FuncaoProfissional.MEDICO,
-          );
-          this.enfermeirosDisponiveis = profissionais.filter(
-            (p) => p.funcao === FuncaoProfissional.ENFERMEIRO,
-          );
-          this.condutoresDisponiveis = profissionais.filter(
-            (p) => p.funcao === FuncaoProfissional.CONDUTOR,
-          );
-        },
-        error: (err) => {
-          console.error('Erro ao carregar dados do formulário de equipes:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Não foi possível carregar as opções disponíveis.',
-          });
-        },
-      });
-  }
-
   protected salvarEquipe() {}
 
   protected confirmarExclusao(equipe: EquipeExibicaoModel) {
@@ -226,71 +169,58 @@ export class EquipesComponent implements OnInit, OnDestroy {
   }
 
   protected abrirCadastro() {
-    this.idEditando = null;
-    this.ambulanciaSelecionada = null;
-    this.condutorSelecionadoId = null;
-    this.enfermeiroSelecionadoId = null;
-    this.medicoSelecionadoId = null;
+    this.ref = this.dialogService.open(CriarEquipeComponent, {
+      header: 'Criar Equipe',
+      width: '60vw',
+      modal: true,
+      closable: true,
+    });
 
-    this.carregarDadosFormulario();
-    this.cadastroVisivel = true;
-  }
-
-  protected fecharCadastro() {
-    this.cadastroVisivel = false;
-    this.equipeCadastrada = {
-      ambulanciaId: null,
-      ativo: true,
-      profissionaisIds: [],
-    };
-    this.idEditando = null;
-    this.equipeOriginal = null;
-    setTimeout(() => {
-      this.cadastroForm.resetForm();
-    }, 0);
+    this.ref?.onClose.subscribe((equipe: EquipeExibicaoModel | null) => {
+      if (equipe) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Equipe criada com sucesso',
+        });
+        this.carregarDados();
+      }
+    });
   }
 
   protected abrirEdicao(equipe: EquipeExibicaoModel) {
-    this.idEditando = equipe.id;
-    this.cadastroVisivel = true;
+    this.ref = this.dialogService.open(CriarEquipeComponent, {
+      header: 'Editar Equipe',
+      width: '60vw',
+      modal: true,
+      closable: true,
+      inputValues: {
+        equipe: {
+          ambulanciaId: equipe.ambulancia.id,
+          ativo: equipe.ativo,
+          profissionaisIds: equipe.profissionais.map((p) => p.id),
+        },
+        idEditando: equipe.id,
+        ambulanciaSelecionada: equipe.ambulancia,
+        medicoSelecionadoId:
+          equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.MEDICO)?.id || null,
+        enfermeiroSelecionadoId:
+          equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.ENFERMEIRO)?.id || null,
+        condutorSelecionadoId:
+          equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.CONDUTOR)?.id || null,
+      },
+    });
 
-    this.carregarDadosFormulario(equipe.id);
-
-    this.equipeCadastrada = {
-      ambulanciaId: equipe.ambulancia.id,
-      ativo: equipe.ativo,
-      profissionaisIds: equipe.profissionais.map((p) => p.id),
-    };
-
-    this.ambulanciaSelecionada = equipe.ambulancia;
-    this.medicoSelecionadoId =
-      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.MEDICO)?.id || null;
-    this.enfermeiroSelecionadoId =
-      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.ENFERMEIRO)?.id || null;
-    this.condutorSelecionadoId =
-      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.CONDUTOR)?.id || null;
-
-    this.equipeOriginal = {
-      ...this.equipeCadastrada,
-      profissionaisIds: [...this.equipeCadastrada.profissionaisIds],
-    };
-  }
-
-  get semAlteracoes(): boolean {
-    if (!this.idEditando || !this.equipeOriginal) return false;
-
-    const idsAtuais = [...this.equipeCadastrada.profissionaisIds].sort().join(',');
-    const idsOriginais = [...this.equipeOriginal.profissionaisIds].sort().join(',');
-
-    return (
-      this.equipeCadastrada.ambulanciaId === this.equipeOriginal.ambulanciaId &&
-      this.equipeCadastrada.ativo === this.equipeOriginal.ativo &&
-      idsAtuais === idsOriginais
-    );
-  }
-
-  get medicoObrigatorio(): boolean {
-    return this.ambulanciaSelecionada.tipo === this.tipoUTI;
+    this.ref?.onClose.subscribe((equipe: EquipeExibicaoModel | null) => {
+      if (equipe) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Equipe atualizada com sucesso',
+        });
+        this.carregarDados();
+      }
+    });
   }
 
   getProfissionaisOrdenados(profissionais: ProfissionalExibicaoModel[]) {
