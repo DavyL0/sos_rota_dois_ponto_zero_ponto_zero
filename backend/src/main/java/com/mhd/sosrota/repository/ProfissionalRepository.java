@@ -14,7 +14,7 @@ import java.util.Optional;
  * @brief Interface ProfissionalRepository
  */
 public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
-    Optional<Profissional> findByNome(String nome);
+    boolean existsByNome(String nome);
 
     List<Profissional> findByFuncaoProfissionalOrderByNomeAsc(FuncaoProfissional funcao);
 

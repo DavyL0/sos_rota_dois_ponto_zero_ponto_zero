@@ -11,7 +11,7 @@ import com.mhd.sosrota.model.enums.FuncaoProfissional;
 public record ProfissionalExibicaoDTO(
         Long id,
         String nome,
-        FuncaoProfissional funcaoProfissional,
+        FuncaoProfissional funcao,
         String contato,
         boolean ativo,
         Long equipeId

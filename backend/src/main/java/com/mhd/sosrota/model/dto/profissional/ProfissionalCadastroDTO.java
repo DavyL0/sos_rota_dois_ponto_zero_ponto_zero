@@ -14,7 +14,7 @@ public record ProfissionalCadastroDTO(
         String nome,
 
         @NotNull(message = "A função é obrigatória")
-        FuncaoProfissional funcaoProfissional,
+        FuncaoProfissional funcao,
 
         @Email(message = "O e-mail informado não é válido")
         @Size(max = 50, message = "O e-mail não pode ter mais de 50 caracteres")

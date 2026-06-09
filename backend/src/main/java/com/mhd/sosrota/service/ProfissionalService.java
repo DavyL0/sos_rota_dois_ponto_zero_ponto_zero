@@ -5,6 +5,8 @@ import com.mhd.sosrota.model.dto.profissional.ProfissionalCadastroDTO;
 import com.mhd.sosrota.model.enums.FuncaoProfissional;
 import com.mhd.sosrota.repository.ProfissionalRepository;
 import com.mhd.sosrota.util.ProfissionalIterator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,22 +29,22 @@ public class ProfissionalService {
     }
 
     public Profissional salvar(ProfissionalCadastroDTO dto) {
-        profissionalRepository.findByNome(dto.nome()).ifPresent(p -> {
+        if (profissionalRepository.existsByNome(dto.nome())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Já existe um profissional cadastrado com esse nome");
-        });
+        }
 
         var profissional = new Profissional();
         profissional.setNome(dto.nome());
-        profissional.setFuncaoProfissional(dto.funcaoProfissional());
+        profissional.setFuncaoProfissional(dto.funcao());
         profissional.setContato(dto.contato());
         profissional.setAtivo(true);
 
         return profissionalRepository.save(profissional);
     }
 
-    public List<Profissional> findAll() {
-        return profissionalRepository.findAll();
+    public Page<Profissional> findAll(Pageable pageable) {
+        return profissionalRepository.findAll(pageable);
     }
 
     public Profissional findById(Long id) {
@@ -71,7 +73,7 @@ public class ProfissionalService {
         var profissional = findById(id);
 
         boolean mudouFuncao = !profissional.getFuncaoProfissional()
-                .equals(dto.funcaoProfissional());
+                .equals(dto.funcao());
 
         if (mudouFuncao && profissional.getEquipe() != null
                 && profissional.getEquipe().isAtivo()) {
@@ -80,7 +82,7 @@ public class ProfissionalService {
         }
 
         profissional.setNome(dto.nome());
-        profissional.setFuncaoProfissional(dto.funcaoProfissional());
+        profissional.setFuncaoProfissional(dto.funcao());
         profissional.setContato(dto.contato());
 
         return profissionalRepository.save(profissional);
