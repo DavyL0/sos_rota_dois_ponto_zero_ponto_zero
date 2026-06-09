@@ -35,6 +35,12 @@ export class ProfissionaisService {
     return this.http.get<Page<ProfissionalExibicaoModel>>(`${this.apiUrl}`, { params });
   }
 
+  obterProfissionaisDisponiveis(equipeId?: number): Observable<ProfissionalExibicaoModel[]> {
+    let params = new HttpParams();
+    if (equipeId) params = params.set('equipeId', equipeId);
+    return this.http.get<ProfissionalExibicaoModel[]>(`${this.apiUrl}/disponiveis`, { params });
+  }
+
   criarProfissional(
     profissional: ProfissionalCadastroModel,
   ): Observable<ProfissionalExibicaoModel> {

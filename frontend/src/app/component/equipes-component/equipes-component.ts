@@ -4,7 +4,7 @@ import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { Toast } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, finalize, forkJoin, Subject, Subscription } from 'rxjs';
 import { EquipesService } from '../../services/equipes-service/equipes-service';
 import { EquipeCadastroModel, EquipeExibicaoModel } from '../../model/equipes.model';
 import {
@@ -12,11 +12,7 @@ import {
   FuncaoProfissionalLabel,
   ProfissionalExibicaoModel,
 } from '../../model/profissional.model';
-import {
-  StatusAmbulancia,
-  TipoAmbulancia,
-  TipoAmbulanciaLabel,
-} from '../../model/ambulancia.model';
+import { TipoAmbulancia, TipoAmbulanciaLabel } from '../../model/ambulancia.model';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { Button } from 'primeng/button';
@@ -26,6 +22,8 @@ import { Tag } from 'primeng/tag';
 import { NgClass } from '@angular/common';
 import { SelectButton } from 'primeng/selectbutton';
 import { Paginator, PaginatorState } from 'primeng/paginator';
+import { AmbulanciasService } from '../../services/ambulancias-service/ambulancias-service';
+import { ProfissionaisService } from '../../services/profissionais-service/profissionais-service';
 
 @Component({
   selector: 'app-equipes-component',
@@ -51,6 +49,8 @@ import { Paginator, PaginatorState } from 'primeng/paginator';
 })
 export class EquipesComponent implements OnInit, OnDestroy {
   private equipesService = inject(EquipesService);
+  private ambulanciasService = inject(AmbulanciasService);
+  private profissionaisService = inject(ProfissionaisService);
   private cd = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
@@ -74,6 +74,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
   tipoSelecao: string = 'Todas';
 
   cadastroVisivel = false;
+  carregandoCadastro = false;
   equipeCadastrada: EquipeCadastroModel = {
     ambulanciaId: null,
     ativo: true,
@@ -142,180 +143,44 @@ export class EquipesComponent implements OnInit, OnDestroy {
           console.error('Erro ao obter equipes:', err);
           this.carregando = false;
 
-          //todo apagar quando o backend estiver funcionando
-          this.equipes = [
-            {
-              id: 101,
-              ativo: true,
-              ambulancia: {
-                id: 1,
-                placa: 'XYZ-1A23',
-                tipo: TipoAmbulancia.UTI,
-                status: StatusAmbulancia.EM_ATENDIMENTO,
-                bairro: { id: 1, nome: 'Centro' },
-              },
-              profissionais: [
-                {
-                  id: 26,
-                  nome: 'Davi Augusto',
-                  funcao: FuncaoProfissional.MEDICO,
-                  contato: 'daviaug23@gmail.com',
-                },
-                {
-                  id: 17,
-                  nome: 'Bianca Biquestre',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'bibiquestre@yahoo.com.br',
-                },
-                {
-                  id: 3,
-                  nome: 'Dominic Toretto',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'toretto@toretto.com',
-                },
-              ],
-            },
-            {
-              id: 102,
-              ativo: true,
-              ambulancia: {
-                id: 2,
-                placa: 'QWE-9B87',
-                tipo: TipoAmbulancia.BASICA,
-                status: StatusAmbulancia.DISPONIVEL,
-                bairro: { id: 2, nome: 'Setor Sul' },
-              },
-              profissionais: [
-                {
-                  id: 4,
-                  nome: 'Paula Teixeira',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'paula@gmail.com',
-                },
-                {
-                  id: 27,
-                  nome: 'Marcelo Ferreira',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'celoferreira@yahoo.com',
-                },
-              ],
-            },
-            {
-              id: 103,
-              ativo: false,
-              ambulancia: {
-                id: 3,
-                placa: 'RTY-5C44',
-                tipo: TipoAmbulancia.BASICA,
-                status: StatusAmbulancia.MANUTENCAO,
-                bairro: { id: 3, nome: 'Jardim América' },
-              },
-              profissionais: [
-                {
-                  id: 6,
-                  nome: 'Maria José',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'maryjoseph@outlook.com',
-                },
-                {
-                  id: 11,
-                  nome: 'Rolando Barros',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'fuirolando@yahoo.com.br',
-                },
-              ],
-            },
-            {
-              id: 104,
-              ativo: true,
-              ambulancia: {
-                id: 4,
-                placa: 'HGF-3D21',
-                tipo: TipoAmbulancia.UTI,
-                status: StatusAmbulancia.DISPONIVEL,
-                bairro: { id: 4, nome: 'Bueno' },
-              },
-              profissionais: [
-                {
-                  id: 2,
-                  nome: 'Meredith Grey',
-                  funcao: FuncaoProfissional.MEDICO,
-                  contato: 'meredith@yahoo.com',
-                },
-                {
-                  id: 9,
-                  nome: 'Gabriela Lisboa',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'gabrielisboa@gmail.com',
-                },
-                {
-                  id: 24,
-                  nome: 'Pericles',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'periclys@outlook.com',
-                },
-              ],
-            },
-            {
-              id: 105,
-              ativo: true,
-              ambulancia: {
-                id: 5,
-                placa: 'LMN-7E65',
-                tipo: TipoAmbulancia.BASICA,
-                status: StatusAmbulancia.EM_ATENDIMENTO,
-                bairro: { id: 5, nome: 'Campinas' },
-              },
-              profissionais: [
-                {
-                  id: 13,
-                  nome: 'Joana Darc',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'joanadarc@joana.com',
-                },
-                {
-                  id: 12,
-                  nome: 'Um Dois Tres de Oliveira',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'umdoistres@gmail.com',
-                },
-              ],
-            },
-            {
-              id: 106,
-              ativo: true,
-              ambulancia: {
-                id: 6,
-                placa: 'VBN-0F98',
-                tipo: TipoAmbulancia.UTI,
-                status: StatusAmbulancia.DISPONIVEL,
-                bairro: { id: 1, nome: 'Centro' },
-              },
-              profissionais: [
-                {
-                  id: 1,
-                  nome: 'Drauzio Varella',
-                  funcao: FuncaoProfissional.MEDICO,
-                  contato: 'drauzio@gmail.com',
-                },
-                {
-                  id: 14,
-                  nome: 'Luiz Felipe',
-                  funcao: FuncaoProfissional.ENFERMEIRO,
-                  contato: 'felipito@outlook.com',
-                },
-                {
-                  id: 10,
-                  nome: 'Juremaldo Sales',
-                  funcao: FuncaoProfissional.CONDUTOR,
-                  contato: 'juremildo@outlook.com',
-                },
-              ],
-            },
-          ];
-          this.totalElementos = this.equipes.length;
-
           this.cd.markForCheck();
+        },
+      });
+  }
+
+  protected carregarDadosFormulario(equipeId?: number) {
+    this.carregandoCadastro = true;
+    forkJoin({
+      ambulancias: this.ambulanciasService.obterAmbulanciasDisponiveis(equipeId),
+      profissionais: this.profissionaisService.obterProfissionaisDisponiveis(equipeId),
+    })
+      .pipe(
+        finalize(() => {
+          this.carregandoCadastro = false;
+          this.cd.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: ({ ambulancias, profissionais }) => {
+          this.ambulanciasDisponiveis = ambulancias;
+
+          this.medicosDisponiveis = profissionais.filter(
+            (p) => p.funcao === FuncaoProfissional.MEDICO,
+          );
+          this.enfermeirosDisponiveis = profissionais.filter(
+            (p) => p.funcao === FuncaoProfissional.ENFERMEIRO,
+          );
+          this.condutoresDisponiveis = profissionais.filter(
+            (p) => p.funcao === FuncaoProfissional.CONDUTOR,
+          );
+        },
+        error: (err) => {
+          console.error('Erro ao carregar dados do formulário de equipes:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível carregar as opções disponíveis.',
+          });
         },
       });
   }
@@ -366,6 +231,8 @@ export class EquipesComponent implements OnInit, OnDestroy {
     this.condutorSelecionadoId = null;
     this.enfermeiroSelecionadoId = null;
     this.medicoSelecionadoId = null;
+
+    this.carregarDadosFormulario();
     this.cadastroVisivel = true;
   }
 
@@ -385,16 +252,28 @@ export class EquipesComponent implements OnInit, OnDestroy {
 
   protected abrirEdicao(equipe: EquipeExibicaoModel) {
     this.idEditando = equipe.id;
+    this.cadastroVisivel = true;
+
+    this.carregarDadosFormulario(equipe.id);
+
     this.equipeCadastrada = {
       ambulanciaId: equipe.ambulancia.id,
       ativo: equipe.ativo,
       profissionaisIds: equipe.profissionais.map((p) => p.id),
     };
+
+    this.ambulanciaSelecionada = equipe.ambulancia;
+    this.medicoSelecionadoId =
+      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.MEDICO)?.id || null;
+    this.enfermeiroSelecionadoId =
+      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.ENFERMEIRO)?.id || null;
+    this.condutorSelecionadoId =
+      equipe.profissionais.find((p) => p.funcao === FuncaoProfissional.CONDUTOR)?.id || null;
+
     this.equipeOriginal = {
       ...this.equipeCadastrada,
       profissionaisIds: [...this.equipeCadastrada.profissionaisIds],
     };
-    this.cadastroVisivel = true;
   }
 
   get semAlteracoes(): boolean {
