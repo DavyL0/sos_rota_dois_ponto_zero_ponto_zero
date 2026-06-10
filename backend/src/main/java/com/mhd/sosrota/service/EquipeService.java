@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class EquipeService {
         this.profissionalRepository = profissionalRepository;
     }
 
+    @Transactional
     public Equipe salvar(EquipeCadastroDTO dto) {
         var ambulancia = ambulanciaRepository.findById(dto.ambulanciaId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -61,10 +63,12 @@ public class EquipeService {
 
         validarComposicao(equipe);
 
+        equipe = equipeRepository.save(equipe);
+
         ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
         ambulanciaRepository.save(ambulancia);
 
-        return equipeRepository.save(equipe);
+        return equipe;
     }
 
     public Page<Equipe> findAll(Pageable pageable, String filtro, Boolean ativo, TipoAmbulancia tipo) {
