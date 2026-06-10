@@ -13,12 +13,14 @@
       </p-tablist>
       <p-tabpanels style="background-color: transparent; padding: 0.875rem 0 1.125rem 0;">
         <p-tabpanel [value]="0">
-          <app-profissionais-component></app-profissionais-component>
+          @if (abaAtiva === 0) {
+            <app-profissionais-component></app-profissionais-component>
+          }
         </p-tabpanel>
         <p-tabpanel [value]="1">
-          <ng-template #content>
+          @if (abaAtiva === 1) {
             <app-equipes-component></app-equipes-component>
-          </ng-template>
+          }
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>

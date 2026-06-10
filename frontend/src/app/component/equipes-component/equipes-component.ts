@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { Toast } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -55,8 +55,6 @@ export class EquipesComponent implements OnInit, OnDestroy {
   private confirmationService = inject(ConfirmationService);
   private ref: DynamicDialogRef | null = inject(DynamicDialogRef);
 
-  @ViewChild('cadastroForm') cadastroForm!: NgForm;
-
   equipes: EquipeExibicaoModel[] = [];
 
   carregando: boolean = true;
@@ -79,7 +77,6 @@ export class EquipesComponent implements OnInit, OnDestroy {
   private buscaSubscription!: Subscription;
 
   ngOnInit(): void {
-    //todo carregar os disponiveis - o backend precisa de um metodo que retorne ambulancias e profissionais sem equipe
     this.buscaSubscription = this.buscaSubject.pipe(debounceTime(300)).subscribe(() => {
       this.paginaAtual = 0;
       this.carregarDados();
@@ -127,8 +124,6 @@ export class EquipesComponent implements OnInit, OnDestroy {
         },
       });
   }
-
-  protected salvarEquipe() {}
 
   protected confirmarExclusao(equipe: EquipeExibicaoModel) {
     this.confirmationService.confirm({

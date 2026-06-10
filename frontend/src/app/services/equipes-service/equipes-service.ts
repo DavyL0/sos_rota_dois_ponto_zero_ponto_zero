@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page } from '../../model/page.model';
-import { EquipeExibicaoModel } from '../../model/equipes.model';
+import { EquipeCadastroModel, EquipeExibicaoModel } from '../../model/equipes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,5 +33,13 @@ export class EquipesService {
     }
 
     return this.http.get<Page<EquipeExibicaoModel>>(`${this.apiUrl}`, { params });
+  }
+
+  salvarEquipe(equipe: EquipeCadastroModel): Observable<EquipeExibicaoModel> {
+    return this.http.post<EquipeExibicaoModel>(`${this.apiUrl}`, equipe);
+  }
+
+  atualizarEquipe(id: number, equipe: EquipeCadastroModel): Observable<EquipeExibicaoModel> {
+    return this.http.put<EquipeExibicaoModel>(`${this.apiUrl}/${id}`, equipe);
   }
 }

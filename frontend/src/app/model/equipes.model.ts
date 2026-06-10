@@ -11,5 +11,5 @@ export interface EquipeExibicaoModel {
 export interface EquipeCadastroModel {
   ambulanciaId: number | null;
   ativo: boolean;
-  profissionaisIds: number[];
+  profissionalIds: number[];
 }
