@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author Murilo Nunes <murilo_no@outlook.com>
  * @author Hartur Sales Xavier <hartursalesxavier@gmail.com>
@@ -40,6 +42,14 @@ public class AmbulanciaController {
             @RequestParam(required = false) String filtro
     ) {
         Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao, filtro).map(AmbulanciaExibicaoDTO::new);
+        return ResponseEntity.ok(ambulancias);
+    }
+
+    @GetMapping("/sem-equipe")
+    public ResponseEntity<List<AmbulanciaExibicaoDTO>> listarAmbulanciasSemEquipe() {
+        List<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findSemEquipe().stream()
+                .map(AmbulanciaExibicaoDTO::new)
+                .toList();
         return ResponseEntity.ok(ambulancias);
     }
 

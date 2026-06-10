@@ -30,5 +30,9 @@ public interface AmbulanciaRepository extends JpaRepository<Ambulancia, Long> {
 
     List<Ambulancia> findByStatus(StatusAmbulancia status);
 
+    @EntityGraph(attributePaths = {"bairroBase"})
+    @Query("SELECT a FROM Ambulancia a WHERE NOT EXISTS (SELECT e.id FROM Equipe e WHERE e.ambulancia = a)")
+    List<Ambulancia> findSemEquipe();
+
     boolean existsByPlaca(String placa);
 }

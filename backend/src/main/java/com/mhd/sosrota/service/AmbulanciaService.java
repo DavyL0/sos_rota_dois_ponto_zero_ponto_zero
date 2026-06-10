@@ -66,6 +66,10 @@ public class AmbulanciaService {
         return ambulanciaRepository.findByStatus(status);
     }
 
+    public List<Ambulancia> findSemEquipe() {
+        return ambulanciaRepository.findSemEquipe();
+    }
+
     public Ambulancia atualizar(Long id, AmbulanciaCadastroDTO dto) {
         var ambulancia = findById(id);
 
