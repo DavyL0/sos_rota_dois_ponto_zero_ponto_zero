@@ -5,11 +5,7 @@ import { FuncaoProfissional } from '../../model/profissional.model';
 import { AmbulanciasService } from '../../services/ambulancias-service/ambulancias-service';
 import { ProfissionaisService } from '../../services/profissionais-service/profissionais-service';
 import { MessageService } from 'primeng/api';
-import {
-  StatusAmbulancia,
-  TipoAmbulancia,
-  TipoAmbulanciaLabel,
-} from '../../model/ambulancia.model';
+import { TipoAmbulancia, TipoAmbulanciaLabel } from '../../model/ambulancia.model';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NgClass } from '@angular/common';
 import { Select } from 'primeng/select';
@@ -46,15 +42,7 @@ export class CriarEquipeComponent implements OnInit {
   @Input() enfermeiroSelecionadoId?: number | null = null;
   @Input() medicoSelecionadoId?: number | null = null;
 
-  ambulanciasDisponiveis: any[] = [
-    {
-      id: 1,
-      placa: 'ABC1D23',
-      tipo: TipoAmbulancia.BASICA,
-      status: StatusAmbulancia.DISPONIVEL,
-      bairro: { id: 1, nome: 'Centro' },
-    },
-  ];
+  ambulanciasDisponiveis: any[] = [];
   condutoresDisponiveis: any[] = [];
   enfermeirosDisponiveis: any[] = [];
   medicosDisponiveis: any[] = [];
@@ -79,7 +67,7 @@ export class CriarEquipeComponent implements OnInit {
   protected carregarDadosFormulario(equipeId?: number) {
     this.carregandoCadastro = true;
     forkJoin({
-      // ambulancias: this.ambulanciasService.obterAmbulanciasDisponiveis(equipeId),
+      ambulancias: this.ambulanciasService.obterAmbulanciasDisponiveis(equipeId),
       profissionais: this.profissionaisService.obterProfissionaisDisponiveis(equipeId),
     })
       .pipe(
@@ -89,8 +77,8 @@ export class CriarEquipeComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: ({ profissionais }) => {
-          // this.ambulanciasDisponiveis = ambulancias;
+        next: ({ ambulancias, profissionais }) => {
+          this.ambulanciasDisponiveis = ambulancias;
 
           this.medicosDisponiveis = profissionais.filter(
             (p) => p.funcao === FuncaoProfissional.MEDICO,

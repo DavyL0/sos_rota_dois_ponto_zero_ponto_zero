@@ -45,9 +45,11 @@ public class AmbulanciaController {
         return ResponseEntity.ok(ambulancias);
     }
 
-    @GetMapping("/sem-equipe")
-    public ResponseEntity<List<AmbulanciaExibicaoDTO>> listarAmbulanciasSemEquipe() {
-        List<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findSemEquipe().stream()
+    @GetMapping("/disponiveis")
+    public ResponseEntity<List<AmbulanciaExibicaoDTO>> listarAmbulanciasSemEquipe(
+            @RequestParam(required = false) Long equipeId
+    ) {
+        List<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findSemEquipe(equipeId).stream()
                 .map(AmbulanciaExibicaoDTO::new)
                 .toList();
         return ResponseEntity.ok(ambulancias);

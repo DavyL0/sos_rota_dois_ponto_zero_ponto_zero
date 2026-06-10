@@ -66,8 +66,8 @@ public class AmbulanciaService {
         return ambulanciaRepository.findByStatus(status);
     }
 
-    public List<Ambulancia> findSemEquipe() {
-        return ambulanciaRepository.findSemEquipe();
+    public List<Ambulancia> findSemEquipe(Long equipeId) {
+        return ambulanciaRepository.findSemEquipe(equipeId);
     }
 
     public Ambulancia atualizar(Long id, AmbulanciaCadastroDTO dto) {
