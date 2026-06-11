@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OcorrenciasService } from '../../services/ocorrencias-service/ocorrencias-service';
 import { FormsModule } from '@angular/forms';
@@ -9,16 +9,22 @@ import { Button } from 'primeng/button';
 import { GravidadeOcorrencia, OcorrenciaCadastroModel } from '../../model/ocorrencias.model';
 import { Bairro } from '../../model/bairro.model';
 import { Textarea } from 'primeng/textarea';
+import { BairroService } from '../../services/bairro-service/bairro-service';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-ocorrencia-cadastrar-component',
-  imports: [FormsModule, InputText, NgClass, Select, Button, Textarea],
+  imports: [FormsModule, InputText, NgClass, Select, Button, Textarea, Toast],
+  providers: [MessageService],
   templateUrl: './ocorrencia-cadastrar-component.html',
   styleUrl: './ocorrencia-cadastrar-component.css',
 })
-export class OcorrenciaCadastrarComponent {
-  public ref = inject(DynamicDialogRef);
-  private service = inject(OcorrenciasService);
+export class OcorrenciaCadastrarComponent implements OnInit {
+  private ref = inject(DynamicDialogRef);
+  private ocorrenciaService = inject(OcorrenciasService);
+  private bairrosService = inject(BairroService);
+  private messageService = inject(MessageService);
 
   ocorrenciaCadastrada: OcorrenciaCadastroModel = {
     tipoOcorrencia: '',
@@ -31,16 +37,24 @@ export class OcorrenciaCadastrarComponent {
     { label: 'Média', value: GravidadeOcorrencia.MEDIA },
     { label: 'Baixa', value: GravidadeOcorrencia.BAIXA },
   ];
-  bairros: Bairro[] = [
-    //todo receber os bairros do backend
-    { id: 2, nome: 'Centro' },
-  ];
+  bairros: Bairro[] = [];
   erroBackend: string | null = null;
 
+  ngOnInit() {
+    this.bairrosService.obterBairros().subscribe({
+      next: (dados) => {
+        this.bairros = dados;
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Não foi possível carregar os bairros ', detail: err.error.message });
+      },
+    });
+  }
+
   salvarOcorrencia() {
-    this.service.criarOcorrencia(this.ocorrenciaCadastrada).subscribe({
-      next: () => {
-        this.ref.close(true);
+    this.ocorrenciaService.criarOcorrencia(this.ocorrenciaCadastrada).subscribe({
+      next: (ocorrenciaCriada) => {
+        this.ref.close(ocorrenciaCriada);
       },
       error: (err) => {
         this.erroBackend = err.error.message;
