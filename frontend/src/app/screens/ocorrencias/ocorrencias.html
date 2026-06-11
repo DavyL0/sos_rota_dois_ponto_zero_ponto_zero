@@ -89,6 +89,7 @@
                   pTooltip="Editar ocorrência"
                   [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
                   || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                  (onClick)="editarOcorrencia(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-times-circle"
@@ -97,6 +98,7 @@
                   pTooltip="Cancelar ocorrência"
                   [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
                   || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                  (onClick)="cancelarOcorrencia(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-trash"

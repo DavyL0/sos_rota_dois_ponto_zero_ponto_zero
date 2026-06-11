@@ -29,6 +29,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Toast } from 'primeng/toast';
+import { OcorrenciaCancelarComponent } from '../../component/ocorrencia-cancelar-component/ocorrencia-cancelar-component';
 
 @Component({
   selector: 'app-ocorrencias',
@@ -63,8 +64,11 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   private timerSubscription!: Subscription;
 
   ngOnInit() {
-    this.timerSubscription = interval(1000).subscribe(() => {
-      this.atualizarSla();
+    this.ngZone.runOutsideAngular(() => {
+      this.timerSubscription = interval(1000).subscribe(() => {
+        this.atualizarSla();
+        this.cd.detectChanges();
+      });
     });
   }
 
@@ -97,6 +101,58 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
           this.cd.markForCheck();
         },
       });
+  }
+
+  protected editarOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {
+    if (
+      ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA ||
+      ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+    ) {
+      this.confirmationService.confirm({
+        header: 'Ação Bloqueada',
+        message: 'Não é possível editar ocorrências finalizadas.',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
+        acceptButtonProps: { severity: 'primary' },
+      });
+      return;
+    }
+  }
+
+  protected cancelarOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {
+    this.ref = this.dialogService.open(OcorrenciaCancelarComponent, {
+      header: 'Cancelar Ocorrência',
+      width: '60vw',
+      modal: true,
+      closable: true,
+    });
+
+    this.ref?.onClose.subscribe((ocorrencia: OcorrenciaExibicaoModel | null) => {
+      if (ocorrencia) {
+        this.carregarDados();
+      }
+    });
+  }
+
+  protected confirmarExclusao(ocorrencia: OcorrenciaExibicaoModel) {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja excluir a ocorrência?`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Excluir',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        severity: 'danger',
+      },
+      accept: () => {
+        this.excluirOcorrencia(ocorrencia);
+      },
+    });
   }
 
   private excluirOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {

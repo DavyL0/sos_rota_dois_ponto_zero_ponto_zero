@@ -31,6 +31,19 @@ export class OcorrenciasService {
     return this.http.post<OcorrenciaExibicaoModel>(`${this.apiUrl}`, ocorrencia);
   }
 
+  atualizarOcorrencia(
+    id: number,
+    ocorrencia: OcorrenciaCadastroModel,
+  ): Observable<OcorrenciaExibicaoModel> {
+    return this.http.put<OcorrenciaExibicaoModel>(`${this.apiUrl}/${id}`, ocorrencia);
+  }
+
+  cancelarOcorrencia(id: number, justificativa: string): Observable<OcorrenciaExibicaoModel> {
+    return this.http.patch<OcorrenciaExibicaoModel>(`${this.apiUrl}/${id}/cancelar`, {
+      justificativa: justificativa,
+    });
+  }
+
   excluirOcorrencia(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
