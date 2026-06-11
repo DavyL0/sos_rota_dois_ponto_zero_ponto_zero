@@ -41,19 +41,20 @@ public class EquipeService {
     @Transactional
     public Equipe salvar(EquipeCadastroDTO dto) {
         var ambulancia = ambulanciaRepository.findById(dto.ambulanciaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Ambulância não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ambulância não encontrada"));
+
+        if (ambulancia.getStatus() == StatusAmbulancia.MANUTENCAO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível criar uma equipe com uma ambulância em manutenção.");
+        }
 
         if (ambulancia.getStatus() == StatusAmbulancia.DISPONIVEL
                 || ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Esta ambulância já possui equipe ativa ou está em atendimento");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta ambulância já possui equipe ativa ou está em atendimento");
         }
 
         List<Profissional> profissionais = dto.profissionalIds().stream()
                 .map(id -> profissionalRepository.findById(id)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                "Profissional não encontrado: " + id)))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profissional não encontrado: " + id)))
                 .toList();
 
         var equipe = new Equipe();
@@ -77,10 +78,10 @@ public class EquipeService {
 
     public Equipe findById(Long id) {
         return equipeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Equipe não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipe não encontrada"));
     }
 
+    @Transactional
     public Equipe atualizar(Long id, EquipeCadastroDTO dto) {
         var equipe = findById(id);
 
@@ -88,20 +89,38 @@ public class EquipeService {
             boolean ambulanciaOcupada = equipeRepository
                     .existsByAmbulanciaIdAndAtivoTrueAndIdNot(dto.ambulanciaId(), id);
             if (ambulanciaOcupada) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "A ambulância já está em uso por outra equipe ativa");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A ambulância já está em uso por outra equipe ativa");
             }
         }
 
         var ambulancia = ambulanciaRepository.findById(dto.ambulanciaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Ambulância não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ambulância não encontrada"));
+
+        if (ambulancia.getStatus() == StatusAmbulancia.MANUTENCAO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Não é possível alocar uma ambulância que está em manutenção.");
+        }
+
+        var ambulanciaAntiga = equipe.getAmbulancia();
+        if (ambulanciaAntiga.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível editar uma equipe em atendimento");
+        }
+
+        if (!ambulanciaAntiga.equals(ambulancia)) {
+            if (ambulanciaAntiga.getStatus() != StatusAmbulancia.INATIVA) {
+                ambulanciaAntiga.setStatus(StatusAmbulancia.INATIVA);
+                ambulanciaRepository.save(ambulanciaAntiga);
+            }
+        }
 
         List<Profissional> profissionais = dto.profissionalIds().stream()
                 .map(pid -> profissionalRepository.findById(pid)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                 "Profissional não encontrado: " + pid)))
                 .toList();
+
+        ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
+        ambulanciaRepository.save(ambulancia);
 
         equipe.getProfissionais().forEach(p -> p.setEquipe(null));
         equipe.getProfissionais().clear();
@@ -116,18 +135,23 @@ public class EquipeService {
     @Transactional
     public Equipe alterarStatus(Long id, boolean ativo) {
         var equipe = findById(id);
+        var ambulancia = equipe.getAmbulancia();
 
         if (ativo) {
             boolean ambulanciaOcupada = equipeRepository
                     .existsByAmbulanciaIdAndAtivoTrueAndIdNot(equipe.getAmbulancia().getId(), id);
             if (ambulanciaOcupada) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "A ambulância já está em uso por outra equipe ativa");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A ambulância já está em uso por outra equipe ativa");
             }
+            ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
+            ambulanciaRepository.save(ambulancia);
         } else {
-            var ambulancia = equipe.getAmbulancia();
             if (ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível desativar uma equipe em atendimento");
+            }
+            if (ambulancia.getStatus() != StatusAmbulancia.INATIVA) {
+                ambulancia.setStatus(StatusAmbulancia.INATIVA);
+                ambulanciaRepository.save(ambulancia);
             }
         }
 
