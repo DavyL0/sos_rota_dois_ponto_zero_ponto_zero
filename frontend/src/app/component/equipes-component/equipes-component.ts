@@ -193,7 +193,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
         equipe: {
           ambulanciaId: equipe.ambulancia.id,
           ativo: equipe.ativo,
-          profissionaisIds: equipe.profissionais.map((p) => p.id),
+          profissionalIds: equipe.profissionais.map((p) => p.id),
         },
         idEditando: equipe.id,
         ambulanciaSelecionada: equipe.ambulancia,
