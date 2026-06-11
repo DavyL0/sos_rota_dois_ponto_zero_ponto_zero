@@ -36,7 +36,7 @@ public class OcorrenciaController {
 
     @GetMapping
     public ResponseEntity<Page<OcorrenciaExibicaoDTO>> listar(
-            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(ocorrenciaService.findAll(pageable).map(OcorrenciaExibicaoDTO::new));
     }
