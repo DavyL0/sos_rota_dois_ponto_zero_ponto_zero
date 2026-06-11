@@ -52,8 +52,17 @@ public class EquipeController {
     @PutMapping("/{id}")
     public ResponseEntity<EquipeExibicaoDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody @Valid EquipeCadastroDTO dto) {
+            @RequestBody @Valid EquipeCadastroDTO dto
+    ) {
         return ResponseEntity.ok(new EquipeExibicaoDTO(equipeService.atualizar(id, dto)));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<EquipeExibicaoDTO> alterarStatus(
+            @PathVariable Long id,
+            @RequestBody boolean ativo
+    ) {
+        return ResponseEntity.ok(new EquipeExibicaoDTO(equipeService.alterarStatus(id, ativo)));
     }
 
     @DeleteMapping("/{id}")

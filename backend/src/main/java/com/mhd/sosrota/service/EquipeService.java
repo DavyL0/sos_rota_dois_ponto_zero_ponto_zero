@@ -113,6 +113,28 @@ public class EquipeService {
         return equipeRepository.save(equipe);
     }
 
+    @Transactional
+    public Equipe alterarStatus(Long id, boolean ativo) {
+        var equipe = findById(id);
+
+        if (ativo) {
+            boolean ambulanciaOcupada = equipeRepository
+                    .existsByAmbulanciaIdAndAtivoTrueAndIdNot(equipe.getAmbulancia().getId(), id);
+            if (ambulanciaOcupada) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "A ambulância já está em uso por outra equipe ativa");
+            }
+        } else {
+            var ambulancia = equipe.getAmbulancia();
+            if (ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível desativar uma equipe em atendimento");
+            }
+        }
+
+        equipe.setAtivo(ativo);
+        return equipeRepository.save(equipe);
+    }
+
     public void deletar(Long id) {
         var equipe = findById(id);
         equipeRepository.delete(equipe);
