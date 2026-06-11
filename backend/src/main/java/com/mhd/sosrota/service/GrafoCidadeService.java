@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- *
  * @author Murilo Nunes <murilo_no@outlook.com>
- * @date 01/06/2026
- * @brief Class GrafoCidadeService
+ * @author Hartur Sales Xavier <hartursalesxavier@gmail.com>
+ * @date 05/06/2026
+ * @brief Service do Grafo
  */
 @Service
 public class GrafoCidadeService {
+
     private final BairroRepository bairroRepository;
     private final RuaRepository ruaRepository;
-
     private GrafoCidade grafo;
 
     public GrafoCidadeService(BairroRepository bairroRepository, RuaRepository ruaRepository) {
@@ -32,22 +32,15 @@ public class GrafoCidadeService {
     public void carregarGrafo() {
         List<Bairro> bairros = bairroRepository.findAll();
         List<Rua> ruas = ruaRepository.findAllWithBairros();
-
         this.grafo = new GrafoCidade(bairros, ruas);
+        GrafoCidade.setInstance(this.grafo);
     }
 
     public GrafoCidade obterGrafo() {
-        if (this.grafo == null) {
-            carregarGrafo();
-        }
+        if (this.grafo == null) carregarGrafo();
         return this.grafo;
     }
 
-    public List<Bairro> obterBairros() {
-        return obterGrafo().getBairros();
-    }
-
-    public List<Rua> obterRuas() {
-        return obterGrafo().getRuas();
-    }
+    public List<Bairro> obterBairros() { return obterGrafo().getBairros(); }
+    public List<Rua> obterRuas() { return obterGrafo().getRuas(); }
 }

@@ -1,36 +1,72 @@
 package com.mhd.sosrota.controller;
 
+import com.mhd.sosrota.model.dto.ambulancia.AmbulanciaCadastroDTO;
 import com.mhd.sosrota.model.dto.ambulancia.AmbulanciaExibicaoDTO;
 import com.mhd.sosrota.service.AmbulanciaService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
- *
  * @author Murilo Nunes <murilo_no@outlook.com>
- * @date 02/06/2026
- * @brief Class AmbulanciaController
+ * @author Hartur Sales Xavier <hartursalesxavier@gmail.com>
+ * @date 04/06/2026
+ * @brief Controller de ambulâncias
  */
 @RestController
-@RequestMapping("api/ambulancias")
+@RequestMapping("/api/ambulancias")
 public class AmbulanciaController {
+
     private final AmbulanciaService ambulanciaService;
 
     public AmbulanciaController(AmbulanciaService ambulanciaService) {
         this.ambulanciaService = ambulanciaService;
     }
 
+    @PostMapping
+    public ResponseEntity<AmbulanciaExibicaoDTO> salvar(@Valid @RequestBody AmbulanciaCadastroDTO ambulanciaDTO) {
+        var novaAmbulancia = ambulanciaService.salvar(ambulanciaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AmbulanciaExibicaoDTO(novaAmbulancia));
+    }
+
     @GetMapping
     public ResponseEntity<Page<AmbulanciaExibicaoDTO>> listarAmbulancias(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao,
+            @RequestParam(required = false) String filtro
     ) {
-        Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao).map(AmbulanciaExibicaoDTO::new);
+        Page<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findAll(paginacao, filtro).map(AmbulanciaExibicaoDTO::new);
         return ResponseEntity.ok(ambulancias);
+    }
+
+    @GetMapping("/sem-equipe")
+    public ResponseEntity<List<AmbulanciaExibicaoDTO>> listarAmbulanciasSemEquipe() {
+        List<AmbulanciaExibicaoDTO> ambulancias = ambulanciaService.findSemEquipe().stream()
+                .map(AmbulanciaExibicaoDTO::new)
+                .toList();
+        return ResponseEntity.ok(ambulancias);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AmbulanciaExibicaoDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulanciaService.findById(id)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AmbulanciaExibicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AmbulanciaCadastroDTO ambulanciaDTO) {
+        var ambulancia = ambulanciaService.atualizar(id, ambulanciaDTO);
+        return ResponseEntity.ok(new AmbulanciaExibicaoDTO(ambulancia));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        ambulanciaService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
