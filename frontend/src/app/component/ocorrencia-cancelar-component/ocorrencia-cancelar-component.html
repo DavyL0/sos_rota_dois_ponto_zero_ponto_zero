@@ -1,1 +1,31 @@
-<p>ocorrencia-cancelar-component works!</p>
+<form #cancelarForm="ngForm" (ngSubmit)="confirmarCancelamento()" class="form-container">
+
+  <div class="form-item">
+    <label for="justificativa">Justificativa do Cancelamento*</label>
+    <textarea
+      pInputTextarea
+      id="justificativa"
+      name="justificativa"
+      [(ngModel)]="justificativa"
+      rows="5"
+      placeholder="Informe o motivo do cancelamento..."
+      style="resize: vertical; min-height: 100px;"
+      [required]="true"
+      #justificativaVar="ngModel"
+      [ngClass]="{'ng-invalid ng-dirty': justificativaVar.invalid && (justificativaVar.dirty || justificativaVar.touched)}">
+    </textarea>
+
+    @if (justificativaVar.invalid && (justificativaVar.dirty || justificativaVar.touched)) {
+      <small class="error-message">A justificativa é obrigatória para realizar o cancelamento.</small>
+    }
+  </div>
+
+  @if (erroBackend) {
+    <small class="error-message server-error">{{ erroBackend }}</small>
+  }
+
+  <div class="form-actions">
+    <p-button label="Voltar" severity="secondary" (onClick)="fechar()" [disabled]="carregando"></p-button>
+    <p-button label="Confirmar Cancelamento" severity="danger" type="submit" [disabled]="cancelarForm.invalid || carregando" [loading]="carregando"></p-button>
+  </div>
+</form>

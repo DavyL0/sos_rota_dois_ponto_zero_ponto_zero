@@ -95,7 +95,7 @@
                   icon="pi pi-times-circle"
                   [text]="true"
                   severity="danger"
-                  pTooltip="Cancelar ocorrência"
+                  pTooltip="Cancelar"
                   [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
                   || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
                   (onClick)="cancelarOcorrencia(ocorrencia)"

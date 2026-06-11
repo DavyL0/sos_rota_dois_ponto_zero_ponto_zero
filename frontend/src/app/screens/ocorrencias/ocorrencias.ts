@@ -126,6 +126,9 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       width: '60vw',
       modal: true,
       closable: true,
+      inputValues: {
+        idEditando: ocorrencia.id,
+      },
     });
 
     this.ref?.onClose.subscribe((ocorrencia: OcorrenciaExibicaoModel | null) => {
