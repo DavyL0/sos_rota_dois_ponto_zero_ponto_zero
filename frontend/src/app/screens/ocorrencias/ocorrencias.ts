@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  NgZone,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
 import { Button } from 'primeng/button';
 import {
@@ -16,21 +24,27 @@ import { NgClass } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OcorrenciaDetalhesComponent } from '../../component/ocorrencia-detalhes-component/ocorrencia-detalhes-component';
-import {
-  OcorrenciaCadastrarComponent
-} from '../../component/ocorrencia-cadastrar-component/ocorrencia-cadastrar-component';
+import { OcorrenciaCadastrarComponent } from '../../component/ocorrencia-cadastrar-component/ocorrencia-cadastrar-component';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-ocorrencias',
-  imports: [Button, TableModule, Skeleton, Tooltip, NgClass],
-  providers: [DialogService],
+  imports: [Button, TableModule, Skeleton, Tooltip, NgClass, ConfirmDialog, Toast],
+  providers: [DialogService, DynamicDialogRef, ConfirmationService, MessageService],
   templateUrl: './ocorrencias.html',
   styleUrl: './ocorrencias.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   private ocorrenciasService = inject(OcorrenciasService);
   private cd = inject(ChangeDetectorRef);
-  ref: DynamicDialogRef | undefined | null;
+  private ngZone = inject(NgZone);
+  private ref: DynamicDialogRef | null = inject(DynamicDialogRef);
+  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
 
   constructor(public dialogService: DialogService) {
     super();
@@ -39,6 +53,8 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   ocorrencias: OcorrenciaExibicaoModel[] = [];
 
   totalElementos = 0;
+
+  deletandoId: number | null = null;
 
   protected readonly StatusOcorrencia = StatusOcorrencia;
   gravidadeLabel = GravidadeOcorrenciaLabel;
@@ -83,19 +99,66 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       });
   }
 
+  private excluirOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {
+    this.deletandoId = ocorrencia.id;
+    if (ocorrencia.statusOcorrencia !== StatusOcorrencia.ABERTA) {
+      this.confirmationService.confirm({
+        header: 'Ação Bloqueada',
+        message: 'Não é possível deletar uma ocorrência com histórico. Cancele-a, em vez disso.',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
+        acceptButtonProps: { severity: 'primary' },
+      });
+      this.deletandoId = null;
+      return;
+    }
+    this.ocorrenciasService.excluirOcorrencia(ocorrencia.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ocorrência excluída com sucesso',
+        });
+        this.deletandoId = null;
+        this.carregarDados();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log('Erro ao excluir ocorrência:', err);
+        this.deletandoId = null;
+        if (err.status === 400) {
+          this.confirmationService.confirm({
+            header: 'Ação Bloqueada',
+            message: err.error.message,
+            icon: 'pi pi-exclamation-circle',
+            acceptLabel: 'Ok',
+            rejectVisible: false,
+            acceptButtonProps: { severity: 'primary' },
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Houve um erro ao excluir a ocorrência',
+          });
+        }
+      },
+    });
+  }
+
   abrirCadastrar() {
     this.ref = this.dialogService.open(OcorrenciaCadastrarComponent, {
       header: 'Adicionar nova ocorrência',
       width: '60vw',
       modal: true,
       closable: true,
-    })
+    });
 
     this.ref?.onClose.subscribe((result) => {
       if (result) {
         this.carregarDados();
       }
-    })
+    });
   }
 
   abrirDetalhes(ocorrencia: OcorrenciaExibicaoModel) {

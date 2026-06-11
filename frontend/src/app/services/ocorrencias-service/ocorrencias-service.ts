@@ -30,4 +30,8 @@ export class OcorrenciasService {
   criarOcorrencia(ocorrencia: OcorrenciaCadastroModel): Observable<OcorrenciaExibicaoModel> {
     return this.http.post<OcorrenciaExibicaoModel>(`${this.apiUrl}`, ocorrencia);
   }
+
+  excluirOcorrencia(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

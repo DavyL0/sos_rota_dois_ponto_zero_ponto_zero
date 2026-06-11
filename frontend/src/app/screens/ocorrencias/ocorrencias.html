@@ -9,6 +9,9 @@
     </div>
   </div>
 
+  <p-toast position="top-center"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
   <div class="table-wrapper">
     <p-table #tabelaOcorrencias [value]="ocorrencias" [paginator]="true" [rows]="10"
              [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [loading]="carregando"
@@ -100,6 +103,8 @@
                   [text]="true"
                   severity="danger"
                   pTooltip="Excluir"
+                  [loading]="deletandoId === ocorrencia.id"
+                  (onClick)="confirmarExclusao(ocorrencia)"
                 />
               }
             </td>

@@ -102,6 +102,10 @@ public class OcorrenciaService {
     public void deletar(Long id) {
         var ocorrencia = findById(id);
 
+        if (ocorrencia.getStatusOcorrencia() != StatusOcorrencia.ABERTA) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível deletar uma ocorrência com histórico. Cancele-a, em vez disso");
+        }
+
         if (ocorrencia.getStatusOcorrencia() == StatusOcorrencia.DESPACHADA
                 || ocorrencia.getStatusOcorrencia() == StatusOcorrencia.EM_ATENDIMENTO) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
