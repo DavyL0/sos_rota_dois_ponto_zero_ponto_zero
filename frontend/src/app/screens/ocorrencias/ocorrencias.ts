@@ -103,23 +103,6 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       });
   }
 
-  protected editarOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {
-    if (
-      ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA ||
-      ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
-    ) {
-      this.confirmationService.confirm({
-        header: 'Ação Bloqueada',
-        message: 'Não é possível editar ocorrências finalizadas.',
-        icon: 'pi pi-exclamation-circle',
-        acceptLabel: 'Ok',
-        rejectVisible: false,
-        acceptButtonProps: { severity: 'primary' },
-      });
-      return;
-    }
-  }
-
   protected cancelarOcorrencia(ocorrencia: OcorrenciaExibicaoModel) {
     this.ref = this.dialogService.open(OcorrenciaCancelarComponent, {
       header: 'Cancelar Ocorrência',
@@ -133,6 +116,11 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
     this.ref?.onClose.subscribe((ocorrencia: OcorrenciaExibicaoModel | null) => {
       if (ocorrencia) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ocorrência atualizada com sucesso',
+        });
         this.carregarDados();
       }
     });
@@ -215,6 +203,49 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
     this.ref?.onClose.subscribe((result) => {
       if (result) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ocorrência criada com sucesso',
+        });
+        this.carregarDados();
+      }
+    });
+  }
+
+  abrirEditar(ocorrencia: OcorrenciaExibicaoModel) {
+    if (
+      ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA ||
+      ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+    ) {
+      this.confirmationService.confirm({
+        header: 'Ação Bloqueada',
+        message: 'Não é possível editar ocorrências finalizadas.',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
+        acceptButtonProps: { severity: 'primary' },
+      });
+      return;
+    }
+
+    this.ref = this.dialogService.open(OcorrenciaCadastrarComponent, {
+      header: 'Editar ocorrência',
+      width: '60vw',
+      modal: true,
+      closable: true,
+      inputValues: {
+        ocorrenciaEditando: ocorrencia,
+      },
+    });
+
+    this.ref?.onClose.subscribe((result) => {
+      if (result) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ocorrência atualizada com sucesso',
+        });
         this.carregarDados();
       }
     });

@@ -5,7 +5,7 @@
   <div class="form-item">
     <label for="tipoOcorrencia">Tipo da Ocorrência*</label>
     <input pInputText id="tipoOcorrencia" name="tipoOcorrencia" type="text"
-             [(ngModel)]="ocorrenciaCadastrada.tipoOcorrencia" maxlength="50"
+           [(ngModel)]="ocorrenciaCadastrada.tipoOcorrencia" maxlength="50"
            placeholder="Ex: Mal súbito, Acidente de trânsito..."
            [required]="true" #tipoVar="ngModel"
            [ngClass]="{'ng-invalid ng-dirty': tipoVar.invalid && (tipoVar.dirty || tipoVar.touched)}">
@@ -60,6 +60,7 @@
 
   <div class="form-actions">
     <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
-    <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid"></p-button>
+    <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid ||semAlteracoes"
+              [loading]="carregandoSalvar"></p-button>
   </div>
 </form>
