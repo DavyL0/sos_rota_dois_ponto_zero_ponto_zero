@@ -135,8 +135,23 @@ public class EquipeService {
         return equipeRepository.save(equipe);
     }
 
+    @Transactional
     public void deletar(Long id) {
         var equipe = findById(id);
+
+        var ambulancia = equipe.getAmbulancia();
+
+        if (ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir uma equipe em atendimento");
+        }
+        if (ambulancia.getStatus() != StatusAmbulancia.INATIVA) {
+            ambulancia.setStatus(StatusAmbulancia.INATIVA);
+            ambulanciaRepository.save(ambulancia);
+        }
+
+        equipe.getProfissionais().forEach(p -> p.setEquipe(null));
+        equipe.getProfissionais().clear();
+
         equipeRepository.delete(equipe);
     }
 

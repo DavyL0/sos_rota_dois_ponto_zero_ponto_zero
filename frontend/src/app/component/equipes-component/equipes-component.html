@@ -64,10 +64,18 @@
             (onClick)="alterarStatus(equipe)">
           </p-button>
           <p-button
+            icon="pi pi-trash"
+            outlined="true"
+            severity="danger"
+            pTooltip="Excluir"
+            (onClick)="confirmarExclusao(equipe)">
+          </p-button>
+          <p-button
             label="Editar"
             icon="pi pi-pencil"
             outlined="true"
             severity="info"
+            [loading]="excluindoId === equipe.id"
             (onClick)="abrirEdicao(equipe)">
           </p-button>
         </div>

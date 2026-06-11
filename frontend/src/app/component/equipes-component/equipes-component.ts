@@ -60,6 +60,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
 
   carregando: boolean = true;
   alterandoStatusId: number | null = null;
+  excluindoId: number | null = null;
   totalElementos: number = 0;
   paginaAtual: number = 0;
   tamanhoPagina: number = 10;
@@ -201,7 +202,42 @@ export class EquipesComponent implements OnInit, OnDestroy {
     });
   }
 
-  private excluirEquipe(id: number) {}
+  private excluirEquipe(id: number) {
+    this.excluindoId = id;
+
+    this.equipesService.excluirEquipe(id).subscribe({
+      next: () => {
+        this.excluindoId = null;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Equipe excluída com sucesso',
+        });
+        this.carregarDados();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Erro ao excluir equipe:', err);
+        this.excluindoId = null;
+        if (err.status === 400) {
+          const msg = err.error?.message;
+          this.confirmationService.confirm({
+            header: 'Ação Bloqueada',
+            message: msg || 'Não foi possível excluir a equipe',
+            icon: 'pi pi-exclamation-circle',
+            acceptLabel: 'Ok',
+            rejectVisible: false,
+            acceptButtonProps: { severity: 'primary' },
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Houve um erro ao excluir a equipe',
+          });
+        }
+      },
+    });
+  }
 
   protected filtrar() {
     this.buscaSubject.next();

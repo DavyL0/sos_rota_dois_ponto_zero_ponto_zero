@@ -44,6 +44,10 @@ export class EquipesService {
   }
 
   alterarStatusEquipe(id: number, ativo: boolean): Observable<EquipeExibicaoModel> {
-    return this.http.patch<EquipeExibicaoModel>(`${this.apiUrl}/${id}/status`,  ativo );
+    return this.http.patch<EquipeExibicaoModel>(`${this.apiUrl}/${id}/status`, ativo);
+  }
+
+  excluirEquipe(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
