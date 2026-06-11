@@ -24,6 +24,7 @@ import { SelectButton } from 'primeng/selectbutton';
 import { Paginator, PaginatorState } from 'primeng/paginator';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CriarEquipeComponent } from '../criar-equipe-component/criar-equipe-component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-equipes-component',
@@ -58,6 +59,7 @@ export class EquipesComponent implements OnInit, OnDestroy {
   equipes: EquipeExibicaoModel[] = [];
 
   carregando: boolean = true;
+  alterandoStatusId: number | null = null;
   totalElementos: number = 0;
   paginaAtual: number = 0;
   tamanhoPagina: number = 10;
@@ -123,6 +125,60 @@ export class EquipesComponent implements OnInit, OnDestroy {
           this.cd.markForCheck();
         },
       });
+  }
+
+  protected alterarStatus(equipe: EquipeExibicaoModel) {
+    const novoStatus = !equipe.ativo;
+
+    this.alterandoStatusId = equipe.id;
+    this.equipesService.alterarStatusEquipe(equipe.id, novoStatus).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `Equipe ${novoStatus ? 'ativada' : 'inativada'} com sucesso!`,
+        });
+        this.alterandoStatusId = null;
+        this.carregarDados();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Erro ao alterar status da equipe:', err);
+        this.alterandoStatusId = null;
+        if (err.status === 400) {
+          const msg = err.error?.message;
+
+          switch (msg) {
+            case 'A ambulância já está em uso por outra equipe ativa':
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'A ambulância dessa equipe já está em uso por outra equipe ativa.',
+              });
+              break;
+            case 'Não é possível desativar uma equipe em atendimento':
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Não é possível desativar uma equipe em atendimento.',
+              });
+              break;
+            default:
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: msg,
+              });
+              break;
+          }
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: err.message,
+          });
+        }
+      },
+    });
   }
 
   protected confirmarExclusao(equipe: EquipeExibicaoModel) {

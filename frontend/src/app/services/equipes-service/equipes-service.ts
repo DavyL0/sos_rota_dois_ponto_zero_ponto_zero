@@ -42,4 +42,8 @@ export class EquipesService {
   atualizarEquipe(id: number, equipe: EquipeCadastroModel): Observable<EquipeExibicaoModel> {
     return this.http.put<EquipeExibicaoModel>(`${this.apiUrl}/${id}`, equipe);
   }
+
+  alterarStatusEquipe(id: number, ativo: boolean): Observable<EquipeExibicaoModel> {
+    return this.http.patch<EquipeExibicaoModel>(`${this.apiUrl}/${id}/status`,  ativo );
+  }
 }

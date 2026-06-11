@@ -59,7 +59,9 @@
             [icon]="equipe.ativo ? 'pi pi-power-off' : 'pi pi-check-circle'"
             [severity]="equipe.ativo ? 'danger' : 'success'"
             [text]="true"
-            size="small">
+            [loading]="alterandoStatusId === equipe.id"
+            size="small"
+            (onClick)="alterarStatus(equipe)">
           </p-button>
           <p-button
             label="Editar"
@@ -68,7 +70,6 @@
             severity="info"
             (onClick)="abrirEdicao(equipe)">
           </p-button>
-
         </div>
       </div>
 
