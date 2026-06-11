@@ -37,6 +37,7 @@ export class OcorrenciaCancelarComponent {
         this.ref.close(ocorrenciaCancelada);
       },
       error: (err) => {
+        console.log('Erro ao cancelar', err)
         this.carregando = false;
         this.erroBackend = err.error?.message || 'Erro ao cancelar a ocorrência. Tente novamente.';
       },

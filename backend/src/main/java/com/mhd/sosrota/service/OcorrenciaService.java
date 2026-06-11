@@ -92,8 +92,16 @@ public class OcorrenciaService {
         ocorrencia.setStatusOcorrencia(StatusOcorrencia.CANCELADA);
         ocorrencia.setSlaFinal(calcularSLAFinal(ocorrencia.getLimiteSLA()));
 
-        String novaObs = (ocorrencia.getObservacao() != null ? ocorrencia.getObservacao() : "")
-                + "\n[CANCELAMENTO]: " + justificativa;
+        var obsAtual = ocorrencia.getObservacao() != null ? ocorrencia.getObservacao().strip() : "";
+
+        String novaObs;
+
+        if (obsAtual.isEmpty()) {
+            novaObs = "[CANCELAMENTO]: " + justificativa;
+        } else {
+            novaObs = obsAtual + "\n[CANCELAMENTO]: " + justificativa;
+        }
+
         ocorrencia.setObservacao(novaObs);
 
         return ocorrenciaRepository.save(ocorrencia);

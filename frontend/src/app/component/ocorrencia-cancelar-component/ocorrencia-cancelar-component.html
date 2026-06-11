@@ -26,6 +26,6 @@
 
   <div class="form-actions">
     <p-button label="Voltar" severity="secondary" (onClick)="fechar()" [disabled]="carregando"></p-button>
-    <p-button label="Confirmar Cancelamento" severity="danger" type="submit" [disabled]="cancelarForm.invalid || carregando" [loading]="carregando"></p-button>
+    <p-button label="Confirmar Cancelamento" severity="danger" type="submit" [disabled]="!justificativa || carregando" [loading]="carregando"></p-button>
   </div>
 </form>
