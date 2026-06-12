@@ -50,7 +50,6 @@ sos_rota_dois_ponto_zero_ponto_zero/
 - **Java 17+** com Spring Boot
 - **Spring Data JPA** para persistência de dados
 - **Spring Web** para API REST
-- Testes com JUnit 5
 
 ### Frontend
 - **Angular 21.2.7** - Framework principal
@@ -60,10 +59,10 @@ sos_rota_dois_ponto_zero_ponto_zero/
 - **HTML5 & CSS3** - Markup e estilos
 
 ### Composição de Linguagens
-- **Java**: 47.1%
-- **TypeScript**: 31.3%
-- **HTML**: 14.8%
-- **CSS**: 6.8%
+- **Java**
+- **TypeScript**
+- **HTML**
+- **CSS**
 
 ---
 
@@ -72,7 +71,6 @@ sos_rota_dois_ponto_zero_ponto_zero/
 ### Backend
 - Java 17 ou superior
 - Maven 3.8+
-- MySQL ou banco de dados compatível
 
 ### Frontend
 - Node.js 18+ e npm/yarn
@@ -89,16 +87,13 @@ sos_rota_dois_ponto_zero_ponto_zero/
    cd backend
    ```
 
-2. **Configure o banco de dados** (se necessário):
-   - Edite `application.properties` ou `application.yml` com suas credenciais
-
-3. **Execute a aplicação:**
+2. **Execute a aplicação:**
    ```bash
    mvn clean install
    mvn spring-boot:run
    ```
 
-4. **A API estará disponível em:** `http://localhost:8080`
+3. **A API estará disponível em:** `http://localhost:8080`
 
 ### Frontend
 
@@ -228,46 +223,14 @@ Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](L
 
 ---
 
-## 👤 Autor
+## 👤 Autores
 
 **Davy Lopes** - [@DavyL0](https://github.com/DavyL0)
+**Murilo Nunes** - [@muriloonunes](https://github.com/muriloonunes)
+**Hartur Sales** - [@hartur-sales](https://github.com/hartur-sales)
 
 ---
 
 ## 📝 Changelog
 
 Veja o arquivo [CHANGELOG.md](CHANGELOG.md) para histórico de versões e alterações.
-
----
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
----
-
-## 📞 Suporte
-
-Se você tiver dúvidas ou encontrar problemas, abra uma [issue](https://github.com/DavyL0/sos_rota_dois_ponto_zero_ponto_zero/issues) no repositório.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Integração com API de mapas (Google Maps/Leaflet)
-- [ ] Sistema de notificações em tempo real
-- [ ] Dashboard com gráficos de performance
-- [ ] Autenticação e autorização
-- [ ] Integração com banco de dados
-- [ ] Containerização com Docker
-- [ ] Deploy em produção
-
----
-
-**Desenvolvido com ❤️ para melhorar o gerenciamento de emergências médicas**
