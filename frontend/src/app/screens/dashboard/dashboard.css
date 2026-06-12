@@ -5,13 +5,6 @@
   margin-bottom: 1.5rem;
 }
 
-.dashboard-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
 .metric-card {
   background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
@@ -60,72 +53,12 @@
   font-size: 1.5rem;
 }
 
-.details-panel {
-  background: var(--p-content-background);
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  display: flex;
-  flex-direction: column;
-}
-
-.panel-title {
-  margin: 0 0 1.25rem 0;
-  font-size: 1.15rem;
-  color: var(--p-text-color);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.85rem 1rem;
-  background-color: var(--p-content-hover-background);
-  border-radius: 8px;
-  border: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.list-item:hover {
-  border-color: var(--p-content-border-color);
-}
-
-.item-label {
-  font-weight: 500;
-  color: var(--p-text-color);
-}
-
-.item-value {
-  font-weight: 700;
-  color: var(--p-text-color);
-  background-color: var(--p-surface-200);
-  padding: 0.2rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
 .table-title {
   font-family: 'Teko', sans-serif;
   font-size: 1.8rem;
   font-weight: 600;
   color: var(--p-text-color);
   margin: 0;
-}
-
-:host-context(.app-dark) .item-value {
-  background-color: var(--p-surface-800);
 }
 
 .empty-message {

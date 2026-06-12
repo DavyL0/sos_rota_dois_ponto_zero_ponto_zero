@@ -7,7 +7,7 @@ import {
   GravidadeOcorrenciaLabel,
   OcorrenciaExibicaoModel,
   StatusOcorrencia,
-  StatusOcorrenciaLabel,
+  StatusOcorrenciaLabel
 } from '../../model/ocorrencias.model';
 import { TableModule } from 'primeng/table';
 import { Skeleton } from 'primeng/skeleton';
@@ -16,10 +16,14 @@ import { Tag } from 'primeng/tag';
 import { NgClass } from '@angular/common';
 import { Tooltip } from 'primeng/tooltip';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { OcorrenciaDetalhesComponent } from '../../component/ocorrencia-detalhes-component/ocorrencia-detalhes-component';
+import {
+  OcorrenciaDetalhesComponent
+} from '../../component/ocorrencia-detalhes-component/ocorrencia-detalhes-component';
 import { interval, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { OcorrenciaCancelarComponent } from '../../component/ocorrencia-cancelar-component/ocorrencia-cancelar-component';
+import {
+  OcorrenciaCancelarComponent
+} from '../../component/ocorrencia-cancelar-component/ocorrencia-cancelar-component';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import {
@@ -76,7 +80,6 @@ export class Dashboard implements OnInit, OnDestroy {
   private carregarDados() {
     this.dashboardService.carregarDashboard().subscribe({
       next: (dashboard) => {
-        console.log(dashboard);
         this.dashboard = dashboard;
         this.cd.markForCheck();
       },
