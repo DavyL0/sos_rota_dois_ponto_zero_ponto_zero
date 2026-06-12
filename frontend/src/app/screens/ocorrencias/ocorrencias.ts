@@ -36,7 +36,7 @@ import { BairroService } from '../../services/bairro-service/bairro-service';
 import { Bairro } from '../../model/bairro.model';
 import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import {Tag} from "primeng/tag";
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-ocorrencias',
@@ -325,7 +325,8 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       width: '60vw',
       modal: true,
       closable: true,
-      data: { ocorrencia },
+      focusOnShow: false,
+      inputValues: { ocorrencia: ocorrencia },
     });
   }
 

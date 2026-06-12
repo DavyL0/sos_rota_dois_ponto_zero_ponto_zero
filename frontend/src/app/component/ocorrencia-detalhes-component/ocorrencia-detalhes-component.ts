@@ -1,14 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Tag } from 'primeng/tag';
 import { Button } from 'primeng/button';
 import {
   GravidadeOcorrencia,
   GravidadeOcorrenciaLabel,
+  OcorrenciaExibicaoModel,
   StatusOcorrencia,
-  StatusOcorrenciaLabel
+  StatusOcorrenciaLabel,
 } from '../../model/ocorrencias.model';
 import { TipoAmbulancia, TipoAmbulanciaLabel } from '../../model/ambulancia.model';
+import { AtendimentoService } from '../../services/atendimento-service/atendimento-service';
+import { AtendimentoExibicaoModel } from '../../model/atendimento.model';
 
 @Component({
   selector: 'app-ocorrencia-detalhes-component',
@@ -17,26 +20,37 @@ import { TipoAmbulancia, TipoAmbulanciaLabel } from '../../model/ambulancia.mode
   styleUrl: './ocorrencia-detalhes-component.css',
 })
 export class OcorrenciaDetalhesComponent implements OnInit {
+  private atendimentoService = inject(AtendimentoService);
   public ref = inject(DynamicDialogRef);
-  public config = inject(DynamicDialogConfig);
+  private cd = inject(ChangeDetectorRef);
 
-  ocorrencia: any;
+  @Input() ocorrencia!: OcorrenciaExibicaoModel;
 
-  atendimentoMock = {
-    ambulanciaPlaca: 'ABC-1234',
-    ambulanciaTipo: TipoAmbulancia.BASICA,
-    baseAmbulancia: 'Centro',
-    distanciaPercorridaKm: 12.5,
-    horarioDespacho: new Date(new Date().getTime() - 45 * 60000).toISOString(),
-    chegadaLocal: new Date(new Date().getTime() - 30 * 60000).toISOString(),
-    horarioConclusao: new Date(new Date().getTime() - 5 * 60000).toISOString(),
-  };
+  atendimento: AtendimentoExibicaoModel | null = null;
+  carregandoAtendimento: boolean = false;
 
   protected readonly StatusOcorrencia = StatusOcorrencia;
+  protected readonly Math = Math;
 
   ngOnInit(): void {
-    if (this.config.data && this.config.data.ocorrencia) {
-      this.ocorrencia = { ...this.config.data.ocorrencia };
+    if (
+      this.ocorrencia.statusOcorrencia === StatusOcorrencia.DESPACHADA ||
+      this.ocorrencia.statusOcorrencia === StatusOcorrencia.EM_ATENDIMENTO ||
+      this.ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+    ) {
+      this.carregandoAtendimento = true;
+      this.atendimentoService.obterAtendimento(this.ocorrencia.id).subscribe({
+        next: (atendimento) => {
+          this.atendimento = atendimento;
+          this.carregandoAtendimento = false;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          console.log('Erro ao obter atendimento', err);
+          this.carregandoAtendimento = false;
+          this.cd.detectChanges();
+        },
+      });
     }
   }
 
@@ -86,13 +100,17 @@ export class OcorrenciaDetalhesComponent implements OnInit {
     }
   }
 
-  getAmbulanciaTipo(tipo: TipoAmbulancia) {
-    return TipoAmbulanciaLabel[tipo] || tipo;
+  getAmbulanciaTipo(tipo: any) {
+    if (!tipo) return '';
+    return TipoAmbulanciaLabel[tipo as TipoAmbulancia] || tipo;
   }
 
-  formatarDataHora(dataString: string): string {
+  formatarDataHora(dataString: string | null | undefined): string {
     if (!dataString) return '--/--/---- --:--:--';
-    return new Date(dataString).toLocaleString('pt-BR', {
+
+    const dataNormalizada = dataString.replace('Z', '');
+
+    return new Date(dataNormalizada).toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
