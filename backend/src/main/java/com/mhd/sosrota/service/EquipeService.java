@@ -9,8 +9,11 @@ import com.mhd.sosrota.model.enums.TipoAmbulancia;
 import com.mhd.sosrota.repository.AmbulanciaRepository;
 import com.mhd.sosrota.repository.EquipeRepository;
 import com.mhd.sosrota.repository.ProfissionalRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,28 +31,30 @@ public class EquipeService {
     private final ProfissionalRepository profissionalRepository;
 
     public EquipeService(EquipeRepository equipeRepository,
-                          AmbulanciaRepository ambulanciaRepository,
-                          ProfissionalRepository profissionalRepository) {
+                         AmbulanciaRepository ambulanciaRepository,
+                         ProfissionalRepository profissionalRepository) {
         this.equipeRepository = equipeRepository;
         this.ambulanciaRepository = ambulanciaRepository;
         this.profissionalRepository = profissionalRepository;
     }
 
+    @Transactional
     public Equipe salvar(EquipeCadastroDTO dto) {
         var ambulancia = ambulanciaRepository.findById(dto.ambulanciaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Ambulância não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ambulância não encontrada"));
+
+        if (ambulancia.getStatus() == StatusAmbulancia.MANUTENCAO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível criar uma equipe com uma ambulância em manutenção.");
+        }
 
         if (ambulancia.getStatus() == StatusAmbulancia.DISPONIVEL
                 || ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Esta ambulância já possui equipe ativa ou está em atendimento");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta ambulância já possui equipe ativa ou está em atendimento");
         }
 
         List<Profissional> profissionais = dto.profissionalIds().stream()
                 .map(id -> profissionalRepository.findById(id)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                "Profissional não encontrado: " + id)))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profissional não encontrado: " + id)))
                 .toList();
 
         var equipe = new Equipe();
@@ -59,22 +64,24 @@ public class EquipeService {
 
         validarComposicao(equipe);
 
+        equipe = equipeRepository.save(equipe);
+
         ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
         ambulanciaRepository.save(ambulancia);
 
-        return equipeRepository.save(equipe);
+        return equipe;
     }
 
-    public List<Equipe> findAll() {
-        return equipeRepository.findAll();
+    public Page<Equipe> findAll(Pageable pageable, String filtro, Boolean ativo, TipoAmbulancia tipo) {
+        return equipeRepository.obterComFiltro(pageable, filtro, ativo, tipo);
     }
 
     public Equipe findById(Long id) {
         return equipeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Equipe não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipe não encontrada"));
     }
 
+    @Transactional
     public Equipe atualizar(Long id, EquipeCadastroDTO dto) {
         var equipe = findById(id);
 
@@ -82,20 +89,38 @@ public class EquipeService {
             boolean ambulanciaOcupada = equipeRepository
                     .existsByAmbulanciaIdAndAtivoTrueAndIdNot(dto.ambulanciaId(), id);
             if (ambulanciaOcupada) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "A ambulância já está em uso por outra equipe ativa");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A ambulância já está em uso por outra equipe ativa");
             }
         }
 
         var ambulancia = ambulanciaRepository.findById(dto.ambulanciaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Ambulância não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ambulância não encontrada"));
+
+        if (ambulancia.getStatus() == StatusAmbulancia.MANUTENCAO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Não é possível alocar uma ambulância que está em manutenção.");
+        }
+
+        var ambulanciaAntiga = equipe.getAmbulancia();
+        if (ambulanciaAntiga.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível editar uma equipe em atendimento");
+        }
+
+        if (!ambulanciaAntiga.equals(ambulancia)) {
+            if (ambulanciaAntiga.getStatus() != StatusAmbulancia.INATIVA) {
+                ambulanciaAntiga.setStatus(StatusAmbulancia.INATIVA);
+                ambulanciaRepository.save(ambulanciaAntiga);
+            }
+        }
 
         List<Profissional> profissionais = dto.profissionalIds().stream()
                 .map(pid -> profissionalRepository.findById(pid)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                 "Profissional não encontrado: " + pid)))
                 .toList();
+
+        ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
+        ambulanciaRepository.save(ambulancia);
 
         equipe.getProfissionais().forEach(p -> p.setEquipe(null));
         equipe.getProfissionais().clear();
@@ -107,8 +132,50 @@ public class EquipeService {
         return equipeRepository.save(equipe);
     }
 
+    @Transactional
+    public Equipe alterarStatus(Long id, boolean ativo) {
+        var equipe = findById(id);
+        var ambulancia = equipe.getAmbulancia();
+
+        if (ativo) {
+            boolean ambulanciaOcupada = equipeRepository
+                    .existsByAmbulanciaIdAndAtivoTrueAndIdNot(equipe.getAmbulancia().getId(), id);
+            if (ambulanciaOcupada) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A ambulância já está em uso por outra equipe ativa");
+            }
+            ambulancia.setStatus(StatusAmbulancia.DISPONIVEL);
+            ambulanciaRepository.save(ambulancia);
+        } else {
+            if (ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível desativar uma equipe em atendimento");
+            }
+            if (ambulancia.getStatus() != StatusAmbulancia.INATIVA) {
+                ambulancia.setStatus(StatusAmbulancia.INATIVA);
+                ambulanciaRepository.save(ambulancia);
+            }
+        }
+
+        equipe.setAtivo(ativo);
+        return equipeRepository.save(equipe);
+    }
+
+    @Transactional
     public void deletar(Long id) {
         var equipe = findById(id);
+
+        var ambulancia = equipe.getAmbulancia();
+
+        if (ambulancia.getStatus() == StatusAmbulancia.EM_ATENDIMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir uma equipe em atendimento");
+        }
+        if (ambulancia.getStatus() != StatusAmbulancia.INATIVA) {
+            ambulancia.setStatus(StatusAmbulancia.INATIVA);
+            ambulanciaRepository.save(ambulancia);
+        }
+
+        equipe.getProfissionais().forEach(p -> p.setEquipe(null));
+        equipe.getProfissionais().clear();
+
         equipeRepository.delete(equipe);
     }
 

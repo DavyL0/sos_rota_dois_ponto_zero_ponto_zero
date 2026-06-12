@@ -1,0 +1,127 @@
+.equipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.equipe-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.equipe-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+:host-context(.app-dark) .equipe-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.equipe-card-inativa {
+  background-color: var(--p-surface-100);
+  opacity: 0.85;
+}
+
+.equipe-card-inativa:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+:host-context(.app-dark) .equipe-card-inativa {
+  background-color: var(--p-surface-800);
+  border-color: var(--p-surface-600);
+}
+
+.equipe-card-inativa .card-header {
+  filter: grayscale(80%);
+  opacity: 0.8;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+}
+
+.header-uti {
+  background-color: var(--p-primary-900);
+  color: #ffffff;
+}
+
+.header-basica {
+  background-color: var(--p-primary-100);
+  color: var(--p-primary-900);
+}
+
+:host-context(.app-dark) .header-uti {
+  background-color: var(--p-primary-600);
+  color: var(--p-primary-100);
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+:host-context(.app-dark) .header-basica {
+  background-color: color-mix(in srgb, var(--p-primary-700) 70%, transparent);
+  color: var(--p-primary-200);
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+.placa {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1.25rem;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  padding-bottom: 1.5rem;
+}
+
+.profissionais-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.profissional-nome {
+  font-weight: 500;
+  color: var(--p-text-color);
+}
+
+.profissional-separador {
+  color: var(--p-text-color-secondary);
+}
+
+.profissional-funcao {
+  color: var(--p-text-color-secondary);
+}
+
+.team-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--p-content-border-color);
+  margin-top: auto;
+}

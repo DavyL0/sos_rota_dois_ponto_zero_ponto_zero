@@ -38,6 +38,12 @@ export class AmbulanciasService {
     return this.http.get<Page<AmbulanciaExibicaoModel>>(`${this.apiUrl}`, { params });
   }
 
+  obterAmbulanciasDisponiveis(equipeId?: number): Observable<AmbulanciaExibicaoModel[]> {
+    let params = new HttpParams();
+    if (equipeId) params = params.set('equipeId', equipeId);
+    return this.http.get<AmbulanciaExibicaoModel[]>(`${this.apiUrl}/disponiveis`, { params });
+  }
+
   criarAmbulancia(ambulancia: AmbulanciaCadastroModel): Observable<AmbulanciaExibicaoModel> {
     return this.http.post<AmbulanciaExibicaoModel>(`${this.apiUrl}`, ambulancia);
   }

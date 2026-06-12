@@ -1,0 +1,96 @@
+<p-toast position="top-center"></p-toast>
+<p-confirm-dialog></p-confirm-dialog>
+
+<div class="table-header" style="padding-bottom: 1rem;">
+  <p-iconfield iconPosition="left" style="flex: 1; position: relative; ">
+    <p-inputicon class="pi pi-search"/>
+    <input
+      pInputText
+      type="text"
+      placeholder="Buscar por nome do profissional ou placa"
+      [(ngModel)]="termoBusca"
+      (input)="filtrar()"
+      style="width: 100%; padding-right: 3rem;"
+    />
+    @if (termoBusca) {
+      <p-button
+        icon="pi pi-times"
+        severity="danger"
+        [text]="true"
+        [outlined]="true"
+        class="limpar-btn"
+        (onClick)="limparBusca()"
+        pTooltip="Limpar busca">
+      </p-button>
+    }
+  </p-iconfield>
+
+  <p-selectButton [options]="ativasFiltro" [(ngModel)]="ativasSelecao" (onChange)="filtrar()"></p-selectButton>
+  <p-selectButton [options]="tipoFiltro" [(ngModel)]="tipoSelecao" (onChange)="filtrar()"></p-selectButton>
+  <p-button label="Nova Equipe" icon="pi pi-plus" (onClick)="abrirCadastro()"></p-button>
+</div>
+
+<div class="equipes-grid">
+  @for (equipe of equipes; track equipe.id) {
+    <div class="equipe-card" [ngClass]="{'equipe-card-inativa': !equipe.ativo}">
+
+      <div class="card-header" [ngClass]="equipe.ambulancia?.tipo === tipoUTI ? 'header-uti' : 'header-basica'">
+        <p-tag [value]="tipoLabel[equipe.ambulancia.tipo] || equipe.ambulancia.tipo"
+               [severity]="equipe.ambulancia.tipo === TipoAmbulancia.UTI ? 'contrast' : 'info'"></p-tag>
+        <h3 class="placa">{{ equipe.ambulancia.placa }}</h3>
+        <p-tag icon="pi pi-circle-on" [value]="equipe.ativo ? 'Ativa' : 'Inativa'"
+               [severity]="equipe.ativo ? 'success' : 'secondary'"></p-tag>
+      </div>
+
+      <div class="card-body">
+        <div class="card-content">
+          @for (prof of getProfissionaisOrdenados(equipe.profissionais); track prof.id) {
+            <div class="profissionais-row">
+              <span class="profissional-nome">{{ prof.nome }}</span>
+              <span class="profissional-separador"> - </span>
+              <span class="profissional-funcao">{{ funcaoLabel[prof.funcao!] || prof.funcao }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="team-footer">
+          <p-button
+            [label]="equipe.ativo ? 'Desativar' : 'Ativar'"
+            [icon]="equipe.ativo ? 'pi pi-power-off' : 'pi pi-check-circle'"
+            [severity]="equipe.ativo ? 'danger' : 'success'"
+            [text]="true"
+            [loading]="alterandoStatusId === equipe.id"
+            size="small"
+            (onClick)="alterarStatus(equipe)">
+          </p-button>
+          <p-button
+            icon="pi pi-trash"
+            outlined="true"
+            severity="danger"
+            pTooltip="Excluir"
+            (onClick)="confirmarExclusao(equipe)">
+          </p-button>
+          <p-button
+            label="Editar"
+            icon="pi pi-pencil"
+            outlined="true"
+            severity="info"
+            [loading]="excluindoId === equipe.id"
+            (onClick)="abrirEdicao(equipe)">
+          </p-button>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>
+
+@if (totalElementos > 0) {
+  <div style="margin-top: 1.5rem">
+    <p-paginator (onPageChange)="mudarPagina($event)"
+                 [first]="paginaAtual*tamanhoPagina"
+                 [rows]="tamanhoPagina"
+                 [totalRecords]="totalElementos">
+    </p-paginator>
+  </div>
+}

@@ -1,0 +1,169 @@
+<p-toast position="top-center"></p-toast>
+<p-confirm-dialog></p-confirm-dialog>
+
+<div class="table-wrapper">
+  <p-table #tabelaProfissionais [value]="profissionais" [paginator]="true" [rows]="10" [totalRecords]="totalElementos"
+           [lazy]="true" [loading]="carregando" (onLazyLoad)="carregarTabela($event)"
+           [rowHover]="profissionais.length > 0" stripedRows>
+    <ng-template #caption>
+      <div class="table-header">
+        <p-iconfield iconPosition="left" style="flex: 1; position: relative">
+          <p-inputicon class="pi pi-search"/>
+          <input
+            pInputText
+            type="text"
+            placeholder="Busca por nome ou contato"
+            [(ngModel)]="termoBusca"
+            (input)="filtrarTabela()"
+            style="width: 100%; padding-right: 3rem;"
+          />
+          <p-button
+            icon="pi pi-times"
+            severity="danger"
+            [text]="true"
+            [outlined]="true"
+            class="limpar-btn"
+            [class.aparecer]="termoBusca"
+            (onClick)="limparBusca()"
+            pTooltip="Limpar busca"
+          />
+        </p-iconfield>
+        <p-button
+          label="Limpar Ordenação"
+          icon="pi pi-sort-alt-slash"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="limparOrdenacao()"
+          [disabled]="tabelaProfissionais.sortField == null">
+        </p-button>
+        <p-button label="Novo Profissional" icon="pi pi-plus" (onClick)="abrirCadastro()"></p-button>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="nome">Nome
+          <p-sortIcon field="nome"></p-sortIcon>
+        </th>
+        <th pSortableColumn="funcao">Função
+          <p-sortIcon field="funcao"></p-sortIcon>
+        </th>
+        <th>Email</th>
+        <th class="acoes">Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-profissional>
+      @if (carregando) {
+        <tr>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+          <td>
+            <p-skeleton></p-skeleton>
+          </td>
+        </tr>
+      } @else {
+        <tr>
+          <td>{{ profissional.nome }}</td>
+          <td>{{ getFuncaoLabel(profissional.funcao) }}</td>
+          <td>{{ profissional.contato }}</td>
+          <td class="actions-column">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              severity="info"
+              pTooltip="Editar"
+              (onClick)="abrirEdicao(profissional)">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              severity="danger"
+              pTooltip="Excluir"
+              (onClick)="confirmarExclusao(profissional)"
+            >
+            </p-button>
+          </td>
+        </tr>
+      }
+    </ng-template>
+    <ng-template #emptymessage>
+      @if (!carregando) {
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <i class="pi pi-user empty-icon"></i>
+              <p class="empty-text">Nenhum profissional cadastrado</p>
+            </div>
+          </td>
+        </tr>
+      }
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [header]="idEditando ? 'Editar Profissional' : 'Cadastrar Profissional'" [modal]="true"
+          [(visible)]="cadastroVisivel" (onHide)="fecharCadastro()"
+          [draggable]="false" [style]="{ width: '50vw' }">
+  <form #cadastroForm="ngForm" (ngSubmit)="salvarProfissional()" class="form-container">
+    <div class="form-item">
+      <label for="nome">Nome*</label>
+      <input pInputText id="nome" name="nome" type="text" [(ngModel)]="profissionalCadastrado.nome"
+             placeholder="Xin Jin Ping" required #nomeVar="ngModel" maxlength="100"
+             [ngClass]="{'ng-invalid ng-dirty': nomeVar.invalid && nomeVar.touched}">
+      @if (nomeVar.invalid && nomeVar.touched) {
+        <small class="error-message">O nome é obrigatório.</small>
+      }
+      @if (nomeVar.errors?.['duplicate']) {
+        <small class="error-message">Já existe um profissional cadastrado com esse nome.</small>
+      }
+      @if (nomeVar.errors?.['maxlength']) {
+        <small class="error-message">O nome não pode ter mais de 100 caracteres.</small>
+      }
+    </div>
+
+    <div class="form-item">
+      <label for="funcao">Função</label>
+      <p-select id="funcao" name="funcao" [options]="funcoes" [(ngModel)]="profissionalCadastrado.funcao"
+                placeholder="Selecione" optionLabel="label" optionValue="value" appendTo="body"
+                required #funcaoVar="ngModel"
+                [ngClass]="{'ng-invalid ng-dirty': funcaoVar.invalid && (funcaoVar.touched || funcaoVar.dirty)}">
+      </p-select>
+      @if (funcaoVar.invalid && (funcaoVar.dirty || funcaoVar.touched)) {
+        <small class="error-message">A função é obrigatória.</small>
+      }
+    </div>
+
+    <div class="form-item">
+      <label for="email">Email</label>
+      <input pInputText id="email" name="email" type="email" email="true" [(ngModel)]="profissionalCadastrado.contato"
+             placeholder="xinjinping@gmail.com" required #emailVar="ngModel" maxlength="50"
+             [ngClass]="{'ng-invalid ng-dirty': emailVar.invalid && (emailVar.touched || emailVar.dirty)}">
+      @if (emailVar.invalid && emailVar.touched) {
+        @if (emailVar.errors?.['required']) {
+          <small class="error-message">O email é obrigatório.</small>
+        }
+        @if (emailVar.errors?.['email']) {
+          <small class="error-message">Digite um endereço de email válido.</small>
+        }
+        @if (emailVar.errors?.['maxlength']) {
+          <small class="error-message">O email não pode ter mais de 50 caracteres.</small>
+        }
+      }
+    </div>
+
+    @if (erroBackend) {
+      <small class="error-message server-error">{{ erroBackend }}</small>
+    }
+
+    <div class="form-actions">
+      <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
+      <p-button label="Salvar" type="submit" [disabled]="cadastroForm.invalid || semAlteracoes"></p-button>
+    </div>
+  </form>
+</p-dialog>

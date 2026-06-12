@@ -1,0 +1,75 @@
+<p-toast></p-toast>
+
+<form #cadastroForm="ngForm" (ngSubmit)="salvarEquipe()" class="form-container">
+  <div class="form-item">
+    <label for="ambulanciaId">Ambulância*</label>
+    <p-select id="ambulanciaId" name="ambulanciaId" [options]="ambulanciasDisponiveis"
+              [(ngModel)]="ambulanciaSelecionada" [filter]="true" filterBy="placa" [showClear]="true"
+              placeholder="Selecione a ambulância" optionLabel="placa" appendTo="body" required
+              #ambulanciaVar="ngModel">
+      <ng-template #selectedItem let-ambulancia>
+        @if (ambulancia) {
+          <div class="flex align-items-center gap-2">
+            <span>{{ ambulancia.placa }} ({{ getTipoLabel(ambulancia.tipo) }})</span>
+          </div>
+        }
+      </ng-template>
+      <ng-template #item let-ambulancia>
+        <div class="flex flex-column">
+          <span class="font-bold">{{ ambulancia.placa }} ({{ getTipoLabel(ambulancia.tipo) }})</span>
+        </div>
+      </ng-template>
+    </p-select>
+    @if (ambulanciaVar.invalid && ambulanciaVar.touched) {
+      <small class="error-message">A ambulância é obrigatória.</small>
+    }
+    @if (ambulanciaVar.errors?.['ativa']) {
+      <small class="error-message">Esta ambulância já possui equipe ativa ou está em atendimento</small>
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="medicoId">Médico</label>
+    <p-select id="medicoId" name="medicoId" [options]="medicosDisponiveis" [(ngModel)]="medicoSelecionadoId"
+              placeholder="Selecione um médico" optionLabel="nome" optionValue="id" appendTo="body" [showClear]="true"
+              [required]="ambulanciaSelecionada?.tipo === TipoAmbulancia.UTI" #medicoVar="ngModel"
+              [ngClass]="{'ng-invalid ng-dirty': medicoVar.invalid && (medicoVar.touched || medicoVar.dirty|| ambulanciaSelecionada?.tipo === TipoAmbulancia.UTI)}">
+    </p-select>
+    @if (ambulanciaSelecionada?.tipo === TipoAmbulancia.UTI && medicoVar.invalid) {
+      <small class="error-message">O médico é obrigatório para equipes do tipo UTI.</small>
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="enfermeiroId">Enfermeiro*</label>
+    <p-select id="enfermeiroId" name="enfermeiroId" [options]="enfermeirosDisponiveis"
+              [(ngModel)]="enfermeiroSelecionadoId"
+              placeholder="Selecione um enfermeiro" optionLabel="nome" optionValue="id" appendTo="body"
+              [showClear]="true" required #enfermeiroVar="ngModel">
+    </p-select>
+    @if (enfermeiroVar.invalid && enfermeiroVar.touched) {
+      <small class="error-message">Um enfermeiro é obrigatório na equipe.</small>
+    }
+  </div>
+
+  <div class="form-item">
+    <label for="condutorId">Condutor*</label>
+    <p-select id="condutorId" name="condutorId" [options]="condutoresDisponiveis" [(ngModel)]="condutorSelecionadoId"
+              placeholder="Selecione um condutor" optionLabel="nome" optionValue="id" appendTo="body"
+              [showClear]="true" required #condutorVar="ngModel">
+    </p-select>
+    @if (condutorVar.invalid && condutorVar.touched) {
+      <small class="error-message">Um condutor é obrigatório na equipe.</small>
+    }
+  </div>
+
+  @if (erroBackend) {
+    <small class="error-message server-error">{{ erroBackend }}</small>
+  }
+
+  <div class="form-actions">
+    <p-button label="Cancelar" severity="secondary" (onClick)="fecharCadastro()"></p-button>
+    <p-button label="Salvar" type="submit"
+              [disabled]="cadastroForm.invalid || carregandoCadastro|| semAlteracoes"></p-button>
+  </div>
+</form>
