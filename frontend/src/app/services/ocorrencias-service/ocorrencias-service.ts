@@ -16,12 +16,25 @@ export class OcorrenciasService {
     size: number,
     sortField?: string,
     sortOrder?: number,
+    gravidade?: string,
+    bairroId?: number,
+    status?: string,
   ): Observable<Page<OcorrenciaExibicaoModel>> {
     let params = new HttpParams().set('page', page).set('size', size);
 
     if (sortField) {
       const direction = sortOrder === 1 ? 'asc' : 'desc';
       params = params.set('sort', `${sortField},${direction}`);
+    }
+
+    if (gravidade) {
+      params = params.set('gravidade', gravidade);
+    }
+    if (bairroId) {
+      params = params.set('bairroId', bairroId.toString());
+    }
+    if (status) {
+      params = params.set('status', status);
     }
 
     return this.http.get<Page<OcorrenciaExibicaoModel>>(`${this.apiUrl}`, { params });

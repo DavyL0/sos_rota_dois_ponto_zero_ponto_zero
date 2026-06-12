@@ -17,7 +17,62 @@
              [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [loading]="carregando"
              [rowHover]="ocorrencias.length > 0" stripedRows>
       <ng-template #caption>
-        <!--        todo: implementar filtro-->
+        <div class="table-header">
+          <span class="filter-label">Filtros</span>
+          <p-select
+            id="filtroGravidade"
+            name="filtroGravidade"
+            [options]="tiposGravidade"
+            [(ngModel)]="gravidadeFiltro"
+            placeholder="Filtrar por Gravidade"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [showClear]="true"
+            (onChange)="filtrarTabela()"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-select
+            id="filtroBairro"
+            name="filtroBairro"
+            [options]="bairros"
+            [(ngModel)]="bairroFiltroId"
+            placeholder="Filtrar por Bairro"
+            optionLabel="nome"
+            optionValue="id"
+            appendTo="body"
+            [filter]="true"
+            (onChange)="filtrarTabela()"
+            filterBy="nome"
+            [showClear]="true"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-select
+            id="filtroStatus"
+            name="filtroStatus"
+            [options]="tiposStatus"
+            [(ngModel)]="statusFiltro"
+            placeholder="Filtrar por Status"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [showClear]="true"
+            (onChange)="filtrarTabela()"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-button
+            label="Limpar Filtros"
+            icon="pi pi-filter-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparFiltros()"
+            [disabled]="!gravidadeFiltro && !bairroFiltroId && !statusFiltro"
+            styleClass="margin-left: auto;">
+          </p-button>
+        </div>
       </ng-template>
       <ng-template #header>
         <tr>

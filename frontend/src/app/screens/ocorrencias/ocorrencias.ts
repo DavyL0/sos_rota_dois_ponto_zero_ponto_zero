@@ -6,6 +6,7 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { TabelaOrdenacao } from '../../component/tabela-ordenacao';
 import { Button } from 'primeng/button';
@@ -17,7 +18,7 @@ import {
   StatusOcorrenciaLabel,
 } from '../../model/ocorrencias.model';
 import { OcorrenciasService } from '../../services/ocorrencias-service/ocorrencias-service';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Skeleton } from 'primeng/skeleton';
 import { Tooltip } from 'primeng/tooltip';
 import { NgClass } from '@angular/common';
@@ -31,10 +32,24 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Toast } from 'primeng/toast';
 import { OcorrenciaCancelarComponent } from '../../component/ocorrencia-cancelar-component/ocorrencia-cancelar-component';
 import { DespacharOcorrenciaComponent } from '../../component/despachar-ocorrencia-component/despachar-ocorrencia-component';
+import { BairroService } from '../../services/bairro-service/bairro-service';
+import { Bairro } from '../../model/bairro.model';
+import { Select } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-ocorrencias',
-  imports: [Button, TableModule, Skeleton, Tooltip, NgClass, ConfirmDialog, Toast],
+  imports: [
+    Button,
+    TableModule,
+    Skeleton,
+    Tooltip,
+    NgClass,
+    ConfirmDialog,
+    Toast,
+    Select,
+    FormsModule,
+  ],
   providers: [DialogService, DynamicDialogRef, ConfirmationService, MessageService],
   templateUrl: './ocorrencias.html',
   styleUrl: './ocorrencias.css',
@@ -42,25 +57,45 @@ import { DespacharOcorrenciaComponent } from '../../component/despachar-ocorrenc
 })
 export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   private ocorrenciasService = inject(OcorrenciasService);
+  private bairroService = inject(BairroService);
   private cd = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private ref: DynamicDialogRef | null = inject(DynamicDialogRef);
+  private dialogService = inject(DialogService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
-  constructor(public dialogService: DialogService) {
-    super();
-  }
+  @ViewChild('tabelaOcorrencias') tabela!: Table;
 
   ocorrencias: OcorrenciaExibicaoModel[] = [];
+  bairros: Bairro[] = [];
 
   totalElementos = 0;
 
   deletandoId: number | null = null;
 
+  bairroFiltroId: number | null = null;
+  gravidadeFiltro: GravidadeOcorrencia | null = null;
+  statusFiltro: StatusOcorrencia | null = null;
+
+
   protected readonly StatusOcorrencia = StatusOcorrencia;
   gravidadeLabel = GravidadeOcorrenciaLabel;
   statusLabel = StatusOcorrenciaLabel;
+
+  tiposGravidade = [
+    { label: 'Alta', value: GravidadeOcorrencia.ALTA },
+    { label: 'Média', value: GravidadeOcorrencia.MEDIA },
+    { label: 'Baixa', value: GravidadeOcorrencia.BAIXA },
+  ];
+
+  tiposStatus = [
+    { label: 'Aberta', value: StatusOcorrencia.ABERTA },
+    { label: 'Despachada', value: StatusOcorrencia.DESPACHADA },
+    { label: 'Em atendimento', value: StatusOcorrencia.EM_ATENDIMENTO },
+    { label: 'Concluída', value: StatusOcorrencia.CONCLUIDA },
+    { label: 'Cancelada', value: StatusOcorrencia.CANCELADA },
+  ];
 
   private timerSubscription!: Subscription;
 
@@ -70,6 +105,16 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
         this.atualizarSla();
         this.cd.detectChanges();
       });
+    });
+
+    this.bairroService.obterBairros().subscribe({
+      next: (dados) => {
+        this.bairros = dados;
+        this.cd.markForCheck();
+      },
+      error: (err) => {
+        console.log('Erro ao carregar bairros ', err);
+      },
     });
   }
 
@@ -87,6 +132,9 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
         this.tamanhoPagina,
         this.campoOrdenacao,
         this.ordemOrdenacao ?? -1,
+        this.gravidadeFiltro ?? undefined,
+        this.bairroFiltroId ?? undefined,
+        this.statusFiltro ?? undefined,
       )
       .subscribe({
         next: (dados) => {
@@ -194,6 +242,12 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
     });
   }
 
+  protected filtrarTabela() {
+    if (this.tabela) {
+      this.tabela.reset();
+    }
+  }
+
   abrirDespachar(ocorrencia: OcorrenciaExibicaoModel) {
     this.ref = this.dialogService.open(DespacharOcorrenciaComponent, {
       header: 'Despachar ambulância',
@@ -272,6 +326,13 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
       closable: true,
       data: { ocorrencia },
     });
+  }
+
+  protected limparFiltros() {
+    this.gravidadeFiltro = null;
+    this.bairroFiltroId = null;
+    this.statusFiltro = null;
+    this.filtrarTabela();
   }
 
   getGravidadeLabel(gravidade: GravidadeOcorrencia): string {

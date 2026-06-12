@@ -1,0 +1,15 @@
+.filter-label {
+  font-weight: 600;
+  color: var(--p-text-color);
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.filtro-select {
+  flex: 1 1 0;
+  min-width: 160px;
+}
+
+.btn-limpar {
+  margin-left: auto;
+}
