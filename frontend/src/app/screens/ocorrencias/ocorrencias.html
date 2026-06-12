@@ -78,25 +78,24 @@
             severity="secondary"
             [outlined]="true"
             (onClick)="limparOrdenacao()"
-            disabled="{{tabelaOcorrencias.sortField == null}}"
-          >
+            [disabled]="!tabelaOcorrencias.sortField">
           </p-button>
         </div>
       </ng-template>
       <ng-template #header>
         <tr>
+          <th>Tipo</th>
           <th pSortableColumn="bairro.nome">Bairro
-            <p-sortIcon field="bairro.nome"/>
+          <p-sortIcon field="bairro.nome"/>
+          </th>
+          <th pSortableColumn="dataHoraAbertura">Data de abertura
+            <p-sortIcon field="dataHoraAbertura"/>
+          </th>
+          <th pSortableColumn="statusOcorrencia">Status
+          <p-sortIcon field="statusOcorrencia"/>
           </th>
           <th pSortableColumn="gravidadePeso">Gravidade
             <p-sortIcon field="gravidadePeso"/>
-          </th>
-          <th pSortableColumn="statusOcorrencia">Status
-            <p-sortIcon field="statusOcorrencia"/>
-          </th>
-          <th>Tipo</th>
-          <th pSortableColumn="dataHoraAbertura">Data de abertura
-            <p-sortIcon field="dataHoraAbertura"/>
           </th>
           <th>SLA</th>
           <th class="acoes">Ações</th>
@@ -129,11 +128,21 @@
           </tr>
         } @else {
           <tr>
-            <td>{{ ocorrencia.bairro?.nome }}</td>
-            <td>{{ getGravidadeLabel(ocorrencia.gravidadeOcorrencia) }}</td>
-            <td>{{ getStatusLabel(ocorrencia.statusOcorrencia) }}</td>
             <td>{{ ocorrencia.tipoOcorrencia }}</td>
+            <td>{{ ocorrencia.bairro?.nome }}</td>
             <td>{{ getDataOcorrencia(ocorrencia.dataHoraAbertura) }}</td>
+            <td>
+              <p-tag
+                [value]="getStatusLabel(ocorrencia.statusOcorrencia)"
+                [severity]="getStatusSeverity(ocorrencia.statusOcorrencia)">
+              </p-tag>
+            </td>
+            <td>
+              <p-tag
+                [value]="getGravidadeLabel(ocorrencia.gravidadeOcorrencia)"
+                [severity]="getGravidadeSeverity(ocorrencia.gravidadeOcorrencia)">
+              </p-tag>
+            </td>
             <td [ngClass]="ocorrencia._slaFormatado?.classe">
               {{ ocorrencia._slaFormatado?.texto }}
             </td>

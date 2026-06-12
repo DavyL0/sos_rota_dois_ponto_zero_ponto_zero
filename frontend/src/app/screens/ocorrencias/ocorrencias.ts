@@ -36,6 +36,7 @@ import { BairroService } from '../../services/bairro-service/bairro-service';
 import { Bairro } from '../../model/bairro.model';
 import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import {Tag} from "primeng/tag";
 
 @Component({
   selector: 'app-ocorrencias',
@@ -49,6 +50,7 @@ import { FormsModule } from '@angular/forms';
     Toast,
     Select,
     FormsModule,
+    Tag,
   ],
   providers: [DialogService, DynamicDialogRef, ConfirmationService, MessageService],
   templateUrl: './ocorrencias.html',
@@ -77,7 +79,6 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
   bairroFiltroId: number | null = null;
   gravidadeFiltro: GravidadeOcorrencia | null = null;
   statusFiltro: StatusOcorrencia | null = null;
-
 
   protected readonly StatusOcorrencia = StatusOcorrencia;
   gravidadeLabel = GravidadeOcorrenciaLabel;
@@ -347,6 +348,39 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
 
   getStatusLabel(status: StatusOcorrencia): string {
     return this.statusLabel[status] || status;
+  }
+
+  getGravidadeSeverity(
+    gravidade: GravidadeOcorrencia,
+  ): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
+    switch (gravidade) {
+      case GravidadeOcorrencia.ALTA:
+        return 'danger';
+      case GravidadeOcorrencia.MEDIA:
+        return 'warn';
+      case GravidadeOcorrencia.BAIXA:
+        return 'info';
+      default:
+        return 'secondary';
+    }
+  }
+  getStatusSeverity(
+    status: StatusOcorrencia,
+  ): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
+    switch (status) {
+      case StatusOcorrencia.ABERTA:
+        return 'info'; // Azul
+      case StatusOcorrencia.DESPACHADA:
+        return 'warn'; // Laranja
+      case StatusOcorrencia.EM_ATENDIMENTO:
+        return 'warn'; // Laranja
+      case StatusOcorrencia.CONCLUIDA:
+        return 'success'; // Verde
+      case StatusOcorrencia.CANCELADA:
+        return 'danger'; // Vermelho
+      default:
+        return 'secondary';
+    }
   }
 
   getDataOcorrencia(dataString: string): string {
