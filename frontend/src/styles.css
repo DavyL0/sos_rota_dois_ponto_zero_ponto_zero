@@ -1,2 +1,188 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeicons/primeicons.css";
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap&family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+:root {
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+  --accent-800: #9a3412;
+  --accent-900: #7c2d12;
+}
+
+* {
+  font-family: 'Arimo', sans-serif;
+}
+
+.p-button.p-button-accent {
+  background: var(--accent-500);
+  border-color: var(--accent-500);
+  color: #ffffff;
+}
+
+.p-button.p-button-accent:hover {
+  background: var(--accent-600);
+  border-color: var(--accent-600);
+}
+
+.p-button.p-button-accent:focus {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent-300);
+}
+
+.app-dark .p-button.p-button-accent {
+  background: var(--accent-400);
+  border-color: var(--accent-400);
+  color: var(--p-surface-900);
+}
+
+.app-dark .p-button.p-button-accent:hover {
+  background: var(--accent-300);
+  border-color: var(--accent-300);
+}
+
+/*Titulo das paginas*/
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--p-text-color);
+  line-height: 1;
+}
+
+.page-subtitle {
+  color: var(--p-text-muted-color);
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+/*Tabelas*/
+.table-wrapper {
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  width: 100%
+}
+
+.limpar-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: all 0.1s linear;
+  pointer-events: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.limpar-btn.aparecer {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.actions-column {
+  text-align: center;
+  white-space: nowrap;
+}
+
+th.acoes,
+td.actions-column {
+  width: 120px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/*Estado vazio*/
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.pi.empty-icon {
+  font-size: 3rem;
+  color: var(--p-text-muted-color);
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-text {
+  color: var(--p-text-muted-color);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+}
+
+/*Form de cadastro/edicao*/
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.error-message {
+  color: var(--p-red-500);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.server-error {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}

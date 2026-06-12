@@ -1,0 +1,28 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Profissionais e equipes</h1>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    <p-tabs [(value)]="abaAtiva">
+      <p-tablist class="tab-list">
+        <p-tab [value]="0">Profissionais</p-tab>
+        <p-tab [value]="1">Equipes</p-tab>
+      </p-tablist>
+      <p-tabpanels style="background-color: transparent; padding: 0.875rem 0 1.125rem 0;">
+        <p-tabpanel [value]="0">
+          @if (abaAtiva === 0) {
+            <app-profissionais-component></app-profissionais-component>
+          }
+        </p-tabpanel>
+        <p-tabpanel [value]="1">
+          @if (abaAtiva === 1) {
+            <app-equipes-component></app-equipes-component>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</div>
