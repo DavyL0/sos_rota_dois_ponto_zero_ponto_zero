@@ -1,0 +1,122 @@
+<div class="despacho-container">
+
+  <div class="overview-panel">
+    <div class="overview-grid">
+      <div class="overview-item">
+        <span class="overview-label">
+          <i class="pi pi-tags"></i>
+          Tipo
+        </span>
+        <span class="overview-valor">{{ ocorrenciaDespacho?.tipoOcorrencia }}</span>
+      </div>
+
+      <div class="overview-item">
+        <span class="overview-label">
+          <i class="pi pi-map-marker"></i>
+          Local
+        </span>
+        <span class="overview-valor">{{ ocorrenciaDespacho?.bairro?.nome }}</span>
+      </div>
+
+      <div class="overview-item">
+        <span class="overview-label">
+          <i class="pi pi-exclamation-triangle"></i>
+          Gravidade
+        </span>
+        <span class="overview-valor">
+          {{ getGravidadeOcorrencia(ocorrenciaDespacho?.gravidadeOcorrencia) }}
+        </span>
+      </div>
+
+      <div class="overview-item">
+        <span class="overview-label">
+          <i class="pi pi-clock"></i>
+          SLA Restante
+        </span>
+        <span [ngClass]="getSlaRestanteClass()">{{ minutosSlaRestante }} min</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabela-section">
+    <h3 class="section-title">Ambulâncias Disponíveis para Despacho</h3>
+
+    <div class="table-wrapper">
+      <p-table
+        [value]="opcoesDespacho"
+        [loading]="carregandoLista"
+        selectionMode="single"
+        [(selection)]="opcaoSelecionada"
+        dataKey="ambulancia.id"
+        [rowHover]="true"
+        class="p-datatable-sm">
+
+        <ng-template #header>
+          <tr>
+            <th style="width: 3rem"></th>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Base Atual</th>
+            <th>Distância</th>
+            <th>Tempo Est.</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-opcao>
+          <tr [pSelectableRow]="opcao">
+            <td>
+              <p-tableRadioButton [value]="opcao"></p-tableRadioButton>
+            </td>
+            <td class="font-bold">{{ opcao.ambulancia.placa }}</td>
+            <td>{{ opcao.ambulancia.tipo }}</td>
+            <td>
+              <div class="bairro-cell">
+                <i class="pi pi-map-marker icon-muted"></i>
+                <span>{{ opcao.ambulancia.bairro?.nome }}</span>
+              </div>
+            </td>
+            <td>{{ Math.round(opcao.distanciaKm) }} km</td>
+            <td>
+              <p-tag severity="info" [value]="Math.round(opcao.tempoEstimadoMin) + ' min'"
+                     icon="pi pi-stopwatch"></p-tag>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+          @if (!carregandoLista) {
+            <tr>
+              <td colspan="6">
+                <div class="empty-state-small">
+                  <i class="pi pi-car empty-icon"></i>
+                  <p class="empty-text">Nenhuma ambulância disponível no momento.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  @if (erroBackend) {
+    <small class="error-message server-error">{{ erroBackend }}</small>
+  }
+
+  <div class="footer-actions">
+    <p-button
+      label="Cancelar"
+      severity="secondary"
+      [text]="true"
+      (onClick)="fechar()"
+      [disabled]="carregandoDespacho">
+    </p-button>
+    <p-button
+      label="Despachar Ambulância"
+      icon="pi pi-send"
+      (onClick)="confirmarDespacho()"
+      [disabled]="!opcaoSelecionada || carregandoDespacho"
+      [loading]="carregandoDespacho">
+    </p-button>
+  </div>
+</div>

@@ -35,10 +35,8 @@ public class AtendimentoController {
     @PostMapping("/despachar")
     public ResponseEntity<AtendimentoExibicaoDTO> despachar(
             @RequestBody @Valid DespachoDTO dto) {
-        var atendimento = atendimentoService.realizarDespacho(
-                dto.ocorrenciaId(), dto.ambulanciaId());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AtendimentoExibicaoDTO(atendimento));
+        var atendimento = atendimentoService.realizarDespacho(dto.ocorrenciaId(), dto.ambulanciaId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AtendimentoExibicaoDTO(atendimento));
     }
 
     @GetMapping("/ocorrencia/{ocorrenciaId}")
