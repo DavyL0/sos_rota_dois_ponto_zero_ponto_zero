@@ -5,15 +5,17 @@
     </div>
   </div>
 
+  <p-toast position="top-right"></p-toast>
+
   @if (dashboard) {
     <div class="metric-cards-grid">
       <div class="metric-card">
         <div class="metric-content">
           <span class="metric-title">Ocorrências Abertas</span>
-          <span class="metric-value text-info">{{ dashboard.totalOcorrenciasAbertas }}</span>
+          <span class="metric-value text-danger">{{ dashboard.totalOcorrenciasAbertas }}</span>
         </div>
-        <div class="metric-icon bg-info-light">
-          <i class="pi pi-folder-open text-info"></i>
+        <div class="metric-icon bg-danger-light">
+          <i class="pi pi-exclamation-circle text-danger"></i>
         </div>
       </div>
 
@@ -33,7 +35,7 @@
           <span class="metric-value text-primary">{{ dashboard.totalOcorrenciasEmAtendimento }}</span>
         </div>
         <div class="metric-icon bg-primary-light">
-          <i class="pi pi-clock text-primary"></i>
+          <i class="pi pi-heart text-primary"></i>
         </div>
       </div>
 
@@ -98,7 +100,8 @@
         <div class="table-header"><span class="table-title">Últimas ocorrências</span>
           <p-button
             label="Nova Ocorrência"
-            icon="pi pi-plus"/>
+            icon="pi pi-plus"
+            (onClick)="abrirCadastrar()"/>
         </div>
       </ng-template>
       <ng-template #header>
@@ -198,6 +201,7 @@
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 [text]="true"
+                (onClick)="verTodasOcorrencias()"
               />
             </div>
           </td>
