@@ -225,9 +225,9 @@ Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](L
 
 ## 👤 Autores
 
-**Davy Lopes** - [@DavyL0](https://github.com/DavyL0)
-**Murilo Nunes** - [@muriloonunes](https://github.com/muriloonunes)
-**Hartur Sales** - [@hartur-sales](https://github.com/hartur-sales)
+### **Davy Lopes** - [@DavyL0](https://github.com/DavyL0)
+### **Murilo Nunes** - [@muriloonunes](https://github.com/muriloonunes)
+### **Hartur Sales** - [@hartur-sales](https://github.com/hartur-sales)
 
 ---
 
