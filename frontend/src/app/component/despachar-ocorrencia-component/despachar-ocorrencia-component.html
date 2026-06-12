@@ -3,27 +3,37 @@
   <div class="overview-panel">
     <div class="overview-grid">
       <div class="overview-item">
-        <span class="overview-label"><i class="pi pi-tags"></i> Tipo</span>
+        <span class="overview-label">
+          <i class="pi pi-tags"></i>
+          Tipo
+        </span>
         <span class="overview-valor">{{ ocorrenciaDespacho?.tipoOcorrencia }}</span>
       </div>
 
       <div class="overview-item">
-        <span class="overview-label"><i class="pi pi-map-marker"></i> Local</span>
+        <span class="overview-label">
+          <i class="pi pi-map-marker"></i>
+          Local
+        </span>
         <span class="overview-valor">{{ ocorrenciaDespacho?.bairro?.nome }}</span>
       </div>
 
       <div class="overview-item">
-        <span class="overview-label"><i class="pi pi-exclamation-triangle"></i> Gravidade</span>
-        <div class="overview-valor mt-1">
-          <p-tag
-            [value]="ocorrenciaDespacho?.gravidadeOcorrencia"
-            severity="warn"> </p-tag>
-        </div>
+        <span class="overview-label">
+          <i class="pi pi-exclamation-triangle"></i>
+          Gravidade
+        </span>
+        <span class="overview-valor">
+          {{ getGravidadeOcorrencia(ocorrenciaDespacho?.gravidadeOcorrencia) }}
+        </span>
       </div>
 
       <div class="overview-item">
-        <span class="overview-label"><i class="pi pi-clock"></i> SLA Restante</span>
-        <span class="overview-valor sla-destaque">{{ minutosSlaRestante }} min</span>
+        <span class="overview-label">
+          <i class="pi pi-clock"></i>
+          SLA Restante
+        </span>
+        <span [ngClass]="getSlaRestanteClass()">{{ minutosSlaRestante }} min</span>
       </div>
     </div>
   </div>
@@ -65,9 +75,10 @@
                 <span>{{ opcao.ambulancia.bairro?.nome }}</span>
               </div>
             </td>
-            <td>{{ opcao.distanciaKm }} km</td>
+            <td>{{ Math.round(opcao.distanciaKm) }} km</td>
             <td>
-              <p-tag severity="info" [value]="opcao.tempoEstimadoMin + ' min'" icon="pi pi-stopwatch"></p-tag>
+              <p-tag severity="info" [value]="Math.round(opcao.tempoEstimadoMin) + ' min'"
+                     icon="pi pi-stopwatch"></p-tag>
             </td>
           </tr>
         </ng-template>
@@ -87,6 +98,10 @@
       </p-table>
     </div>
   </div>
+
+  @if (erroBackend) {
+    <small class="error-message server-error">{{ erroBackend }}</small>
+  }
 
   <div class="footer-actions">
     <p-button

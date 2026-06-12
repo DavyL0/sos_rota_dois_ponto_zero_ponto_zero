@@ -45,14 +45,14 @@
   font-weight: 500;
 }
 
-.mt-1 {
-  margin-top: 0.25rem;
+.overview-valor.sla-estourado {
+  color: var(--p-red-500);
+  font-weight: 700;
 }
 
-.sla-destaque {
+.overview-valor.sla-alerta {
   color: var(--p-orange-500);
   font-weight: 700;
-  font-size: 1.2rem;
 }
 
 .tabela-section {
