@@ -81,6 +81,7 @@
                   severity="info"
                   pTooltip="Despachar ambulância"
                   [disabled]="ocorrencia.statusOcorrencia !== StatusOcorrencia.ABERTA"
+                  (onClick)="abrirDespachar(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-pencil"

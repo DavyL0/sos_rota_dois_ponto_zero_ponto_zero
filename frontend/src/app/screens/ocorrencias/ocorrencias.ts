@@ -30,6 +30,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Toast } from 'primeng/toast';
 import { OcorrenciaCancelarComponent } from '../../component/ocorrencia-cancelar-component/ocorrencia-cancelar-component';
+import { DespacharOcorrenciaComponent } from '../../component/despachar-ocorrencia-component/despachar-ocorrencia-component';
 
 @Component({
   selector: 'app-ocorrencias',
@@ -189,6 +190,18 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
             detail: 'Houve um erro ao excluir a ocorrência',
           });
         }
+      },
+    });
+  }
+
+  abrirDespachar(ocorrencia: OcorrenciaExibicaoModel) {
+    this.ref = this.dialogService.open(DespacharOcorrenciaComponent, {
+      header: 'Despachar ambulância',
+      width: '60vw',
+      modal: true,
+      closable: true,
+      inputValues: {
+        ocorrenciaDespacho: ocorrencia,
       },
     });
   }

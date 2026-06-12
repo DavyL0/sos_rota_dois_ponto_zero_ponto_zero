@@ -43,7 +43,7 @@ export interface OcorrenciaExibicaoModel {
   bairro: Bairro;
   dataOcorrencia: string;
   dataHoraAbertura: string;
-  limiteSla: string;
+  limiteSLA: string;
   slaFinal: number;
   observacao: string;
   _slaFormatado?: { texto: string; classe: string };
