@@ -3,6 +3,8 @@ package com.mhd.sosrota.controller;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCadastroDTO;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCancelamentoDTO;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaExibicaoDTO;
+import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
+import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.service.OcorrenciaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -36,9 +38,12 @@ public class OcorrenciaController {
 
     @GetMapping
     public ResponseEntity<Page<OcorrenciaExibicaoDTO>> listar(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) GravidadeOcorrencia gravidade,
+            @RequestParam(required = false) Long bairroId,
+            @RequestParam(required = false) StatusOcorrencia status
     ) {
-        return ResponseEntity.ok(ocorrenciaService.findAll(pageable).map(OcorrenciaExibicaoDTO::new));
+        return ResponseEntity.ok(ocorrenciaService.findAll(pageable, gravidade, bairroId, status).map(OcorrenciaExibicaoDTO::new));
     }
 
     @GetMapping("/{id}")

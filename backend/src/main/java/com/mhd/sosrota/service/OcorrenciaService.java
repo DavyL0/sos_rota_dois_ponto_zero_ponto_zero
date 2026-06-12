@@ -2,6 +2,7 @@ package com.mhd.sosrota.service;
 
 import com.mhd.sosrota.model.Ocorrencia;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCadastroDTO;
+import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.repository.BairroRepository;
 import com.mhd.sosrota.repository.OcorrenciaRepository;
@@ -49,8 +50,8 @@ public class OcorrenciaService {
         return ocorrenciaRepository.save(ocorrencia);
     }
 
-    public Page<Ocorrencia> findAll(Pageable pageable) {
-        return ocorrenciaRepository.findAll(pageable);
+    public Page<Ocorrencia> findAll(Pageable pageable, GravidadeOcorrencia gravidade, Long bairroId, StatusOcorrencia status) {
+        return ocorrenciaRepository.findComFiltro(pageable, gravidade, bairroId, status);
     }
 
     public Ocorrencia findById(Long id) {
