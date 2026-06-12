@@ -72,15 +72,32 @@
             [disabled]="!gravidadeFiltro && !bairroFiltroId && !statusFiltro"
             styleClass="margin-left: auto;">
           </p-button>
+          <p-button
+            label="Limpar Ordenação"
+            icon="pi pi-sort-alt-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparOrdenacao()"
+            disabled="{{tabelaOcorrencias.sortField == null}}"
+          >
+          </p-button>
         </div>
       </ng-template>
       <ng-template #header>
         <tr>
-          <th>Bairro</th>
-          <th>Gravidade</th>
-          <th>Status</th>
+          <th pSortableColumn="bairro.nome">Bairro
+            <p-sortIcon field="bairro.nome"/>
+          </th>
+          <th pSortableColumn="gravidadePeso">Gravidade
+            <p-sortIcon field="gravidadePeso"/>
+          </th>
+          <th pSortableColumn="statusOcorrencia">Status
+            <p-sortIcon field="statusOcorrencia"/>
+          </th>
           <th>Tipo</th>
-          <th>Data de abertura</th>
+          <th pSortableColumn="dataHoraAbertura">Data de abertura
+            <p-sortIcon field="dataHoraAbertura"/>
+          </th>
           <th>SLA</th>
           <th class="acoes">Ações</th>
         </tr>

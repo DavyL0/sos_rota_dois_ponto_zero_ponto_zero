@@ -4,6 +4,7 @@ import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.util.DurationToSecondsConverter;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -137,4 +138,7 @@ public class Ocorrencia {
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
+
+    @Formula("(CASE gravidade WHEN 'BAIXA' THEN 1 WHEN 'MEDIA' THEN 2 WHEN 'ALTA' THEN 3 ELSE 0 END)")
+    private Integer gravidadePeso;
 }

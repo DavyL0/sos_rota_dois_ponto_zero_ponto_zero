@@ -335,6 +335,12 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
     this.filtrarTabela();
   }
 
+  protected limparOrdenacao() {
+    this.tabela.sortField = null;
+    this.tabela.sortOrder = 1;
+    this.tabela.reset();
+  }
+
   getGravidadeLabel(gravidade: GravidadeOcorrencia): string {
     return this.gravidadeLabel[gravidade] || gravidade;
   }
