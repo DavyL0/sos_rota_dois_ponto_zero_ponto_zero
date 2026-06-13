@@ -49,38 +49,6 @@
         </div>
       </div>
     </div>
-
-    <!--
-    <div class="dashboard-details-grid">
-      <div class="details-panel">
-        <h3 class="panel-title"><i class="pi pi-map-marker"></i> Atendimentos por Bairro</h3>
-        <div class="list-container">
-          @for (item of dashboard.atendimentosPorBairro | keyvalue; track item.key) {
-            <div class="list-item">
-              <span class="item-label">{{ item.key }}</span>
-              <span class="item-value">{{ item.value }}</span>
-            </div>
-          } @empty {
-            <div class="empty-message">Nenhum dado registrado ainda.</div>
-          }
-        </div>
-      </div>
-
-      <div class="details-panel">
-        <h3 class="panel-title"><i class="pi pi-stopwatch"></i> Tempo Médio de Resposta</h3>
-        <div class="list-container">
-          @for (item of dashboard.tempoMedioRespostaPorGravidade | keyvalue; track item.key) {
-            <div class="list-item">
-              <span class="item-label">{{ item.key | titlecase }}</span>
-              <span class="item-value">{{ item.value }} min</span>
-            </div>
-          } @empty {
-            <div class="empty-message">Nenhum dado registrado ainda.</div>
-          }
-        </div>
-      </div>
-    </div>
-    -->
   } @else {
     <div class="metric-cards-grid">
       @for (i of [1, 2, 3, 4]; track i) {
