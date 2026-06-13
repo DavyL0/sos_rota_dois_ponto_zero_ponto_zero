@@ -5,9 +5,9 @@ import com.mhd.sosrota.model.dto.dashboard.DashboardDTO;
 import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusAmbulancia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
+import com.mhd.sosrota.repository.AmbulanciaRepository;
 import com.mhd.sosrota.repository.AtendimentoRepository;
 import com.mhd.sosrota.repository.OcorrenciaRepository;
-import com.mhd.sosrota.repository.AmbulanciaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -48,7 +48,7 @@ public class DashboardService {
 
         Map<GravidadeOcorrencia, Double> bruto = new LinkedHashMap<>();
         for (GravidadeOcorrencia g : GravidadeOcorrencia.values()) {
-            bruto.put(g, atendimentoRepository.calculateTempoMedioRespostaByGravidade(g));
+            bruto.put(g, atendimentoRepository.calculateTempoMedioRespostaByGravidade(g.name()));
         }
         Map<GravidadeOcorrencia, Double> tempoMedio =
                 RelatorioAdapter.adaptarTempoMedioPorGravidade(bruto);

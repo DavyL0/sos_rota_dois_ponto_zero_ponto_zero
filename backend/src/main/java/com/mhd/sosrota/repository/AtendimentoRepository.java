@@ -4,6 +4,7 @@ import com.mhd.sosrota.model.Atendimento;
 import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
               AND a.data_hora_despacho IS NOT NULL
               AND a.data_hora_chegada IS NOT NULL
             """, nativeQuery = true)
-    Double calculateTempoMedioRespostaByGravidade(GravidadeOcorrencia gravidade);
+    Double calculateTempoMedioRespostaByGravidade(@Param("gravidade") String gravidade);
 
     @Query("SELECT a.ocorrencia.bairro.nome, COUNT(a.id) FROM Atendimento a GROUP BY a.ocorrencia.bairro.nome ORDER BY COUNT(a.id) DESC")
     List<Object[]> countAtendimentosByBairro();
