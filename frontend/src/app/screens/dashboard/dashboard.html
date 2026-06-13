@@ -1,1 +1,180 @@
-<p>dashboard works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Visão geral</h1>
+    </div>
+  </div>
+
+  <p-toast position="top-right"></p-toast>
+
+  @if (dashboard) {
+    <div class="metric-cards-grid">
+      <div class="metric-card">
+        <div class="metric-content">
+          <span class="metric-title">Ocorrências Abertas</span>
+          <span class="metric-value text-danger">{{ dashboard.totalOcorrenciasAbertas }}</span>
+        </div>
+        <div class="metric-icon bg-danger-light">
+          <i class="pi pi-exclamation-circle text-danger"></i>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <span class="metric-title">Despachadas</span>
+          <span class="metric-value text-warn">{{ dashboard.totalOcorrenciasDespachadas }}</span>
+        </div>
+        <div class="metric-icon bg-warn-light">
+          <i class="pi pi-send text-warn"></i>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <span class="metric-title">Em Atendimento</span>
+          <span class="metric-value text-primary">{{ dashboard.totalOcorrenciasEmAtendimento }}</span>
+        </div>
+        <div class="metric-icon bg-primary-light">
+          <i class="pi pi-heart text-primary"></i>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <span class="metric-title">Ambulâncias Disponíveis</span>
+          <span class="metric-value text-success">{{ dashboard.totalAmbulanciasDisponiveis }}</span>
+        </div>
+        <div class="metric-icon bg-success-light">
+          <i class="pi pi-car text-success"></i>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="metric-cards-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton width="100%" height="110px" borderRadius="12px"></p-skeleton>
+      }
+    </div>
+    <div class="dashboard-details-grid">
+      <p-skeleton width="100%" height="220px" borderRadius="12px"></p-skeleton>
+      <p-skeleton width="100%" height="220px" borderRadius="12px"></p-skeleton>
+    </div>
+  }
+
+  <div class="table-wrapper">
+    <p-table #tabelaOcorrencias [value]="ocorrencias" [rows]="10"
+             [loading]="carregandoOcorrencias" [rowHover]="ocorrencias.length >0" stripedRows>
+      <ng-template #caption>
+        <div class="table-header"><span class="table-title">Últimas ocorrências</span>
+          <p-button
+            label="Nova Ocorrência"
+            icon="pi pi-plus"
+            (onClick)="abrirCadastrar()"/>
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th>Tipo</th>
+          <th>Bairro</th>
+          <th>Data de abertura</th>
+          <th>Status</th>
+          <th>Gravidade</th>
+          <th>SLA</th>
+          <th class="acoes">Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-ocorrencia>
+        @if (carregandoOcorrencias) {
+          <tr>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+            <td>
+              <p-skeleton></p-skeleton>
+            </td>
+          </tr>
+        } @else {
+          <tr>
+            <td>{{ ocorrencia.tipoOcorrencia }}</td>
+            <td>{{ ocorrencia.bairro?.nome }}</td>
+            <td>{{ getDataOcorrencia(ocorrencia.dataHoraAbertura) }}</td>
+            <td>
+              <p-tag
+                [value]="getStatusLabel(ocorrencia.statusOcorrencia)"
+                [severity]="getStatusSeverity(ocorrencia.statusOcorrencia)">
+              </p-tag>
+            </td>
+            <td>
+              <p-tag
+                [value]="getGravidadeLabel(ocorrencia.gravidadeOcorrencia)"
+                [severity]="getGravidadeSeverity(ocorrencia.gravidadeOcorrencia)">
+              </p-tag>
+            </td>
+            <td [ngClass]="ocorrencia._slaFormatado?.classe">
+              {{ ocorrencia._slaFormatado?.texto }}
+            </td>
+            <td class="actions-column">
+              @if (ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA) {
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Detalhes"
+                  (onClick)="abrirDetalhes(ocorrencia)"
+                />
+              } @else {
+                <p-button
+                  icon="pi pi-map"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Despachar ambulância"
+                  [disabled]="ocorrencia.statusOcorrencia !== StatusOcorrencia.ABERTA"
+                  (onClick)="abrirDespachar(ocorrencia)"
+                />
+                <p-button
+                  icon="pi pi-times-circle"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Cancelar"
+                  [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
+                  || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                  (onClick)="cancelarOcorrencia(ocorrencia)"
+                />
+              }
+            </td>
+          </tr>
+        }
+      </ng-template>
+      <ng-template #footer>
+        <tr>
+          <td colspan="7">
+            <div class="table-footer">
+              <p-button
+                label="Ver todas"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                [text]="true"
+                (onClick)="verTodasOcorrencias()"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -3,15 +3,15 @@
   <div class="detalhes-grid">
     <div class="detalhe-item">
       <span class="detalhe-label"><i class="pi pi-tags"></i> Tipo</span>
-      <span class="detalhe-valor">{{ ocorrencia?.tipoOcorrencia }}</span>
+      <span class="detalhe-valor">{{ ocorrencia.tipoOcorrencia }}</span>
     </div>
 
     <div class="detalhe-item">
       <span class="detalhe-label"><i class="pi pi-exclamation-triangle"></i> Gravidade</span>
       <div class="detalhe-valor mt-1">
         <p-tag
-          [value]="getGravidadeLabel(ocorrencia?.gravidadeOcorrencia)"
-          [severity]="getGravidadeSeverity(ocorrencia?.gravidadeOcorrencia)">
+          [value]="getGravidadeLabel(ocorrencia.gravidadeOcorrencia)"
+          [severity]="getGravidadeSeverity(ocorrencia.gravidadeOcorrencia)">
         </p-tag>
       </div>
     </div>
@@ -20,15 +20,15 @@
       <span class="detalhe-label"><i class="pi pi-info-circle"></i> Status Atual</span>
       <div class="detalhe-valor mt-1">
         <p-tag
-          [value]="getStatusLabel(ocorrencia?.statusOcorrencia)"
-          [severity]="getStatusSeverity(ocorrencia?.statusOcorrencia)">
+          [value]="getStatusLabel(ocorrencia.statusOcorrencia)"
+          [severity]="getStatusSeverity(ocorrencia.statusOcorrencia)">
         </p-tag>
       </div>
     </div>
 
     <div class="detalhe-item">
       <span class="detalhe-label"><i class="pi pi-map-marker"></i> Local da Ocorrência</span>
-      <span class="detalhe-valor">{{ ocorrencia?.bairro?.nome }}</span>
+      <span class="detalhe-valor">{{ ocorrencia.bairro?.nome }}</span>
     </div>
   </div>
 
@@ -36,87 +36,100 @@
     <span class="detalhe-label"><i class="pi pi-align-left"></i> Observações</span>
     <div class="observacao-box">
       @if (ocorrencia?.observacao) {
-        <p class="observacao-texto">{{ ocorrencia?.observacao }}</p>
+        <p class="observacao-texto">{{ ocorrencia.observacao }}</p>
       } @else {
         <p class="observacao-vazia">Nenhuma observação registrada para esta ocorrência.</p>
       }
     </div>
   </div>
 
-  @if (ocorrencia?.statusOcorrencia !== StatusOcorrencia.CANCELADA) {
+  @if (ocorrencia?.statusOcorrencia === StatusOcorrencia.DESPACHADA ||
+  ocorrencia?.statusOcorrencia === StatusOcorrencia.EM_ATENDIMENTO ||
+  ocorrencia?.statusOcorrencia === StatusOcorrencia.CONCLUIDA) {
     <div class="atendimento-container">
       <span class="detalhe-label"><i class="pi pi-clipboard"></i> Dados do Atendimento</span>
 
       <div class="atendimento-card-unificado">
 
-        <div class="veiculo-info-row">
-          <div class="veiculo-item">
-            <div class="icon-circle sec"><i class="pi pi-car"></i></div>
-            <div class="veiculo-info">
-              <span class="veiculo-label">Ambulância Vinculada</span>
-              <span class="veiculo-valor">{{ atendimentoMock.ambulanciaPlaca }} ({{ getAmbulanciaTipo(atendimentoMock.ambulanciaTipo) }})</span>
-            </div>
+        @if (carregandoAtendimento) {
+
+        } @else if (!carregandoAtendimento && !atendimento) {
+          <div class="empty-state text-center p-4">
+            <i class="pi pi-exclamation-triangle text-red-500 mb-3" style="font-size: 2.5rem;"></i>
+            <p class="text-color-secondary m-0" style="font-size: 1.1rem;">
+              Houve um erro ao obter os dados do atendimento.
+            </p>
           </div>
-          <div class="veiculo-item">
-            <div class="icon-circle sec"><i class="pi pi-map-marker"></i></div>
-            <div class="veiculo-info">
-              <span class="veiculo-label">Base de Origem</span>
-              <span class="veiculo-valor">{{ atendimentoMock.baseAmbulancia }}</span>
+        } @else if (atendimento) {
+          <div class="veiculo-info-row">
+            <div class="veiculo-item">
+              <div class="icon-circle sec"><i class="pi pi-car"></i></div>
+              <div class="veiculo-info">
+                <span class="veiculo-label">Ambulância Vinculada</span>
+                <span class="veiculo-valor">{{ atendimento?.ambulancia?.placa }}
+                  ({{ getAmbulanciaTipo(atendimento?.ambulancia?.tipo) || atendimento?.ambulancia?.tipo }})</span>
+              </div>
             </div>
-          </div>
-          <div class="veiculo-item">
-            <div class="icon-circle sec"><i class="pi pi-map"></i></div>
-            <div class="veiculo-info">
-              <span class="veiculo-label">Distância Percorrida</span>
-              <span class="veiculo-valor">{{ atendimentoMock.distanciaPercorridaKm }} km</span>
+            <div class="veiculo-item">
+              <div class="icon-circle sec"><i class="pi pi-map-marker"></i></div>
+              <div class="veiculo-info">
+                <span class="veiculo-label">Base de Origem</span>
+                <span class="veiculo-valor">{{ atendimento?.ambulancia?.bairro?.nome }}</span>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <hr class="atendimento-divider" />
-
-        <div class="timeline-horizontal">
-
-          <div class="time-step">
-            <div class="step-marker"><i class="pi pi-calendar-plus"></i></div>
-            <div class="step-details">
-              <span class="step-title">Abertura</span>
-              <span class="step-time">{{ formatarDataHora(ocorrencia?.dataHoraAbertura) }}</span>
-            </div>
-          </div>
-
-          <div class="step-line"></div>
-
-          <div class="time-step">
-            <div class="step-marker"><i class="pi pi-clock"></i></div>
-            <div class="step-details">
-              <span class="step-title">Despacho</span>
-              <span class="step-time">{{ formatarDataHora(atendimentoMock.horarioDespacho) }}</span>
+            <div class="veiculo-item">
+              <div class="icon-circle sec"><i class="pi pi-map"></i></div>
+              <div class="veiculo-info">
+                <span class="veiculo-label">Distância Percorrida</span>
+                <span class="veiculo-valor">{{ Math.round(atendimento.distanciaKm) }} km</span>
+              </div>
             </div>
           </div>
 
-          <div class="step-line"></div>
+          <hr class="atendimento-divider"/>
 
-          <div class="time-step">
-            <div class="step-marker"><i class="pi pi-stopwatch"></i></div>
-            <div class="step-details">
-              <span class="step-title">Chegada Local</span>
-              <span class="step-time">{{ formatarDataHora(atendimentoMock.chegadaLocal) }}</span>
+          <div class="timeline-horizontal">
+
+            <div class="time-step">
+              <div class="step-marker"><i class="pi pi-calendar-plus"></i></div>
+              <div class="step-details">
+                <span class="step-title">Abertura</span>
+                <span class="step-time">{{ formatarDataHora(ocorrencia?.dataHoraAbertura) }}</span>
+              </div>
             </div>
-          </div>
 
-          <div class="step-line"></div>
+            <div class="step-line"></div>
 
-          <div class="time-step">
-            <div class="step-marker final"><i class="pi pi-check"></i></div>
-            <div class="step-details">
-              <span class="step-title">Conclusão</span>
-              <span class="step-time">{{ formatarDataHora(atendimentoMock.horarioConclusao) }}</span>
+            <div class="time-step">
+              <div class="step-marker"><i class="pi pi-clock"></i></div>
+              <div class="step-details">
+                <span class="step-title">Despacho</span>
+                <span class="step-time">{{ formatarDataHora(atendimento?.dataHoraDespacho) }}</span>
+              </div>
             </div>
+
+            <div class="step-line"></div>
+
+            <div class="time-step">
+              <div class="step-marker"><i class="pi pi-stopwatch"></i></div>
+              <div class="step-details">
+                <span class="step-title">Chegada Local</span>
+                <span class="step-time">{{ formatarDataHora(atendimento?.dataHoraChegada) }}</span>
+              </div>
+            </div>
+
+            <div class="step-line"></div>
+
+            <div class="time-step">
+              <div class="step-marker final"><i class="pi pi-check"></i></div>
+              <div class="step-details">
+                <span class="step-title">Conclusão</span>
+                <span class="step-time">{{ formatarDataHora(atendimento?.dataHoraConclusao) }}</span>
+              </div>
+            </div>
+
           </div>
-
-        </div>
-
+        }
       </div>
     </div>
   }

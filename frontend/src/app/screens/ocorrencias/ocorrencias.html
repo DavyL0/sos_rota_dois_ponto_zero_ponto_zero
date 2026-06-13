@@ -4,25 +4,99 @@
       <h1 class="page-title">Ocorrências</h1>
     </div>
     <div class="header-actions">
-      <p-button label="Nova Ocorrência" icon="pi pi-plus">
+      <p-button label="Nova Ocorrência" icon="pi pi-plus" (onClick)="abrirCadastrar()">
       </p-button>
     </div>
   </div>
+
+  <p-toast position="top-center"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
 
   <div class="table-wrapper">
     <p-table #tabelaOcorrencias [value]="ocorrencias" [paginator]="true" [rows]="10"
              [lazy]="true" (onLazyLoad)="carregarTabela($event)" [totalRecords]="totalElementos" [loading]="carregando"
              [rowHover]="ocorrencias.length > 0" stripedRows>
       <ng-template #caption>
-        <!--        todo: implementar filtro-->
+        <div class="table-header">
+          <span class="filter-label">Filtros</span>
+          <p-select
+            id="filtroGravidade"
+            name="filtroGravidade"
+            [options]="tiposGravidade"
+            [(ngModel)]="gravidadeFiltro"
+            placeholder="Filtrar por Gravidade"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [showClear]="true"
+            (onChange)="filtrarTabela()"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-select
+            id="filtroBairro"
+            name="filtroBairro"
+            [options]="bairros"
+            [(ngModel)]="bairroFiltroId"
+            placeholder="Filtrar por Bairro"
+            optionLabel="nome"
+            optionValue="id"
+            appendTo="body"
+            [filter]="true"
+            (onChange)="filtrarTabela()"
+            filterBy="nome"
+            [showClear]="true"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-select
+            id="filtroStatus"
+            name="filtroStatus"
+            [options]="tiposStatus"
+            [(ngModel)]="statusFiltro"
+            placeholder="Filtrar por Status"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [showClear]="true"
+            (onChange)="filtrarTabela()"
+            class="filtro-select"
+            [style]="{'width': '100%'}">
+          </p-select>
+          <p-button
+            label="Limpar Filtros"
+            icon="pi pi-filter-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparFiltros()"
+            [disabled]="!gravidadeFiltro && !bairroFiltroId && !statusFiltro"
+            styleClass="margin-left: auto;">
+          </p-button>
+          <p-button
+            label="Limpar Ordenação"
+            icon="pi pi-sort-alt-slash"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="limparOrdenacao()"
+            [disabled]="!tabelaOcorrencias.sortField">
+          </p-button>
+        </div>
       </ng-template>
       <ng-template #header>
         <tr>
-          <th>Bairro</th>
-          <th>Gravidade</th>
-          <th>Status</th>
           <th>Tipo</th>
-          <th>Data de abertura</th>
+          <th pSortableColumn="bairro.nome">Bairro
+          <p-sortIcon field="bairro.nome"/>
+          </th>
+          <th pSortableColumn="dataHoraAbertura">Data de abertura
+            <p-sortIcon field="dataHoraAbertura"/>
+          </th>
+          <th pSortableColumn="statusOcorrencia">Status
+          <p-sortIcon field="statusOcorrencia"/>
+          </th>
+          <th pSortableColumn="gravidadePeso">Gravidade
+            <p-sortIcon field="gravidadePeso"/>
+          </th>
           <th>SLA</th>
           <th class="acoes">Ações</th>
         </tr>
@@ -54,11 +128,21 @@
           </tr>
         } @else {
           <tr>
-            <td>{{ ocorrencia.bairro?.nome }}</td>
-            <td>{{ getGravidadeLabel(ocorrencia.gravidadeOcorrencia) }}</td>
-            <td>{{ getStatusLabel(ocorrencia.statusOcorrencia) }}</td>
             <td>{{ ocorrencia.tipoOcorrencia }}</td>
+            <td>{{ ocorrencia.bairro?.nome }}</td>
             <td>{{ getDataOcorrencia(ocorrencia.dataHoraAbertura) }}</td>
+            <td>
+              <p-tag
+                [value]="getStatusLabel(ocorrencia.statusOcorrencia)"
+                [severity]="getStatusSeverity(ocorrencia.statusOcorrencia)">
+              </p-tag>
+            </td>
+            <td>
+              <p-tag
+                [value]="getGravidadeLabel(ocorrencia.gravidadeOcorrencia)"
+                [severity]="getGravidadeSeverity(ocorrencia.gravidadeOcorrencia)">
+              </p-tag>
+            </td>
             <td [ngClass]="ocorrencia._slaFormatado?.classe">
               {{ ocorrencia._slaFormatado?.texto }}
             </td>
@@ -78,6 +162,7 @@
                   severity="info"
                   pTooltip="Despachar ambulância"
                   [disabled]="ocorrencia.statusOcorrencia !== StatusOcorrencia.ABERTA"
+                  (onClick)="abrirDespachar(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-pencil"
@@ -86,20 +171,24 @@
                   pTooltip="Editar ocorrência"
                   [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
                   || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                  (onClick)="abrirEditar(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-times-circle"
                   [text]="true"
                   severity="danger"
-                  pTooltip="Cancelar ocorrência"
+                  pTooltip="Cancelar"
                   [disabled]="ocorrencia.statusOcorrencia === StatusOcorrencia.CONCLUIDA
                   || ocorrencia.statusOcorrencia === StatusOcorrencia.CANCELADA"
+                  (onClick)="cancelarOcorrencia(ocorrencia)"
                 />
                 <p-button
                   icon="pi pi-trash"
                   [text]="true"
                   severity="danger"
                   pTooltip="Excluir"
+                  [loading]="deletandoId === ocorrencia.id"
+                  (onClick)="confirmarExclusao(ocorrencia)"
                 />
               }
             </td>

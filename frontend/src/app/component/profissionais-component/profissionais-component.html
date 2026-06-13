@@ -114,16 +114,21 @@
     <div class="form-item">
       <label for="nome">Nome*</label>
       <input pInputText id="nome" name="nome" type="text" [(ngModel)]="profissionalCadastrado.nome"
-             placeholder="Xin Jin Ping" required #nomeVar="ngModel" maxlength="100"
+             placeholder="Xin Jin Ping" required #nomeVar="ngModel" maxlength="100" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s']+$"
              [ngClass]="{'ng-invalid ng-dirty': nomeVar.invalid && nomeVar.touched}">
       @if (nomeVar.invalid && nomeVar.touched) {
-        <small class="error-message">O nome é obrigatório.</small>
-      }
-      @if (nomeVar.errors?.['duplicate']) {
-        <small class="error-message">Já existe um profissional cadastrado com esse nome.</small>
-      }
-      @if (nomeVar.errors?.['maxlength']) {
-        <small class="error-message">O nome não pode ter mais de 100 caracteres.</small>
+        @if (nomeVar.errors?.['required']) {
+          <small class="error-message">O nome é obrigatório.</small>
+        }
+        @if (nomeVar.errors?.['duplicate']) {
+          <small class="error-message">Já existe um profissional cadastrado com esse nome.</small>
+        }
+        @if (nomeVar.errors?.['maxlength']) {
+          <small class="error-message">O nome não pode ter mais de 100 caracteres.</small>
+        }
+        @if (nomeVar.errors?.['pattern']) {
+          <small class="error-message">O nome não pode conter números ou caracteres especiais.</small>
+        }
       }
     </div>
 

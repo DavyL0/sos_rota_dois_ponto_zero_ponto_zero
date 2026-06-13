@@ -11,7 +11,7 @@ public record DashboardDTO(
         long totalOcorrenciasAbertas,
         long totalOcorrenciasDespachadas,
         long totalOcorrenciasEmAtendimento,
-        long totalAmbulanciasdisponiveis,
+        long totalAmbulanciasDisponiveis,
         Map<String, Long> atendimentosPorBairro,
         Map<String, Double> tempoMedioRespostaPorGravidade
 ) {}

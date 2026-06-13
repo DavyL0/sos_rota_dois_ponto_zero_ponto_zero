@@ -1,0 +1,92 @@
+.metric-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-title {
+  color: var(--p-text-muted-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 2.2rem;
+  font-family: 'Teko', sans-serif;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.metric-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.table-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin: 0;
+}
+
+.empty-message {
+  color: var(--p-text-muted-color);
+  font-style: italic;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.text-info { color: var(--p-blue-500); }
+.bg-info-light { background-color: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+.text-warn { color: var(--p-orange-500); }
+.bg-warn-light { background-color: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.2); }
+
+.text-danger { color: var(--p-red-500); }
+.bg-danger-light { background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+.text-primary { color: var(--p-primary-500); }
+.bg-primary-light { background-color: rgba(var(--p-primary-500-rgb, 59, 130, 246), 0.15); border: 1px solid rgba(var(--p-primary-500-rgb, 59, 130, 246), 0.2); }
+
+.text-success { color: var(--p-green-500); }
+.bg-success-light { background-color: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.2); }

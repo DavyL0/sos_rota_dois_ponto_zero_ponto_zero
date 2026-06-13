@@ -11,6 +11,7 @@ import jakarta.validation.constraints.*;
 public record ProfissionalCadastroDTO(
         @NotBlank(message = "O nome do profissional é obrigatório")
         @Size(max = 100, message = "O nome não pode ter mais de 100 caracteres")
+        @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s']+$", message = "O nome não pode conter números ou caracteres especiais")
         String nome,
 
         @NotNull(message = "A função é obrigatória")
@@ -19,4 +20,5 @@ public record ProfissionalCadastroDTO(
         @Email(message = "O e-mail informado não é válido")
         @Size(max = 50, message = "O e-mail não pode ter mais de 50 caracteres")
         String contato
-) {}
+) {
+}
