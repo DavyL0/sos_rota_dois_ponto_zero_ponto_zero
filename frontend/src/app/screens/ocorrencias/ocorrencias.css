@@ -1,9 +1,19 @@
-.sla-estourado {
-  color: var(--p-red-500);
-  font-weight: bold;
+.filter-label {
+  font-family: 'Teko', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  white-space: nowrap;
+  margin-right: 0.5rem;
+  align-self: flex-end;
+  line-height: 1;
 }
 
-.sla-alerta {
-  color: var(--p-orange-500);
-  font-weight: bold;
+.filtro-select {
+  flex: 1 1 0;
+  min-width: 160px;
+}
+
+.btn-limpar {
+  margin-left: auto;
 }

@@ -48,7 +48,7 @@
             severity="secondary"
             [outlined]="true"
             (onClick)="limparOrdenacao()"
-            disabled="{{tabelaAmbulancias.sortField == null}}"
+            [disabled]="!tabelaAmbulancias.sortField"
           >
           </p-button>
         </div>

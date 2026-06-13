@@ -6,9 +6,10 @@ package com.mhd.sosrota.service.ciclo;
  * @brief Classe abstrata que define o esqueleto do ciclo de atendimento.
  */
 public abstract class CicloAtendimentoTemplate {
+
     public final void executarCiclo(Long atendimentoId, double distanciaKm) {
         double tempoViagem = calcularTempoViagem(distanciaKm);
-        double tempoAtendimento = calcularTempoAtendimento();
+        double tempoAtendimento = calcularTempoAtendimento(atendimentoId);
 
         agendarChegada(atendimentoId, tempoViagem);
         agendarConclusao(atendimentoId, tempoViagem + tempoAtendimento);
@@ -17,11 +18,11 @@ public abstract class CicloAtendimentoTemplate {
 
     protected abstract double calcularTempoViagem(double distanciaKm);
 
-    protected abstract double calcularTempoAtendimento();
+    protected abstract double calcularTempoAtendimento(Long atendimentoId);
 
-    protected abstract void agendarChegada(Long atendimentoId, double delaySegundos);
+    protected abstract void agendarChegada(Long atendimentoId, double tempoViagem);
 
-    protected abstract void agendarConclusao(Long atendimentoId, double delaySegundos);
+    protected abstract void agendarConclusao(Long atendimentoId, double tempoViagem);
 
-    protected abstract void agendarRetorno(Long atendimentoId, double delaySegundos);
+    protected abstract void agendarRetorno(Long atendimentoId, double tempoViagem);
 }

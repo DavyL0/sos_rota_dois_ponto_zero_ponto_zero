@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 01/06/2026
  * @brief Interface AmbulanciaRepository
  */
+@Repository
 public interface AmbulanciaRepository extends JpaRepository<Ambulancia, Long> {
     @EntityGraph(attributePaths = {"bairroBase"})
     @Query("""

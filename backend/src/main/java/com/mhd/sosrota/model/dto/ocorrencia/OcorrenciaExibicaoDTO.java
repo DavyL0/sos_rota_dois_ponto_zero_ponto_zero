@@ -32,7 +32,7 @@ public record OcorrenciaExibicaoDTO(
                 new BairroDTO(o.getBairro().getId(), o.getBairro().getNome()),
                 o.getDataHoraAbertura(),
                 o.getLimiteSLA(),
-                o.getSlaFinal().getSeconds(),
+                o.getSlaFinal() != null ? o.getSlaFinal().getSeconds() : null,
                 o.getObservacao()
         );
     }

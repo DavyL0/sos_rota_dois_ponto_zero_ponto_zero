@@ -1,13 +1,16 @@
 package com.mhd.sosrota.service;
 
+import com.mhd.sosrota.model.Ambulancia;
 import com.mhd.sosrota.model.Atendimento;
 import com.mhd.sosrota.model.Bairro;
+import com.mhd.sosrota.model.Ocorrencia;
 import com.mhd.sosrota.model.dto.atendimento.OpcaoDespachoDTO;
 import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusAmbulancia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.model.enums.TipoAmbulancia;
 import com.mhd.sosrota.repository.AtendimentoRepository;
+import com.mhd.sosrota.service.ciclo.CicloAtendimentoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,8 @@ public class AtendimentoService {
     private final AmbulanciaService ambulanciaService;
     private final AtendimentoRepository atendimentoRepository;
     private final GrafoCidadeService grafoCidadeService;
+
+    CicloAtendimentoTemplate cicloAtendimentoTemplate;
 
     public AtendimentoService(OcorrenciaService ocorrenciaService,
                               AmbulanciaService ambulanciaService,
@@ -72,8 +77,8 @@ public class AtendimentoService {
 
     @Transactional
     public Atendimento realizarDespacho(Long ocorrenciaId, Long ambulanciaId) {
-        var ocorrencia = ocorrenciaService.findById(ocorrenciaId);
-        var ambulancia = ambulanciaService.findById(ambulanciaId);
+        Ocorrencia ocorrencia = ocorrenciaService.findById(ocorrenciaId);
+        Ambulancia ambulancia = ambulanciaService.findById(ambulanciaId);
 
         if (ocorrencia.getStatusOcorrencia() != StatusOcorrencia.ABERTA) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -93,8 +98,12 @@ public class AtendimentoService {
         ocorrencia.setSlaFinal(OcorrenciaService.calcularSLAFinal(ocorrencia.getLimiteSLA()));
         ambulancia.setStatus(StatusAmbulancia.EM_ATENDIMENTO);
 
-        var atendimento = new Atendimento(ocorrencia, ambulancia, distanciaKm);
-        return atendimentoRepository.save(atendimento);
+        Atendimento atendimento = new Atendimento(ocorrencia, ambulancia, distanciaKm);
+        atendimento = atendimentoRepository.save(atendimento);
+
+        cicloAtendimentoTemplate.executarCiclo(ocorrenciaId, distanciaKm);
+
+        return atendimento;
     }
 
     public Atendimento findByOcorrencia(Long ocorrenciaId) {

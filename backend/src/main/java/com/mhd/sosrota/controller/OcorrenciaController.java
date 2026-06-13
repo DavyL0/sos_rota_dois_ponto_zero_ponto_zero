@@ -3,6 +3,8 @@ package com.mhd.sosrota.controller;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCadastroDTO;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCancelamentoDTO;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaExibicaoDTO;
+import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
+import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.service.OcorrenciaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -29,18 +31,19 @@ public class OcorrenciaController {
     }
 
     @PostMapping
-    public ResponseEntity<OcorrenciaExibicaoDTO> criar(
-            @RequestBody @Valid OcorrenciaCadastroDTO dto) {
+    public ResponseEntity<OcorrenciaExibicaoDTO> criar(@RequestBody @Valid OcorrenciaCadastroDTO dto) {
         var ocorrencia = ocorrenciaService.salvar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new OcorrenciaExibicaoDTO(ocorrencia));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new OcorrenciaExibicaoDTO(ocorrencia));
     }
 
     @GetMapping
     public ResponseEntity<Page<OcorrenciaExibicaoDTO>> listar(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(
-                ocorrenciaService.findAll(pageable).map(OcorrenciaExibicaoDTO::new));
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) GravidadeOcorrencia gravidade,
+            @RequestParam(required = false) Long bairroId,
+            @RequestParam(required = false) StatusOcorrencia status
+    ) {
+        return ResponseEntity.ok(ocorrenciaService.findAll(pageable, gravidade, bairroId, status).map(OcorrenciaExibicaoDTO::new));
     }
 
     @GetMapping("/{id}")
@@ -51,15 +54,16 @@ public class OcorrenciaController {
     @PutMapping("/{id}")
     public ResponseEntity<OcorrenciaExibicaoDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody @Valid OcorrenciaCadastroDTO dto) {
-        return ResponseEntity.ok(
-                new OcorrenciaExibicaoDTO(ocorrenciaService.atualizar(id, dto)));
+            @RequestBody @Valid OcorrenciaCadastroDTO dto
+    ) {
+        return ResponseEntity.ok(new OcorrenciaExibicaoDTO(ocorrenciaService.atualizar(id, dto)));
     }
 
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<OcorrenciaExibicaoDTO> cancelar(
             @PathVariable Long id,
-            @RequestBody @Valid OcorrenciaCancelamentoDTO dto) {
+            @RequestBody @Valid OcorrenciaCancelamentoDTO dto
+    ) {
         return ResponseEntity.ok(
                 new OcorrenciaExibicaoDTO(ocorrenciaService.cancelar(id, dto.justificativa())));
     }

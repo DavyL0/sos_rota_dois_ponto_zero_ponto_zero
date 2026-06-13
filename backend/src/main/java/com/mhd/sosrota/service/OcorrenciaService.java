@@ -2,6 +2,7 @@ package com.mhd.sosrota.service;
 
 import com.mhd.sosrota.model.Ocorrencia;
 import com.mhd.sosrota.model.dto.ocorrencia.OcorrenciaCadastroDTO;
+import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import com.mhd.sosrota.model.enums.StatusOcorrencia;
 import com.mhd.sosrota.repository.BairroRepository;
 import com.mhd.sosrota.repository.OcorrenciaRepository;
@@ -44,12 +45,13 @@ public class OcorrenciaService {
         ocorrencia.setBairro(bairro);
         ocorrencia.setObservacao(dto.observacao());
         ocorrencia.setStatusOcorrencia(StatusOcorrencia.ABERTA);
+        ocorrencia.setDataHoraAbertura(OffsetDateTime.now(ZoneId.of("America/Sao_Paulo")));
 
         return ocorrenciaRepository.save(ocorrencia);
     }
 
-    public Page<Ocorrencia> findAll(Pageable pageable) {
-        return ocorrenciaRepository.findAll(pageable);
+    public Page<Ocorrencia> findAll(Pageable pageable, GravidadeOcorrencia gravidade, Long bairroId, StatusOcorrencia status) {
+        return ocorrenciaRepository.findComFiltro(pageable, gravidade, bairroId, status);
     }
 
     public Ocorrencia findById(Long id) {
@@ -91,8 +93,16 @@ public class OcorrenciaService {
         ocorrencia.setStatusOcorrencia(StatusOcorrencia.CANCELADA);
         ocorrencia.setSlaFinal(calcularSLAFinal(ocorrencia.getLimiteSLA()));
 
-        String novaObs = (ocorrencia.getObservacao() != null ? ocorrencia.getObservacao() : "")
-                + "\n[CANCELAMENTO]: " + justificativa;
+        var obsAtual = ocorrencia.getObservacao() != null ? ocorrencia.getObservacao().strip() : "";
+
+        String novaObs;
+
+        if (obsAtual.isEmpty()) {
+            novaObs = "[CANCELAMENTO]: " + justificativa;
+        } else {
+            novaObs = obsAtual + "\n[CANCELAMENTO]: " + justificativa;
+        }
+
         ocorrencia.setObservacao(novaObs);
 
         return ocorrenciaRepository.save(ocorrencia);
@@ -100,6 +110,10 @@ public class OcorrenciaService {
 
     public void deletar(Long id) {
         var ocorrencia = findById(id);
+
+        if (ocorrencia.getStatusOcorrencia() != StatusOcorrencia.ABERTA) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível deletar uma ocorrência com histórico. Cancele-a, em vez disso");
+        }
 
         if (ocorrencia.getStatusOcorrencia() == StatusOcorrencia.DESPACHADA
                 || ocorrencia.getStatusOcorrencia() == StatusOcorrencia.EM_ATENDIMENTO) {
