@@ -14,7 +14,6 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "atendimentos")
 public class Atendimento {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_atendimento")
@@ -28,7 +27,7 @@ public class Atendimento {
     @JoinColumn(name = "ambulancia_id", referencedColumnName = "id_ambulancia", nullable = false)
     private Ambulancia ambulancia;
 
-    @Column(name = "data_hora_despacho", nullable = false, insertable = false, updatable = false)
+    @Column(name = "data_hora_despacho", nullable = false)
     private OffsetDateTime dataHoraDespacho;
 
     @Column(name = "data_hora_chegada")
@@ -75,6 +74,10 @@ public class Atendimento {
 
     public OffsetDateTime getDataHoraDespacho() {
         return dataHoraDespacho;
+    }
+
+    public void setDataHoraDespacho(OffsetDateTime dataHoraDespacho) {
+        this.dataHoraDespacho = dataHoraDespacho;
     }
 
     public LocalDateTime getDataHoraChegada() {
