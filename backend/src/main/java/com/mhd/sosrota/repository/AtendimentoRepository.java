@@ -2,7 +2,6 @@ package com.mhd.sosrota.repository;
 
 import com.mhd.sosrota.model.Ambulancia;
 import com.mhd.sosrota.model.Atendimento;
-import com.mhd.sosrota.model.enums.GravidadeOcorrencia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

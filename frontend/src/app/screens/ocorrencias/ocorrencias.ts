@@ -259,6 +259,12 @@ export class Ocorrencias extends TabelaOrdenacao implements OnInit, OnDestroy {
         ocorrenciaDespacho: ocorrencia,
       },
     });
+
+    this.ref?.onClose.subscribe((result) => {
+      if (result) {
+        this.carregarDados();
+      }
+    })
   }
 
   abrirCadastrar() {
