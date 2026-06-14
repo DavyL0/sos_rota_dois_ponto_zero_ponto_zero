@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  * @brief Iterador de profissionais filtrado por função.
  */
 public class ProfissionalIterator implements Iterator<Profissional> {
-
+    //iterator para obter profissionais filtrados por funcao
     private final List<Profissional> profissionais;
     private final FuncaoProfissional filtroFuncao;
     private int cursor = 0;
@@ -22,14 +22,14 @@ public class ProfissionalIterator implements Iterator<Profissional> {
     public ProfissionalIterator(List<Profissional> profissionais, FuncaoProfissional filtroFuncao) {
         this.profissionais = profissionais;
         this.filtroFuncao = filtroFuncao;
-        avançar();
+        avancar();
     }
 
     public ProfissionalIterator(List<Profissional> profissionais) {
         this(profissionais, null);
     }
 
-    private void avançar() {
+    private void avancar() {
         proximo = null;
         while (cursor < profissionais.size()) {
             Profissional candidato = profissionais.get(cursor++);
@@ -49,7 +49,7 @@ public class ProfissionalIterator implements Iterator<Profissional> {
     public Profissional next() {
         if (!hasNext()) throw new NoSuchElementException();
         Profissional atual = proximo;
-        avançar();
+        avancar();
         return atual;
     }
 }
