@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-06-14
+
+### Added
+- Ciclo de atendimento completo para rastreamento de ocorrências
+- Serviço para verificar atendimentos pendentes e atualizar status de ambulâncias em tempo real
+- Confirmação antes de despachar ocorrências que excedem o SLA
+
+### Fixed
+- Correção nas telas de dashboard e ocorrências que não atualizavam ao despachar
+
+### Changed
+- Adição de comentários nas classes de padrões de projeto para melhor documentação do código
+
 ## [1.2.0] - 2026-06-13
 
 ### Added
