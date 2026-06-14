@@ -113,6 +113,8 @@ public class AtendimentoService {
             throw new IllegalArgumentException("Nenhum ciclo de atendimento definido para a gravidade: " + gravidade);
         }
 
+        System.out.println("CICLO ESCOLHIDO: "+ cicloEscolhido);
+
         cicloEscolhido.executarCiclo(atendimento.getId(), distanciaKm, this);
 
         return atendimento;
