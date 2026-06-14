@@ -22,12 +22,12 @@ import java.util.List;
 public interface AmbulanciaRepository extends JpaRepository<Ambulancia, Long> {
     @EntityGraph(attributePaths = {"bairroBase"})
     @Query("""
-    SELECT a FROM Ambulancia a
-    LEFT JOIN a.bairroBase b
-    WHERE (:filtro IS NULL
-       OR LOWER(a.placa) LIKE LOWER(CONCAT('%', :filtro, '%'))
-       OR LOWER(b.nome) LIKE LOWER(CONCAT('%', :filtro, '%')))
-""")
+                SELECT a FROM Ambulancia a
+                LEFT JOIN a.bairroBase b
+                WHERE (:filtro IS NULL
+                   OR LOWER(a.placa) LIKE LOWER(CONCAT('%', :filtro, '%'))
+                   OR LOWER(b.nome) LIKE LOWER(CONCAT('%', :filtro, '%')))
+            """)
     Page<Ambulancia> obterComFiltro(Pageable pageable, @Param("filtro") String filtro);
 
     List<Ambulancia> findByStatus(StatusAmbulancia status);

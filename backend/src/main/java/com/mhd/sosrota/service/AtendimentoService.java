@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,24 +31,24 @@ import java.util.Map;
  */
 @Service
 public class AtendimentoService {
-
     private static final double VELOCIDADE_KMH = 60.0;
 
     private final OcorrenciaService ocorrenciaService;
     private final AmbulanciaService ambulanciaService;
     private final AtendimentoRepository atendimentoRepository;
     private final GrafoCidadeService grafoCidadeService;
-
-    CicloAtendimentoTemplate cicloAtendimentoTemplate;
+    private final Map<String, CicloAtendimentoTemplate> ciclosDeAtendimento;
 
     public AtendimentoService(OcorrenciaService ocorrenciaService,
                               AmbulanciaService ambulanciaService,
                               AtendimentoRepository atendimentoRepository,
-                              GrafoCidadeService grafoCidadeService) {
+                              GrafoCidadeService grafoCidadeService,
+                              Map<String, CicloAtendimentoTemplate> ciclosDeAtendimento) {
         this.ocorrenciaService = ocorrenciaService;
         this.ambulanciaService = ambulanciaService;
         this.atendimentoRepository = atendimentoRepository;
         this.grafoCidadeService = grafoCidadeService;
+        this.ciclosDeAtendimento = ciclosDeAtendimento;
     }
 
     public List<OpcaoDespachoDTO> buscarOpcoesDeDespacho(Long ocorrenciaId) {
@@ -99,11 +102,57 @@ public class AtendimentoService {
         ambulancia.setStatus(StatusAmbulancia.EM_ATENDIMENTO);
 
         Atendimento atendimento = new Atendimento(ocorrencia, ambulancia, distanciaKm);
+        atendimento.setDataHoraDespacho(OffsetDateTime.now(ZoneId.of("America/Sao_Paulo")));
         atendimento = atendimentoRepository.save(atendimento);
 
-        cicloAtendimentoTemplate.executarCiclo(ocorrenciaId, distanciaKm);
+        var gravidade = ocorrencia.getGravidadeOcorrencia();
+
+        String chaveDoCiclo = "ciclo_" + gravidade.name();
+        CicloAtendimentoTemplate cicloEscolhido = ciclosDeAtendimento.get(chaveDoCiclo);
+        if (cicloEscolhido == null) {
+            throw new IllegalArgumentException("Nenhum ciclo de atendimento definido para a gravidade: " + gravidade);
+        }
+
+        System.out.println("CICLO ESCOLHIDO: "+ cicloEscolhido);
+
+        cicloEscolhido.executarCiclo(atendimento.getId(), distanciaKm, this);
 
         return atendimento;
+    }
+
+    @Transactional
+    public void registrarChegada(Long atendimentoId) {
+        var atendimento = atendimentoRepository.findById(atendimentoId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado")
+        );
+
+        atendimento.setDataHoraChegada(LocalDateTime.now());
+        atendimento.getOcorrencia().setStatusOcorrencia(StatusOcorrencia.EM_ATENDIMENTO);
+
+        atendimentoRepository.save(atendimento);
+    }
+
+    @Transactional
+    public void registrarConclusao(Long atendimentoId) {
+        var atendimento = atendimentoRepository.findById(atendimentoId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado")
+        );
+
+        atendimento.setDataHoraConclusao(LocalDateTime.now());
+        atendimento.getOcorrencia().setStatusOcorrencia(StatusOcorrencia.CONCLUIDA);
+
+        atendimentoRepository.save(atendimento);
+    }
+
+    @Transactional
+    public void registrarRetorno(Long atendimentoId) {
+        var atendimento = atendimentoRepository.findById(atendimentoId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado")
+        );
+
+        atendimento.getAmbulancia().setStatus(StatusAmbulancia.DISPONIVEL);
+
+        atendimentoRepository.save(atendimento);
     }
 
     public Atendimento findByOcorrencia(Long ocorrenciaId) {

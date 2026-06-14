@@ -10,6 +10,7 @@ import java.util.List;
  * @brief Decorator abstrato — delega para o filtro interno.
  */
 public abstract class FiltroDecorator implements FiltroAtendimento {
+    //decorator para os diversos tipos de filtro
     protected final FiltroAtendimento filtroInterno;
 
     protected FiltroDecorator(FiltroAtendimento filtroInterno) {

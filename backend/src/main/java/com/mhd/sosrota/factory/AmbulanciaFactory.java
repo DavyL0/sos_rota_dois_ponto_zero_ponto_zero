@@ -11,6 +11,7 @@ import com.mhd.sosrota.model.enums.TipoAmbulancia;
  * @brief Fábrica de ambulâncias.
  */
 public class AmbulanciaFactory {
+    //factory para criar o tipo certo de ambulancia
     public static Ambulancia criarBasica(String placa, Bairro bairroBase) {
         return new Ambulancia(StatusAmbulancia.INATIVA, TipoAmbulancia.BASICA, placa, bairroBase);
     }

@@ -12,10 +12,13 @@ import { TableModule } from 'primeng/table';
 import { Button } from 'primeng/button';
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-despachar-ocorrencia-component',
-  imports: [Tag, TableModule, Button, NgClass],
+  imports: [Tag, TableModule, Button, NgClass, ConfirmDialog],
+  providers: [ConfirmationService],
   templateUrl: './despachar-ocorrencia-component.html',
   styleUrl: './despachar-ocorrencia-component.css',
 })
@@ -23,6 +26,7 @@ export class DespacharOcorrenciaComponent implements OnInit {
   private atendimentoService = inject(AtendimentoService);
   private ref = inject(DynamicDialogRef);
   private cd = inject(ChangeDetectorRef);
+  private confirmationService = inject(ConfirmationService);
 
   @Input() ocorrenciaDespacho: OcorrenciaExibicaoModel | null = null;
   ocorrenciaId: number | null = null;
@@ -64,25 +68,60 @@ export class DespacharOcorrenciaComponent implements OnInit {
       return;
     }
 
-    this.carregandoDespacho = true;
-    this.erroBackend = null;
+    const tempo = this.opcaoSelecionada.tempoEstimadoMin;
+    const limiteSla = new Date(this.ocorrenciaDespacho?.limiteSLA!);
+    const agora = new Date();
 
-    this.atendimentoService
-      .despachar(this.ocorrenciaId, this.opcaoSelecionada.ambulancia.id)
-      .subscribe({
-        next: (resultado) => {
-          this.carregandoDespacho = false;
-          this.ref.close(resultado);
+    const estimativaChegada = new Date(agora);
+
+    estimativaChegada.setMinutes(estimativaChegada.getMinutes() + tempo);
+
+    const executarDespacho = () => {
+      this.carregandoDespacho = true;
+      this.erroBackend = null;
+
+      this.atendimentoService
+        .despachar(this.ocorrenciaId!, this.opcaoSelecionada!.ambulancia.id)
+        .subscribe({
+          next: (resultado) => {
+            this.carregandoDespacho = false;
+            this.ref.close(resultado);
+          },
+          error: (err: HttpErrorResponse) => {
+            this.carregandoDespacho = false;
+            console.log('Erro ao despachar', err);
+
+            if (err.status === 400) {
+              this.erroBackend = err.error.message;
+            }
+          },
+        });
+    };
+
+    if (estimativaChegada > limiteSla) {
+      this.confirmationService.confirm({
+        message: `O tempo estimado para chegada da ambulância excede o SLA da ocorrência. Deseja continuar?`,
+        header: 'Atenção',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Continuar',
+        rejectLabel: 'Cancelar',
+        rejectButtonProps: {
+          severity: 'secondary',
+          outlined: true,
         },
-        error: (err: HttpErrorResponse) => {
-          this.carregandoDespacho = false;
-          console.log('Erro ao despachar', err)
-
-          if (err.status === 400) {
-            this.erroBackend = err.error.message;
-          }
+        acceptButtonProps: {
+          severity: 'danger',
+        },
+        accept: () => {
+          executarDespacho();
+        },
+        reject: () => {
+          return;
         },
       });
+    } else {
+      executarDespacho();
+    }
   }
 
   fechar() {

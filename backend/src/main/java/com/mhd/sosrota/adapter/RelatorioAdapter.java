@@ -11,8 +11,7 @@ import java.util.Map;
  * @brief Adapter que converte dados
  */
 public class RelatorioAdapter {
-
-
+    //adapter para obter os relatorios
     public static Map<String, Long> adaptarAtendimentosPorBairro(
             java.util.List<Object[]> dadosBrutos) {
 
